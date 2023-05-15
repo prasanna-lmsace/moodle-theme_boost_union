@@ -151,7 +151,7 @@ class smartmenu_item_form extends \moodleform {
         $theme = \theme_config::load($PAGE->theme->name);
         $faiconsystem = \core\output\icon_system_fontawesome::instance($theme->get_icon_system());
         $iconlist = $faiconsystem->get_core_icon_map();
-        // Icon element
+        // Icon element.
         $icons = $mform->addElement('select', 'menuicon', get_string('icon', 'core'), $iconlist);
         $icons->setMultiple(false);
         $mform->setType('menuicon', PARAM_TEXT);
@@ -232,7 +232,6 @@ class smartmenu_item_form extends \moodleform {
         $mform->setDefault('textposition', 'theme_boost_union');
         $mform->addHelpButton('textposition', 'smartmenu:textposition', 'theme_boost_union');
 
-
         // Text color.
         $mform->addElement('theme_boost_unioncolorpicker', 'textcolor', get_string('smartmenu:textcolor', 'theme_boost_union'));
         $mform->addHelpButton('textcolor', 'smartmenu:textcolor', 'theme_boost_union');
@@ -303,10 +302,12 @@ class smartmenu_item_form extends \moodleform {
         // Access rule by dates.
         $mform->addElement('header', 'accessbydateselector', get_string('smartmenu:accessbydateselector', 'theme_boost_union'));
         // Prevent the menu display until the start date is reached.
-        $mform->addElement('date_time_selector', 'start_date', get_string('smartmenu:from', 'theme_boost_union'), array('optional' => true));
+        $mform->addElement('date_time_selector', 'start_date',
+            get_string('smartmenu:from', 'theme_boost_union'), array('optional' => true));
         $mform->addHelpButton('start_date', 'smartmenu:from', 'theme_boost_union');
         // Hide the item, if the end date is reached.
-        $mform->addElement('date_time_selector', 'end_date', get_string('smartmenu:durationuntil', 'theme_boost_union'), array('optional' => true));
+        $mform->addElement('date_time_selector', 'end_date',
+            get_string('smartmenu:durationuntil', 'theme_boost_union'), array('optional' => true));
         $mform->addHelpButton('end_date', 'smartmenu:durationuntil', 'theme_boost_union');
 
         $this->add_action_buttons();

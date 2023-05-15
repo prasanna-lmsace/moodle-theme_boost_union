@@ -862,9 +862,7 @@ $string['smartmenu:from'] = 'From';
 $string['smartmenu:durationuntil'] = 'Until';
 $string['smartmenu:category'] = 'Category';
 $string['smartmenu:url'] = 'Menu URL';
-/**
- * Smartmenu form elements help text.
- */
+// ...Smartmenu form elements help text.
 $string['smartmenu:description_help'] = 'Description about the menu';
 $string['smartmenu:menutitle_help'] = 'Enter the title for menu.';
 $string['smartmenu:location_help'] = 'Select the location where you want the menu to appear on the page.';

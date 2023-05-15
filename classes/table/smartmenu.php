@@ -239,9 +239,7 @@ class smartmenu extends \table_sql {
         // Show notification as html element.
         $notification = new \core\output\notification(
                 get_string('menusnothingtodisplay', 'theme_boost_union'), \core\output\notification::NOTIFY_INFO);
-        // $notification->set_show_closebutton(false);
-        echo $OUTPUT->heading(get_string('menusnothingtodisplay', 'theme_boost_union'));
 
-        // echo $OUTPUT->render($notification);
+        echo $OUTPUT->heading(get_string('menusnothingtodisplay', 'theme_boost_union'));
     }
 }

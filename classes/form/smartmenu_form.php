@@ -123,7 +123,6 @@ class smartmenu_form extends \moodleform {
         $mform->disabledIf('cardform', 'type', 'neq', smartmenu::TYPE_CARD);
         $mform->addHelpButton('cardform', 'smartmenu:cardform', 'theme_boost_union');
 
-
         // Overflow behavior.
         $overflow = array(
             smartmenu::NOWRAP => get_string('smartmenu:no_wrap', 'theme_boost_union'),
@@ -193,10 +192,12 @@ class smartmenu_form extends \moodleform {
         // Access rule by languages.
         $mform->addElement('header', 'accessbydateselector', get_string('smartmenu:accessbydateselector', 'theme_boost_union'));
 
-        $mform->addElement('date_time_selector', 'start_date', get_string('smartmenu:from', 'theme_boost_union'), array('optional' => true));
+        $mform->addElement('date_time_selector', 'start_date',
+            get_string('smartmenu:from', 'theme_boost_union'), array('optional' => true));
         $mform->addHelpButton('start_date', 'smartmenu:from', 'theme_boost_union');
 
-        $mform->addElement('date_time_selector', 'end_date', get_string('smartmenu:durationuntil', 'theme_boost_union'), array('optional' => true));
+        $mform->addElement('date_time_selector', 'end_date',
+            get_string('smartmenu:durationuntil', 'theme_boost_union'), array('optional' => true));
         $mform->addHelpButton('end_date', 'smartmenu:durationuntil', 'theme_boost_union');
 
         // Add the Submit button.

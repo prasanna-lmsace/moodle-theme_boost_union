@@ -50,7 +50,6 @@ define(['jquery', 'theme_boost/popover', 'core/fragment'], function($, popover, 
      * Ex. "core:t\document" is aira value and "fa-document" is aria-label.
      *
      * @param {Element} target
-     * @returns
      */
     const filterIcons = (target) => {
         var filter = target.value.toLowerCase();
@@ -60,17 +59,16 @@ define(['jquery', 'theme_boost/popover', 'core/fragment'], function($, popover, 
         }
         var li = ul.querySelectorAll('li');
 
-        for (i = 0; i < li.length; i++) {
+        for (var i = 0; i < li.length; i++) {
             var value = li[i].getAttribute('aria-value');
             var label = li[i].getAttribute('aria-label');
             if (!value.toLowerCase().includes(filter) && !label.toLowerCase().includes(filter)) {
                 li[i].style.display = "none";
-            }
-            else {
+            } else {
                 li[i].style.display = "inline-block";
             }
         }
-    }
+    };
 
     /**
      * Creates input element and append the element into the target elements parentnode.
@@ -86,7 +84,8 @@ define(['jquery', 'theme_boost/popover', 'core/fragment'], function($, popover, 
         input.classList.add('form-control');
 
         if (SELECTBOX.value != '') {
-            input.value = SELECTBOX.querySelector('option[selected]') !== null ? SELECTBOX.querySelector('option[selected]').text : '';
+            input.value = SELECTBOX.querySelector('option[selected]') !== null
+                ? SELECTBOX.querySelector('option[selected]').text : '';
         }
 
         var wrapper = document.createElement('div');
@@ -95,7 +94,7 @@ define(['jquery', 'theme_boost/popover', 'core/fragment'], function($, popover, 
 
         document.querySelector(target).style.display = 'none';
         document.querySelector(target).parentNode.append(wrapper);
-    }
+    };
 
     /**
      * Update the target with fontawesome iconpicker.
@@ -105,9 +104,8 @@ define(['jquery', 'theme_boost/popover', 'core/fragment'], function($, popover, 
      * Search icons. when the icons is selected, same icon in the select element will selected.
      *
      * @param {String} target Element Selector.
-     * @returns
      */
-    const IconPicker = (target) => {
+    const iconPicker = (target) => {
 
         SELECTBOX = document.querySelector(target);
 
@@ -125,16 +123,15 @@ define(['jquery', 'theme_boost/popover', 'core/fragment'], function($, popover, 
 
         // Check the search input created and inserted in dom.
         if (pickerInput === undefined || pickerInput === null) {
-            setTimeout(() => IconPicker(target), 1000);
+            setTimeout(() => iconPicker(target), 1000);
             return;
         }
 
         // Fetch the icons list, and setup popover with iconslist.
-        getIconList().then(function(html, js) {
+        getIconList().then(function(html) {
 
             $(pickerInput).popover({
                 content: html,
-                // container: container,
                 html: true,
                 placement: 'bottom',
                 customClass: 'fontawesome-picker',
@@ -154,10 +151,11 @@ define(['jquery', 'theme_boost/popover', 'core/fragment'], function($, popover, 
                         pickerInput.value = label;
                         SELECTBOX.value = value;
                         $(pickerInput).popover('hide');
-                    })
+                    });
                 });
             });
-        })
+            return;
+        }).catch();
 
         document.addEventListener('click', e => {
             if (pickerIsShown && !e.target.closest(SELECTORS.PICKERCONTAINER)) {
@@ -184,12 +182,12 @@ define(['jquery', 'theme_boost/popover', 'core/fragment'], function($, popover, 
             pickerIsShown = true;
             // Add class to selected icon, helps to differenciate.
             if (pickerInput.value != '') {
-                var iconSuggestion = document.querySelector('.fontawesome-iconpicker-popover ul.fontawesome-icon-suggestions')
-                if (iconSuggestion.querySelector('li[aria-label="'+pickerInput.value+'"]') !== null) {
+                var iconSuggestion = document.querySelector('.fontawesome-iconpicker-popover ul.fontawesome-icon-suggestions');
+                if (iconSuggestion.querySelector('li[aria-label="' + pickerInput.value + '"]') !== null) {
                     // Remove selected class.
                     iconSuggestion.querySelectorAll('li').forEach((li) => li.classList.remove('selected'));
                     // Assign selected class for new.
-                    iconSuggestion.querySelector('li[aria-label="'+pickerInput.value+'"]').classList.add('selected');
+                    iconSuggestion.querySelector('li[aria-label="' + pickerInput.value + '"]').classList.add('selected');
                 }
             }
         });
@@ -199,16 +197,15 @@ define(['jquery', 'theme_boost/popover', 'core/fragment'], function($, popover, 
         });
 
         pickerInput.addEventListener('keyup', function(e) {
-            console.log(e.target);
             filterIcons(e.target);
         });
-    }
+    };
 
     return {
         init: (target, contextid) => {
             contextID = contextid;
-            IconPicker(target);
+            iconPicker(target);
         }
 
     };
-})
+});

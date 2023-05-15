@@ -549,7 +549,7 @@ class smartmenu_helper {
         $editurl = new moodle_url('/theme/boost_union/smartmenus/edit.php', ['id' => $menuid, 'sesskey' => sesskey()]);
         $output .= $OUTPUT->single_button($editurl, $caption, 'get');
 
-        $output .= html_writer::end_div(); // E.O left-menu-items
+        $output .= html_writer::end_div(); // E.O left-menu-items.
 
         // Right side menus to create items.
         $output .= html_writer::start_div('right-menu-items');
@@ -562,9 +562,9 @@ class smartmenu_helper {
         );
         $output .= html_writer::link($itemsurl, $itemscaption);
 
-        $output .= html_writer::end_div(); // E.O Right-menu-items
+        $output .= html_writer::end_div(); // E.O Right-menu-items.
 
-        $output .= html_writer::end_div(); // E.O Menuitem buttons
+        $output .= html_writer::end_div(); // E.O Menuitem buttons.
 
         return $output;
     }
