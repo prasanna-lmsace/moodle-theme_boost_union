@@ -61,15 +61,19 @@
     Modifications compared to this template:
     * Added the possibility to change navbar color.
     * Include button for off-canvas region.
+    * Removed the primary menu drawer hamburger menu, added bottom bar more section will help users to open the nav drawer.
+    * Display the logo on mobile viewport. (removed d-none, changed d-md-flex to d-flex)
+    * Added menu bar section.
 }}
+
+{{#menubar}}
+<nav class="menubar fixed-top boost-union-menubar navbar navbar-expand">
+    {{> core/moremenu}}
+</nav>
+{{/menubar}}
 <nav class="navbar fixed-top {{navbarcolorclasses}} navbar-expand" aria-label="{{#str}}sitemenubar, admin{{/str}}">
 
-    <button class="navbar-toggler aabtn d-block d-md-none px-1 my-1 border-0" data-toggler="drawers" data-action="toggle" data-target="theme_boost-drawers-primary">
-        <span class="navbar-toggler-icon"></span>
-        <span class="sr-only">{{#str}}sidepanel, core{{/str}}</span>
-    </button>
-
-    <a href="{{{ config.homeurl }}}" class="navbar-brand d-none d-md-flex align-items-center m-0 mr-4 p-0 aabtn">
+    <a href="{{{ config.homeurl }}}" class="navbar-brand d-flex align-items-center m-0 mr-4 p-0 aabtn">
 
         {{# output.should_display_navbar_logo }}
             <img src="{{output.get_compact_logo_url}}" class="logo mr-1" alt="{{sitename}}">
