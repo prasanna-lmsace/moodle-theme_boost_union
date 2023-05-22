@@ -82,12 +82,14 @@ class moodlequickform_boostunioncolorpicker extends HTML_QuickForm_input {
         $this->forceltr = (bool) $value;
     }
 
-     /**
-      * Returns HTML for this form element.
-      *
-      * @return string
-      */
+    // @codingStandardsIgnoreStart
+    /**
+     * Returns HTML for this form element.
+     *
+     * @return string
+     */
     public function toHtml() {
+    // @codingStandardsIgnoreEnd
         global $PAGE, $OUTPUT;
         $icon = new pix_icon('i/loading', get_string('loading', 'admin'), 'moodle', ['class' => 'loadingicon']);
         $template = (object) [

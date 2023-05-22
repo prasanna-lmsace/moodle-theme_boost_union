@@ -60,6 +60,9 @@ class smartmenu extends \table_sql {
         $this->define_columns($columns);
         $this->define_headers($headers);
 
+        // Remove sorting for some fields.
+        $this->sortable(false);
+
         $this->set_attribute('id', 'smartmenus');
 
         $this->guess_base_url();
@@ -71,7 +74,7 @@ class smartmenu extends \table_sql {
      * Guess the base url for the menu items table.
      */
     public function guess_base_url(): void {
-        $this->baseurl = new moodle_url('/theme/boost_union/smartmenu/overview.php');
+        $this->baseurl = new moodle_url('/theme/boost_union/smartmenus/menus.php');
     }
 
     /**

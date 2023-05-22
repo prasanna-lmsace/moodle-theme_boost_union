@@ -171,7 +171,7 @@ class smartmenu_item_form extends \moodleform {
 
         // Tooltip field.
         $mform->addElement('text', 'tooltip', get_string('smartmenu:tooltip', 'theme_boost_union'));
-        $mform->setType('tooltip', PARAM_ALPHANUMEXT);
+        $mform->setType('tooltip', PARAM_TEXT);
         $mform->addHelpButton('tooltip', 'smartmenu:tooltip', 'theme_boost_union');
 
         // Order field.

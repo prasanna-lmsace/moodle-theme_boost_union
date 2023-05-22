@@ -62,8 +62,8 @@ class menuitems extends \table_sql {
         $this->define_columns($columns);
         $this->define_headers($headers);
 
-        $this->no_sorting('restrictions');
-        $this->no_sorting('action');
+        // Remove sorting for some fields.
+        $this->sortable(false);
 
         $this->guess_base_url();
 
@@ -74,7 +74,8 @@ class menuitems extends \table_sql {
      * Guess the base url for the participants table.
      */
     public function guess_base_url(): void {
-        $this->baseurl = new moodle_url('/theme/boost_union/smartmenu/overview.php');
+        $menu = required_param('menu', PARAM_INT);
+        $this->baseurl = new moodle_url('/theme/boost_union/smartmenus/items.php', ['menu' => $menu]);
     }
 
     /**
@@ -157,14 +158,14 @@ class menuitems extends \table_sql {
 
         if ($row->start_date) {
             $rules[] = [
-                'name' => get_string('startdate'),
+                'name' => get_string('smartmenu:from', 'theme_boost_union'),
                 'value' => userdate($row->start_date, get_string('strftimedate', 'core_langconfig') )
             ];
 
         }
         if ($row->end_date) {
             $rules[] = [
-                'name' => get_string('enddate'),
+                'name' => get_string('smartmenu:durationuntil', 'theme_boost_union'),
                 'value' => userdate($row->end_date, get_string('strftimedate', 'core_langconfig') )
             ];
 

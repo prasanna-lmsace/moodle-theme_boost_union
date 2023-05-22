@@ -220,7 +220,6 @@ class smartmenu_item {
      * @param int $id Record id of the menu.
      */
     public function __construct(int $id) {
-        global $DB;
 
         // Item id.
         $this->id = $id;
@@ -507,7 +506,6 @@ class smartmenu_item {
      * @return string The URL of the image associated with the item.
      */
     public function get_course_image($course) {
-        global $OUTPUT;
 
         $courseimage = course_summary_exporter::get_course_image($course);
         if (!$courseimage) {
@@ -524,7 +522,6 @@ class smartmenu_item {
      * @return array The node data.
      */
     protected function generate_heading() {
-        $heading = format_string($this->item->title);
 
         return $this->generate_node_data(
             $this->item->title, // Title.
@@ -558,7 +555,7 @@ class smartmenu_item {
      *
      * Generate the fetched course records as each nodes.
      *
-     * @return void
+     * @return stdclass
      */
     protected function generate_dynamic_item() {
         global $DB;
@@ -618,7 +615,7 @@ class smartmenu_item {
 
         // Submenu only contains the title as separate node.
         if ($this->item->mode == self::MODE_SUBMENU) {
-            $haschildren = (count($items) > 1 ) ? true : false;
+            $haschildren = (count($items) > 0 ) ? true : false;
             $submenu[] = $this->generate_node_data(
                 $this->item->title, // Title.
                 'javascript:void(0)', // URL.
@@ -640,7 +637,7 @@ class smartmenu_item {
      * @param stdclass $query the database query to modify
      * @return bool true if categories filter was applied, false otherwise
      */
-    public function get_categories_sql(&$query) {
+    protected function get_categories_sql(&$query) {
         global $DB;
 
         if (empty($this->item->category)) {
@@ -659,7 +656,7 @@ class smartmenu_item {
      * @param stdclass $query the database query to modify
      * @return void
      */
-    public function get_enrollmentrole_sql(&$query) {
+    protected function get_enrollmentrole_sql(&$query) {
         global $DB, $USER;
 
         if (empty($this->item->enrolmentrole)) {
@@ -690,7 +687,7 @@ class smartmenu_item {
      * @param [type] $query
      * @return void
      */
-    public function get_completionstatus_sql(&$query) {
+    protected function get_completionstatus_sql(&$query) {
         global $DB, $USER;
 
         if (empty($this->item->completionstatus)) {
@@ -741,7 +738,7 @@ class smartmenu_item {
      * @param stdclass $query The database query object.
      * @return bool Returns false if the item's date range is empty.
      */
-    public function get_daterange_sql(&$query) {
+    protected function get_daterange_sql(&$query) {
         global $DB, $USER;
 
         if (empty($this->item->daterange)) {
@@ -780,8 +777,8 @@ class smartmenu_item {
      * @param stdclass $query The database query object.
      * @return bool Returns false if the item's date range is empty.
      */
-    public function get_customfield_sql(&$query) {
-        global $DB, $USER;
+    protected function get_customfield_sql(&$query) {
+        global $DB;
 
         if (empty($this->item->customfields)) {
             return false;
@@ -789,21 +786,39 @@ class smartmenu_item {
 
         $customfields = $this->item->customfields ? json_decode($this->item->customfields) : [];
 
-        $i = 0;
+        $i = 0; // Multiple fields unique id for values.
         $params = [];
         $sql = [];
         foreach ($customfields as $shortname => $value) {
-            if ($value == 0 ) {
+            // Filter the null, autocomplete fields dont displayed the empty value, user cannot able to remove the null fields.
+            // Therfore remove the 0 or empty values from condition values.
+            if (is_array($value)) {
+                $value = array_filter($value, function($v) {
+                    return $v != 0;
+                });
+            }
+
+            if ($value == 0 || empty($value)) {
                 continue;
             }
+            // Select from multiple values for a custom field.
+            if (is_array($value)) {
+                list($insql, $inparams) = $DB->get_in_or_equal($value, SQL_PARAMS_NAMED, 'val_'.$i);
+                $where = "cd.value $insql";
+                $params += $inparams;
+            } else {
+                $where = "cd.value=:value_$i";
+                $params += ["value_$i" => $value];
+            }
+
             $i++;
             $sql[] = "
                 c.id IN (
                     SELECT instanceid FROM {customfield_data} cd
                     JOIN {customfield_field} cf ON cd.fieldid = cf.id AND cf.shortname = :shortname_$i
-                    WHERE cd.value=:value_$i
+                    WHERE $where
                 )";
-            $params += ["shortname_$i" => $shortname, "value_$i" => $value];
+            $params += ["shortname_$i" => $shortname];
         }
 
         $query->where[] = $sql ? implode(' AND ', $sql) : '';
@@ -829,7 +844,6 @@ class smartmenu_item {
      * @return false|array Returns false if the menu is not visible or a item array otherwise.
      */
     public function build() {
-        global $DB;
 
         // If the flag to purge the menuitems cache is set for this user.
         if (get_user_preferences('theme_boost_union_menuitem_purgesessioncache', false) == true) {
@@ -931,7 +945,7 @@ class smartmenu_item {
 
         global $OUTPUT;
 
-        $title = format_string($title);
+        $title = $titleorg = format_string($title);
         // Icon not shown in moodle 4.x, added the icon with text.
         if ($this->item->menuicon) {
             $icon = explode(':', $this->item->menuicon);
@@ -959,11 +973,13 @@ class smartmenu_item {
             'url' => $url,
             'key' => $key != null ? $key : 'item-'.$this->item->id,
             'text' => $title,
-            'title' => $tooltip ? format_string($tooltip) : format_string($title),
+            'title' => $titleorg,
+            'tooltip' => $tooltip ? format_string($tooltip) : '',
             'haschildren' => $haschildren,
             'itemimage' => $itemimage ?: $this->get_itemimage($this->item->id),
             'itemtype' => $itemtype,
-            'link' => 1
+            'link' => 1,
+            'sort' => uniqid() // Support third level menu.
         ];
 
         if ($haschildren && !empty($children)) {
@@ -1042,7 +1058,7 @@ class smartmenu_item {
      * @return void
      */
     public static function load_custom_field_config(&$mform) {
-        global $DB;
+        global $PAGE;
 
         $coursehandler = \core_course\customfield\course_handler::create();
         foreach ($coursehandler->get_fields() as $field) {
@@ -1053,9 +1069,21 @@ class smartmenu_item {
             if (isset($data[$fieldid])) {
                 $data = $data[$fieldid];
                 $data->instance_form_definition($mform);
+                if ("select" == $field->get('type')) {
+                    $elem = $mform->getElement("customfield_".$shortname);
+                    $elem->setMultiple(true);
+                }
                 $mform->hideif("customfield_".$shortname, 'type', 'neq', self::TYPEDYNAMIC);
             }
         }
+
+        $PAGE->requires->js_amd_inline('require(["core/form-autocomplete"], function(Auto) {
+            // List of custom fields.
+            var dropdowns = document.querySelectorAll("div[data-fieldtype=select] [id^=id_customfield_]");
+            dropdowns.forEach((elem) => {
+                Auto.enhance(elem);
+            });
+        })');
     }
 
     /**

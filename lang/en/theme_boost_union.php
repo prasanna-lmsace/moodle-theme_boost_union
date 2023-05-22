@@ -923,5 +923,5 @@ $string['smartmenu:operator_help'] = "Select the operator for the cohort conditi
 $string['smartmenu:bylanguage_help'] = "Select whether to show or hide the menu item based on the user's language.";
 $string['smartmenu:order_help'] = 'Rearrange the position of item';
 $string['smartmenu:from_help'] = 'Select the date to display the menu items to users until the date reached';
-$string['smartmenu:durationuntil_help'] = 'Select the date to display the menu items to users until the date reached';
+$string['smartmenu:durationuntil_help'] = 'Select the date to hide the menu items to users once the date reached';
 $string['smartmenu:category_help'] = 'Select a category to display its courses as menu items';

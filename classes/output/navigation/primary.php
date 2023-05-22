@@ -129,8 +129,10 @@ class primary extends \core\navigation\output\primary {
      * Seperate the children items and attach those items to submenus element in usermenu.
      * Add the menus in items element in usermenu.
      *
+     * Usermenu and its submenus are connected using submenuid. Added submenuid for submenu items if that has childrens.
      * Add all the items before logout menu. Removed the logout menu, then add the items into usermenu items,
-     * once all items are added, then add the logout menu to menu items.
+     * once all items are added, sperator included before logout
+     * if any smart menus are included then added the logout menu to menu items.
      *
      * @param array $usermenu
      * @param array $menus
@@ -153,10 +155,28 @@ class primary extends \core\navigation\output\primary {
             if (isset($menu->submenuid)) {
                 $children = $menu->children;
                 // Update the dividers itemtype.
-                array_walk($children, function(&$value) {
+                array_walk($children, function(&$value) use (&$usermenu, $menu) {
                     if (isset($value['divider'])) {
                         $value['itemtype'] = 'divider';
                         $value['link'] = '';
+                    }
+                    // Children is submenu item, add third level submenu.
+                    // Only three levels is avialble, therfore implemeneted in a static way, incase wants use multiple levels.
+                    // Convert this into separate function make dynamic.
+                    if (!empty($value['children'])) {
+                        $uniqueid = uniqid();
+                        $value['submenuid'] = $uniqueid;
+
+                        $submenu = [
+                            'id' => $uniqueid,
+                            'returnid' => $menu->submenuid, // Return the third level submenus back to its parent section.
+                            'title' => $value['title'],
+                            'items' => $value['children'],
+                        ];
+                        // Insert the third level childrens into submenus.
+                        $usermenu['submenus'][] = (object) $submenu;
+
+                        unset($value['children']);
                     }
                     unset($value['itemdata']); // Remove the item data before add to usermenu.
                 });
@@ -170,7 +190,14 @@ class primary extends \core\navigation\output\primary {
                 $usermenu['submenus'][] = (object) $submenu;
             }
         }
-
+        // Include the divider after smart menus items to make difference from logout.
+        $divider = [
+            'title' => '####',
+            'itemtype' => 'divider',
+            'divider' => 1,
+            'link' => ''
+        ];
+        array_push($usermenu['items'], $divider);
         // Update the logout menu at end of menus.
         array_push($usermenu['items'], $logout);
     }

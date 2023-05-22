@@ -40,13 +40,28 @@
     }
 }}
 {{!
-    * Include icon support.
+    * Include icon support. Changed the text variable to support html.
+    * Include thirdlevel submenu support. Haschildren based menu item added.
 }}
 {{#items}}
-    {{#link}}
-        <a href="{{{url}}}" class="dropdown-item pl-5" role="menuitem" tabindex="-1" {{#isactive}}aria-current="true"{{/isactive}}
-            {{#attributes}}{{key}}="{{value}}" {{/attributes}}>
+    {{#haschildren}}
+        <a href="#" class="carousel-navigation-link dropdown-item pl-5" role="menuitem" tabindex="1" data-carousel-target-id="carousel-item-{{submenuid}}">
+            {{#pixicon}}
+                {{#pix}}{{pixicon}}{{/pix}}
+            {{/pixicon}}
+            {{^pixicon}}
+                {{#imgsrc}}<img aria-hidden="true" src="{{imgsrc}}" alt="{{{title}}}"/>{{/imgsrc}}
+            {{/pixicon}}
             {{{text}}}
         </a>
-    {{/link}}
+    {{/haschildren}}
+
+    {{^haschildren}}
+        {{#link}}
+            <a href="{{{url}}}" class="dropdown-item pl-5" role="menuitem" tabindex="-1" {{#isactive}}aria-current="true"{{/isactive}}
+                {{#attributes}}{{key}}="{{value}}" {{/attributes}}>
+                {{{text}}}
+            </a>
+        {{/link}}
+    {{/haschildren}}
 {{/items}}

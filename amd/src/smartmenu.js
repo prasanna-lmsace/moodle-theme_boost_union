@@ -14,7 +14,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Theme Boost Union - JS code smartmenu
+ * Theme Boost Union - JS for smartmenu to make the third level submenu support.
  *
  * @module     theme_boost_union/smartmenu
  * @copyright  bdecent GmbH 2023
@@ -35,6 +35,8 @@ const addSubmenu = () => {
             item.addEventListener('click', (e) => {
                 e.preventDefault();
                 var target = e.currentTarget;
+                // Hide the shown menu.
+                hideSubmenus(target);
                 target.classList.toggle('show');
                 // Prevent the hide of parent menu.
                 e.stopPropagation();
@@ -43,6 +45,64 @@ const addSubmenu = () => {
     }
 };
 
+/**
+ * Hide visible submenus before display new submenu.
+ *
+ * @param {Selector} target
+ */
+const hideSubmenus = (target) => {
+    var visibleMenu = document.querySelectorAll('nav.moremenu .dropdown-submenu.show');
+    if (visibleMenu !== null) {
+        visibleMenu.forEach((el) => {
+            if (el != target) {
+                el.classList.remove('show');
+            }
+        });
+    }
+};
+
+/**
+ * Make the no wrapped card menus scroll using swipe or drag.
+ */
+const cardScroll = () => {
+    var cards = document.querySelectorAll('.card-dropdown.card-overflow-no-wrap');
+    if (cards !== null) {
+        var scrollStart; // Verify the mouse is clicked and still in click not released.
+        let startPos, scrollPos;
+
+        cards.forEach((card) => {
+            var scrollElement = card.querySelector('.dropdown-menu');
+
+            scrollElement.addEventListener('mousedown', (e) => {
+                scrollStart = true;
+                var target = e.target.parentNode.parentNode;
+                startPos = e.pageX;
+                scrollPos = target.scrollLeft;
+            });
+
+            scrollElement.addEventListener('mousemove', (e) => {
+                e.preventDefault();
+                if (!scrollStart) {
+                    return;
+                }
+                var target = e.target.parentNode.parentNode;
+                const scroll = e.pageX - startPos;
+                target.scrollLeft = scrollPos - scroll;
+
+            });
+
+            scrollElement.addEventListener('click', (e) => e.stopPropagation());
+            scrollElement.addEventListener('mouseleave', () => {
+                scrollStart = false;
+            });
+            scrollElement.addEventListener('mouseup', () => {
+                scrollStart = false;
+            });
+       });
+    }
+};
+
 export const init = () => {
     addSubmenu();
+    cardScroll();
 };

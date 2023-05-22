@@ -52,9 +52,8 @@
                     <div class="dropdown-submenu" role="none" >
                     {{/haschildren}}
                         {{#is_action_link}}
-                            <a class="dropdown-item {{#itemdata.classes}} {{.}} {{/itemdata.classes}}" role="menuitem" {{#actionattributes}}{{name}}="{{value}}"{{/actionattributes}} title="{{title}}" href="{{{url}}}{{{action}}}"
-                                data-disableactive="true" tabindex="-1"
-                            >
+                            <a class="dropdown-item {{#itemdata.classes}} {{.}} {{/itemdata.classes}}" role="menuitem" {{#actionattributes}}{{name}}="{{value}}"{{/actionattributes}} data-toggle="tooltip" title="{{tooltip}}" href="{{{url}}}{{{action}}}"
+                                data-disableactive="true" tabindex="-1">
                                 {{{text}}}
                             </a>
                             {{#action_link_actions}}
@@ -62,7 +61,7 @@
                             {{/action_link_actions}}
                         {{/is_action_link}}
                         {{^is_action_link}}
-                            <a class="dropdown-item {{#itemdata.classes}} {{.}} {{/itemdata.classes}}" role="menuitem" href="{{{url}}}{{{action}}}" {{#isactive}}aria-current="true"{{/isactive}} tabindex="-1" title="{{{title}}}" {{#attributes}}{{name}}="{{value}}"{{/attributes}} >
+                            <a class="dropdown-item {{#itemdata.classes}} {{.}} {{/itemdata.classes}}" role="menuitem" href="{{{url}}}{{{action}}}" {{#isactive}}aria-current="true"{{/isactive}} tabindex="-1" data-toggle="tooltip" title="{{{tooltip}}}" {{#attributes}}{{name}}="{{value}}"{{/attributes}} >
                                 {{{text}}}
                             </a>
                         {{/is_action_link}}
@@ -108,7 +107,7 @@
         {{/istablist}}
         {{^istablist}}
             {{#is_action_link}}
-                <a role="menuitem" class="nav-link {{#classes}}{{.}} {{/classes}}" {{#actionattributes}}{{name}}="{{value}}"{{/actionattributes}} href="{{{url}}}{{{action}}}" data-disableactive="true" tabindex="-1">
+                <a role="menuitem" class="nav-link {{#itemdata.classes}} {{.}} {{/itemdata.classes}} {{#classes}}{{.}} {{/classes}}" {{#actionattributes}}{{name}}="{{value}}"{{/actionattributes}} href="{{{url}}}{{{action}}}" data-disableactive="true" tabindex="-1">
                     {{{text}}}
                 </a>
                 {{#action_link_actions}}
@@ -116,11 +115,12 @@
                 {{/action_link_actions}}
             {{/is_action_link}}
             {{^is_action_link}}
-                <a role="menuitem" class="nav-link pt {{#isactive}}active{{/isactive}} {{#classes}}{{.}} {{/classes}}"
+                <a role="menuitem" class="nav-link {{#itemdata.classes}} {{.}} {{/itemdata.classes}} {{#isactive}}active{{/isactive}} {{#classes}}{{.}} {{/classes}}"
                     href="{{{url}}}{{{action}}}"
                     {{#isactive}}aria-current="true"{{/isactive}}
                     {{^isactive}}tabindex="-1"{{/isactive}}
                     {{#attributes}}{{name}}="{{value}}"{{/attributes}}
+                    data-toggle="tooltip" title="{{{tooltip}}}"
                 >
                     {{{text}}}
                 </a>

@@ -40,9 +40,14 @@
             {{{text}}}
         </a>
         <div class="dropdown-menu" role="menu" id="drop-down-menu-{{moremenuid}}" aria-labelledby="drop-down-{{moremenuid}}">
+            {{#helpicon}} <div class="menu-helpicon"> {{{helpicon}}} </div> {{/helpicon}}
+            {{#abovehelptext}} <div class="menu-description"> {{{helptext}}} </div> {{/abovehelptext}}
             {{#children}}
                 {{^divider}}
                     <div class="card-block {{#itemdata.classes}} {{.}} {{/itemdata.classes}} ">
+                        <a href="{{{url}}}{{{action}}}">
+                            <span class="card-item-overlay"></span>
+                        </a>
                         <div class="img-block">
                             <img src="{{{itemimage}}}" alt="" role="presentation">
                         </div>
@@ -62,7 +67,7 @@
                                 {{/is_action_link}}
 
                                 {{^is_action_link}}
-                                    <a class="dropdown-item menu-item-{{itemtype}} " role="menuitem" href="{{{url}}}{{{action}}}" {{#isactive}}aria-current="true"{{/isactive}} tabindex="-1" {{#attributes}}{{name}}="{{value}}"{{/attributes}} style="{{#itemdata.textcolor}} color:{{{itemdata.textcolor}}};{{/itemdata.textcolor}}">{{{text}}}</a>
+                                    <a class="dropdown-item menu-item-{{itemtype}} " data-toggle="tooltip" title="{{{tooltip}}}" role="menuitem" href="{{{url}}}{{{action}}}" {{#isactive}}aria-current="true"{{/isactive}} tabindex="-1" {{#attributes}}{{name}}="{{value}}"{{/attributes}} style="{{#itemdata.textcolor}} color:{{{itemdata.textcolor}}};{{/itemdata.textcolor}}">{{{text}}}</a>
                                 {{/is_action_link}}
                             </h5>
                             {{^is_action_link}}
@@ -79,6 +84,7 @@
                     <div class="dropdown-divider"></div>
                 {{/divider}}
             {{/children}}
+            {{#belowhelptext}} <div class="menu-description">{{{helptext}}}</div> {{/belowhelptext}}
         </div>
     </li>
 {{/haschildren}}
@@ -99,6 +105,7 @@
                     {{#isactive}}aria-selected="true"{{/isactive}}
                     {{^isactive}}tabindex="-1"{{/isactive}}
                     {{#attributes}}{{name}}="{{value}}"{{/attributes}}
+                    data-toggle="tooltip" title="{{{tooltip}}}"
                 >
                     {{{text}}}
                 </a>
@@ -119,6 +126,7 @@
                     {{#isactive}}aria-current="true"{{/isactive}}
                     {{^isactive}}tabindex="-1"{{/isactive}}
                     {{#attributes}}{{name}}="{{value}}"{{/attributes}}
+                    data-toggle="tooltip" title="{{{tooltip}}}"
                 >
                     {{{text}}}
                 </a>

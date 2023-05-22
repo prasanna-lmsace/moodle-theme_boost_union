@@ -275,8 +275,6 @@ class smartmenu {
      * @throws moodle_exception If menu format is not correct.
      */
     public function __construct($menu) {
-        global $DB;
-
         $this->id = $menu->id;
         $this->menu = $menu;
         $this->helper = new \smartmenu_helper($this->menu);
@@ -374,7 +372,6 @@ class smartmenu {
      * @throws moodle_exception If the menu format is not correct.
      */
     public function duplicate() {
-        global $DB;
 
         // Get list of items associated with its current menu.
         $items = $this->get_menu_items();
@@ -439,7 +436,7 @@ class smartmenu {
      *
      * @return string HTML class for the card form size.
      */
-    public function get_cardform() {
+    protected function get_cardform() {
 
         $options = [
             self::SQUARE => 'square', self::PORTRAIT => 'portrait', self::LANDSCAPE => 'landscape', self::FULLWIDTH => 'fullwidth'
@@ -453,7 +450,7 @@ class smartmenu {
      *
      * @return string HTML class for the card size.
      */
-    public function get_cardsize() {
+    protected function get_cardsize() {
 
         $options = [
             self::TINY => 'tiny', self::SMALL => 'small', self::MEDIUM => 'medium', self::LARGE => 'large'
@@ -559,7 +556,8 @@ class smartmenu {
             'submenuid' => uniqid(), // Menu has user menu location, then the submenu id is manatory for submenus.
             'card' => ($this->menu->type == self::TYPE_CARD) ? true : false,
             'forceintomoremenu' => ($this->menu->moremenubehavior == self::MOREMENU_INTO) ? true : false,
-            'haschildren' => 0
+            'haschildren' => 0,
+            'sort' => uniqid() // Support third level menu.
         ];
 
         // Add the description data to nodes.
@@ -568,6 +566,10 @@ class smartmenu {
             $nodes->helptext = $description;
             $nodes->abovehelptext = ($this->menu->showdesc == self::DESC_ABOVE) ? true : false;
             $nodes->belowhelptext = ($this->menu->showdesc == self::DESC_BELOW) ? true : false;
+            // Add selector class in dropdown element for style.
+            $this->menu->classes[] = ($nodes->abovehelptext) ? 'dropdown-description-above' : '';
+            $this->menu->classes[] = ($nodes->belowhelptext) ? 'dropdown-description-below' : '';
+
             // Show the description as helpicon.
             if ($this->menu->showdesc == self::DESC_HELP) {
                 $alt = get_string('description');
@@ -758,8 +760,6 @@ class smartmenu {
         $record->languages = json_encode($formdata->languages);
 
         $transaction = $DB->start_delegated_transaction();
-        // Smart menus cache instance.
-        $cache = cache::make('theme_boost_union', 'smartmenus');
 
         if (isset($formdata->id) && $DB->record_exists('theme_boost_union_menus', ['id' => $formdata->id])) {
             $menuid = $formdata->id;
