@@ -922,9 +922,9 @@ body.pagelayout-login:not(.loginbackgroundimage) #footnote {
  Smartmenu: CARD style.
  ========================== */
 
- /*Scrollbar*/
+/*Scrollbar*/
 
- /*width and height of the scrollbar */
+/*width and height of the scrollbar */
 ::-webkit-scrollbar {
     width: 12px;
     height: 10px;
@@ -1216,7 +1216,8 @@ body.pagelayout-login:not(.loginbackgroundimage) #footnote {
                     &.show {
                         position: relative;
                         /* The dropdown submenu style is added for the header menu */
-                        /*border, border radius, background color, padding and its position styles are addded and display block is added for the submenu when the dropdown menu is clicked */
+                        /*border, border radius, background color, padding and its position styles are 
+                        addded and display block is added for the submenu when the dropdown menu is clicked */
                         ul {
                             list-style: none;
                             border: 1px solid $border-color;
@@ -1637,7 +1638,8 @@ body.pagelayout-login:not(.loginbackgroundimage) #footnote {
             overflow: auto;
             padding: 10px 2px 2px 10px;
             margin: 0;
-            /*width, height, line height, border, border radius and margin added for the icon item in the popover fontawesome icon picker*/
+            /*width, height, line height, border, border radius and margin
+            added for the icon item in the popover fontawesome icon picker*/
             li {
                 width: 40px;
                 height: 40px;
