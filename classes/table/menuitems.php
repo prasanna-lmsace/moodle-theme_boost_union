@@ -256,4 +256,16 @@ class menuitems extends \table_sql {
         }
         return html_writer::span(join('', $actionshtml), 'menu-item-actions item-actions mr-0');
     }
+
+    /**
+     * Override the default "Nothing to display" message when no menus available.
+     *
+     * @return void
+     */
+    public function print_nothing_to_display() {
+        global $OUTPUT;
+
+        // Show notification as html element.
+        echo $OUTPUT->heading(get_string('itemsnothingtodisplay', 'theme_boost_union'));
+    }
 }

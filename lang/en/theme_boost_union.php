@@ -856,6 +856,7 @@ $string['smartmenu:deleteconfirmitem'] = 'Are you sure you want to delete this m
 $string['smartmenu:copyitem'] = 'Copy menu item';
 $string['smartmenu:copymenu'] = 'Copy menu and it items';
 $string['menusnothingtodisplay'] = "There aren't any smart menus are created. Please create your first smart menu.";
+$string['itemsnothingtodisplay'] = "There aren't any items are created for this menu. Please add first item to this menu.";
 $string['smartmenu:menuicon'] = 'Icon';
 $string['smartmenu:order'] = 'Order';
 $string['smartmenu:from'] = 'From';
@@ -925,3 +926,8 @@ $string['smartmenu:order_help'] = 'Rearrange the position of item';
 $string['smartmenu:from_help'] = 'Select the date to display the menu items to users until the date reached';
 $string['smartmenu:durationuntil_help'] = 'Select the date to hide the menu items to users once the date reached';
 $string['smartmenu:category_help'] = 'Select a category to display its courses as menu items';
+$string['smartmenu:menumode'] = "Select the mode for where the menu should be visible.
+<ul><li>
+Inline: items in the menu will be displayed as a menu directly in the naivgation. This option did not support for card type menus.
+</li>
+<li> Submenu: This is default option, items will be display as submenu of this menu. </li></ul>";

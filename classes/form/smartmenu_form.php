@@ -84,6 +84,14 @@ class smartmenu_form extends \moodleform {
         // Advanced settings options. Settings for advanced users / special use cases.
         $mform->addElement('header', 'advanced_settings', get_string('smartmenu:advancedsettings', 'theme_boost_union'));
 
+        // Display options mode.
+        $displayoptions = [
+            smartmenu::MODE_SUBMENU => get_string('smartmenu:submenu', 'theme_boost_union'),
+            smartmenu::MODE_INLINE => get_string('smartmenu:inline', 'theme_boost_union'),
+        ];
+        $mform->addElement('select', 'mode', get_string('smartmenu:mode', 'theme_boost_union'), $displayoptions);
+        $mform->addHelpButton('mode', 'smartmenu:menumode', 'theme_boost_union');
+
         // CSS Class.
         $mform->addElement('text', 'cssclass', get_string('smartmenu:cssclass', 'theme_boost_union'));
         $mform->addHelpButton('cssclass', 'smartmenu:cssclass', 'theme_boost_union');

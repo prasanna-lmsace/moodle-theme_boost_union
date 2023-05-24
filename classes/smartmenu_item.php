@@ -860,9 +860,9 @@ class smartmenu_item {
         smartmenu_helper::purge_cache_date_reached($cache, $this->item, 'theme_boost_union_menuitemlastcheckdate');
 
         // Get the node data for item from cache if it is stored.
-        if ($result = $cache->get($this->item->id)) {
+        /* if ($result = $cache->get($this->item->id)) {
             return $result;
-        }
+        } */
 
         // Verify the restriction rules.
         if (empty($this->item) || !$this->helper->verify_access_restrictions()) {
@@ -872,12 +872,19 @@ class smartmenu_item {
         // Add custom css class.
         $class[] = $this->item->cssclass;
         // Add classes for hide items in specific viewport.
-        $class[] = $this->item->desktop ? 'd-lg-none' : 'd-lg-inline-block';
-        $class[] = $this->item->tablet ? 'd-md-none' : 'd-md-inline-block';
-        $class[] = $this->item->mobile ? 'd-none' : 'd-inline-block';
+        $class[] = $this->item->desktop ? 'd-lg-none' : 'd-lg-inline-flex';
+        $class[] = $this->item->tablet ? 'd-md-none' : 'd-md-inline-flex';
+        $class[] = $this->item->mobile ? 'd-none' : 'd-inline-flex';
 
         // Add classes for item title placement on card.
         $class[] = $this->get_textposition_class();
+        // Menu item class.
+        $types = [self::TYPESTATIC => 'static', self::TYPEDYNAMIC => 'dynamic', self::TYPEHEADING => 'heading'];
+        $class[] = 'menu-item-'.($types[$this->item->type] ?? '');
+        // Add classes to item data.
+        $this->item->classes = $class;
+
+        $this->item->location = $this->menu->location; // Load the location of menu, used to collect menus for locations in menu inline mode.
 
         // Convert the item background color hexcode into rgba with opacity. Used in the overlay style.
         $this->convert_background_code();
@@ -902,11 +909,6 @@ class smartmenu_item {
                 $type = 'heading';
 
         endswitch;
-
-        // Menu item class.
-        $class[] = 'menu-item-'.$type;
-        // Add classes to item data.
-        $this->item->classes = $class;
 
         // Save the items cache.
         $cache->set($this->item->id, $result);
@@ -968,8 +970,11 @@ class smartmenu_item {
             }
         }
 
+
         $data = [
             'itemdata' => $this->item,
+            'menuclasses' => $this->item->classes, // If menu is inline, need to add the item custom class in dropdown.
+            'location' => $this->menu->location,
             'url' => $url,
             'key' => $key != null ? $key : 'item-'.$this->item->id,
             'text' => $title,
@@ -977,10 +982,12 @@ class smartmenu_item {
             'tooltip' => $tooltip ? format_string($tooltip) : '',
             'haschildren' => $haschildren,
             'itemimage' => $itemimage ?: $this->get_itemimage($this->item->id),
-            'itemtype' => $itemtype,
+            'itemtype' => 'link',
             'link' => 1,
             'sort' => uniqid() // Support third level menu.
         ];
+
+        // if ()
 
         if ($haschildren && !empty($children)) {
             $data['children'] = $children;

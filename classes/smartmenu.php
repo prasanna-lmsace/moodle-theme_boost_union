@@ -251,6 +251,18 @@ class smartmenu {
     public const NOWRAP = 2;
 
     /**
+     * Display the menuitems as menu.
+     * @var int
+     */
+    public const MODE_INLINE = 2;
+
+    /**
+     * Display the menuitems as submenu.
+     * @var int
+     */
+    public const MODE_SUBMENU = 1;
+
+    /**
      * Create an instance of the smartmenu class from the given menu ID or menu object/array.
      *
      * @param int|stdclass $menu
@@ -536,52 +548,59 @@ class smartmenu {
         }
 
         // Get the menu and its menu items from cache.
-        if ($nodes = $cache->get($this->menu->id)) {
+        /* if ($nodes = $cache->get($this->menu->id)) {
             return $nodes;
-        }
+        } */
 
         $this->menu->classes[] = $this->get_cardform(); // Html class for the card form size, Potrait, Square, landscape.
         $this->menu->classes[] = $this->get_cardsize(); // HTML class for the card Size, tiny, small, medium, large.
         $this->menu->classes[] = $this->get_cardwrap(); // HtML class for the card overflow behaviour.
         $this->menu->classes[] = $this->menu->cssclass;// Custom class selector for menu.
 
-        $nodes = (object) [
-            'menudata' => $this->menu,
-            'title' => $this->menu->title,
-            'url' => null,
-            'text' => $this->menu->title,
-            'key' => $this->menu->id,
-            'submenulink' => 1,
-            'itemtype' => 'submenu-link',
-            'submenuid' => uniqid(), // Menu has user menu location, then the submenu id is manatory for submenus.
-            'card' => ($this->menu->type == self::TYPE_CARD) ? true : false,
-            'forceintomoremenu' => ($this->menu->moremenubehavior == self::MOREMENU_INTO) ? true : false,
-            'haschildren' => 0,
-            'sort' => uniqid() // Support third level menu.
-        ];
+        // Card type menus doesn't supports inline menus.
+        // MOde is submenu or not set anything then create the menusitems as submenus. otherwise add the menu items directoly as menu.
+        if ($this->menu->mode != self::MODE_INLINE || $this->menu->type == self::TYPE_CARD) {
 
-        // Add the description data to nodes.
-        if ($this->menu->showdesc != self::DESC_NEVER) {
-            $description = format_text($this->menu->description['text'], FORMAT_HTML);
-            $nodes->helptext = $description;
-            $nodes->abovehelptext = ($this->menu->showdesc == self::DESC_ABOVE) ? true : false;
-            $nodes->belowhelptext = ($this->menu->showdesc == self::DESC_BELOW) ? true : false;
-            // Add selector class in dropdown element for style.
-            $this->menu->classes[] = ($nodes->abovehelptext) ? 'dropdown-description-above' : '';
-            $this->menu->classes[] = ($nodes->belowhelptext) ? 'dropdown-description-below' : '';
+            $nodes = (object) [
+                'menudata' => $this->menu,
+                'title' => $this->menu->title,
+                'url' => null,
+                'text' => $this->menu->title,
+                'key' => $this->menu->id,
+                'submenulink' => 1,
+                'itemtype' => 'submenu-link', // Used in user menus, to identify the menu type, "link" for submmenus.
+                'submenuid' => uniqid(), // Menu has user menu location, then the submenu id is manatory for submenus.
+                'card' => ($this->menu->type == self::TYPE_CARD) ? true : false,
+                'forceintomoremenu' => ($this->menu->moremenubehavior == self::MOREMENU_INTO) ? true : false,
+                'haschildren' => 0,
+                'sort' => uniqid() // Support third level menu.
+            ];
 
-            // Show the description as helpicon.
-            if ($this->menu->showdesc == self::DESC_HELP) {
-                $alt = get_string('description');
-                $data = [
-                    'text' => $description,
-                    'alt' => $alt,
-                    'icon' => (new \pix_icon('help', $alt, 'core', ['class' => 'iconhelp']))->export_for_template($OUTPUT),
-                    'ltr' => !right_to_left()
-                ];
-                $nodes->helpicon = $OUTPUT->render_from_template('core/help_icon', $data);
+            // Add the description data to nodes. Inline mode menus not supports the menu.
+            if ($this->menu->showdesc != self::DESC_NEVER) {
+                $description = format_text($this->menu->description['text'], FORMAT_HTML);
+                $nodes->helptext = $description;
+                $nodes->abovehelptext = ($this->menu->showdesc == self::DESC_ABOVE) ? true : false;
+                $nodes->belowhelptext = ($this->menu->showdesc == self::DESC_BELOW) ? true : false;
+                // Add selector class in dropdown element for style.
+                $this->menu->classes[] = ($nodes->abovehelptext) ? 'dropdown-description-above' : '';
+                $this->menu->classes[] = ($nodes->belowhelptext) ? 'dropdown-description-below' : '';
+
+                // Show the description as helpicon.
+                if ($this->menu->showdesc == self::DESC_HELP) {
+                    $alt = get_string('description');
+                    $data = [
+                        'text' => $description,
+                        'alt' => $alt,
+                        'icon' => (new \pix_icon('help', $alt, 'core', ['class' => 'iconhelp']))->export_for_template($OUTPUT),
+                        'ltr' => !right_to_left()
+                    ];
+                    $nodes->helpicon = $OUTPUT->render_from_template('core/help_icon', $data);
+                }
+
             }
-
+            // Menu is set to inline, items classes are loadded in this variable menuclasses in template.
+            $nodes->menuclasses = $this->menu->classes; // Menus classes.
         }
         // Menus not exists in cache, then build the menu and menu items.
         // Get list of its items.
@@ -596,14 +615,39 @@ class smartmenu {
                 $builditems = (!empty($item)) ? array_merge($builditems, $item) : $builditems;
             }
 
-            // Setup the childrens to parent menu node.
-            $nodes->haschildren = (count($builditems) > 0) ? true : false;
-            $nodes->children = $builditems;
+            if (isset($nodes)) {
+                // Setup the childrens to parent menu node.
+                $nodes->haschildren = (count($builditems) > 0) ? true : false;
+                $nodes->children = $builditems;
+            } else {
+                // If menu is inline mode, then it items are displayed directly in menus.
+                // Set the menuitems as separate menu node in cache.
+                // Remove dividers from inline menus.
+                $builditems = array_filter($builditems, function($item) {
+                    // Remove the item is divider.
+                    return !isset($item['divider']) || !$item['divider'];
+                });
+
+                array_walk($builditems, function(&$item) {
+                    // Make the dynamic courses as top menu for user menus dropdown. if menu mode is inline.
+                    if ($item['haschildren']) {
+                        // Below elements are used to separate the submenus and links for usermenu.
+                        $item['itemtype'] = 'submenu-link';
+                        $item['submenulink'] = 1;
+                        $item['link'] = 0;
+                        $item['submenuid'] = uniqid();
+                    }
+                });
+
+                $nodes = $builditems;
+            }
         }
         // Set the processed menus node and its children item nodes in Cache.
-        $cache->set($this->menu->id, $nodes);
+        if (isset($nodes)) {
+            $cache->set($this->menu->id, $nodes);
+        }
 
-        return $nodes;
+        return $nodes ?? false;
     }
 
     /**
@@ -618,13 +662,23 @@ class smartmenu {
         if (empty($menus) || $location == '') {
             return [];
         }
-
+        // echo $location;
         foreach ($menus as $menu) {
-            if (empty($menu->menudata->location)) {
+
+            $menu = (object) $menu;
+
+            if (isset($menu->menudata->location)) {
+                $menulocation = $menu->menudata->location;
+            }
+            if (isset($menu->itemdata->location)) {
+                $menulocation = $menu->itemdata->location;
+            }
+
+            if (!isset($menulocation) || empty($menulocation)) {
                 continue;
             }
             // The menu contians the specified location. then store the menu for this location.
-            if (in_array($location, $menu->menudata->location)) {
+            if (in_array($location, $menulocation)) {
                 $result[] = $menu;
             }
         }
@@ -652,6 +706,8 @@ class smartmenu {
             $record->roles = json_decode($record->roles);
             $record->cohorts = json_decode($record->cohorts);
             $record->languages = json_decode($record->languages);
+            $record->mode = $record->mode ?? self::MODE_SUBMENU; // Submenu is default menu mode.
+
             return $record;
         } else {
             // TODO: string for menu not found.
@@ -810,7 +866,11 @@ class smartmenu {
         $topmenus = self::get_menus();
         foreach ($topmenus as $menu) {
             if ($node = self::instance($menu->id)->build()) {
-                $nodes[] = $node;
+                if (isset($node->menudata)) {
+                    $nodes[] = $node;
+                } else {
+                    $nodes = array_merge($nodes, array_values((array) $node));
+                }
             }
         }
         return $nodes;

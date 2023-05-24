@@ -42,48 +42,41 @@
         <div class="dropdown-menu" role="menu" id="drop-down-menu-{{moremenuid}}" aria-labelledby="drop-down-{{moremenuid}}">
             {{#helpicon}} <div class="menu-helpicon"> {{{helpicon}}} </div> {{/helpicon}}
             {{#abovehelptext}} <div class="menu-description"> {{{helptext}}} </div> {{/abovehelptext}}
-            {{#children}}
-                {{^divider}}
-                    <div class="card-block {{#itemdata.classes}} {{.}} {{/itemdata.classes}} ">
-                        <a href="{{{url}}}{{{action}}}">
-                            <span class="card-item-overlay"></span>
-                        </a>
-                        <div class="img-block">
-                            <img src="{{{itemimage}}}" alt="" role="presentation">
-                        </div>
-                        <div class="content-block"
-                            style="{{#itemdata.backgroundcolor}}background-color:{{{itemdata.backgroundcolor}}};{{/itemdata.backgroundcolor}}">
 
-                            <h5>
-                                {{#is_action_link}}
-                                    <a class="dropdown-item menu-item-{{itemtype}} " role="menuitem" {{#actionattributes}}{{name}}="{{value}}"{{/actionattributes}} href="{{{url}}}{{{action}}}"
-                                        data-disableactive="true" tabindex="-1"
-                                    >
-                                        {{{text}}}
-                                    </a>
-                                    {{#action_link_actions}}
-                                        {{> core/actions }}
-                                    {{/action_link_actions}}
-                                {{/is_action_link}}
-
-                                {{^is_action_link}}
-                                    <a class="dropdown-item menu-item-{{itemtype}} " data-toggle="tooltip" title="{{{tooltip}}}" role="menuitem" href="{{{url}}}{{{action}}}" {{#isactive}}aria-current="true"{{/isactive}} tabindex="-1" {{#attributes}}{{name}}="{{value}}"{{/attributes}} style="{{#itemdata.textcolor}} color:{{{itemdata.textcolor}}};{{/itemdata.textcolor}}">{{{text}}}</a>
-                                {{/is_action_link}}
-                            </h5>
-                            {{^is_action_link}}
-                            <div class="btn-block">
-                                <a class="dropdown-item " role="menuitem" href="{{{url}}}{{{action}}}" {{#isactive}}aria-current="true"{{/isactive}} tabindex="-1" {{#attributes}}{{name}}="{{value}}"{{/attributes}}>
-                                    <i class="fa fa-long-arrow-right"></i>
-                                </a>
+            <div class="card-block-wrapper">
+                {{#children}}
+                    {{^divider}}
+                        <div class="card-block {{#itemdata.classes}} {{.}} {{/itemdata.classes}} ">
+                            <a href="{{{url}}}{{{action}}}">
+                                <span class="card-item-overlay"></span>
+                            </a>
+                            <div class="img-block">
+                                <a href="{{{url}}}{{{action}}}"><img src="{{{itemimage}}}" alt="" role="presentation"></a>
                             </div>
-                            {{/is_action_link}}
+                            <div class="content-block"
+                                style="{{#itemdata.backgroundcolor}}background-color:{{{itemdata.backgroundcolor}}};{{/itemdata.backgroundcolor}}">
+
+                                <h5>
+                                    {{^is_action_link}}
+                                        <a class="dropdown-item menu-item-{{itemtype}} " data-toggle="tooltip" title="{{{tooltip}}}" role="menuitem" href="{{{url}}}{{{action}}}" {{#isactive}}aria-current="true"{{/isactive}} tabindex="-1" {{#attributes}}{{name}}="{{value}}"{{/attributes}} style="{{#itemdata.textcolor}} color:{{{itemdata.textcolor}}};{{/itemdata.textcolor}}">{{{text}}}</a>
+                                    {{/is_action_link}}
+                                </h5>
+                                {{^is_action_link}}
+                                <div class="btn-block">
+                                    <a class="dropdown-item " role="menuitem" href="{{{url}}}{{{action}}}" {{#isactive}}aria-current="true"{{/isactive}} tabindex="-1" {{#attributes}}{{name}}="{{value}}"{{/attributes}}>
+                                        <i class="fa fa-long-arrow-right"></i>
+                                    </a>
+                                </div>
+                                {{/is_action_link}}
+                            </div>
                         </div>
-                    </div>
-                {{/divider}}
-                {{#divider}}
-                    <div class="dropdown-divider"></div>
-                {{/divider}}
-            {{/children}}
+                    {{/divider}}
+                    {{#divider}}
+                        <div class="dropdown-divider"></div>
+                    {{/divider}}
+                {{/children}}
+            </div>
+
             {{#belowhelptext}} <div class="menu-description">{{{helptext}}}</div> {{/belowhelptext}}
         </div>
     </li>
@@ -91,14 +84,6 @@
 {{^haschildren}}
     <li data-key="{{key}}" class="nav-item" role="none" data-forceintomoremenu="{{#forceintomoremenu}}true{{/forceintomoremenu}}{{^forceintomoremenu}}false{{/forceintomoremenu}}">
         {{#istablist}}
-            {{#is_action_link}}
-                <a role="tab" class="nav-link {{#classes}}{{.}} {{/classes}}" href="{{tab}}" data-toggle="tab" data-text="{{{text}}}" data-disableactive="true" tabindex="-1">
-                    {{{text}}}
-                </a>
-                {{#action_link_actions}}
-                    {{> core/actions }}
-                {{/action_link_actions}}
-            {{/is_action_link}}
             {{^is_action_link}}
                 <a role="tab" class="nav-link {{#isactive}}active{{/isactive}} {{#classes}}{{.}} {{/classes}}"
                     href="{{tab}}" data-toggle="tab" data-text="{{{text}}}"
@@ -112,14 +97,6 @@
             {{/is_action_link}}
         {{/istablist}}
         {{^istablist}}
-            {{#is_action_link}}
-                <a role="menuitem" class="nav-link {{#classes}}{{.}} {{/classes}}" {{#actionattributes}}{{name}}="{{value}}"{{/actionattributes}} href="{{{url}}}{{{action}}}" data-disableactive="true" tabindex="-1">
-                    {{{text}}}
-                </a>
-                {{#action_link_actions}}
-                    {{> core/actions }}
-                {{/action_link_actions}}
-            {{/is_action_link}}
             {{^is_action_link}}
                 <a role="menuitem" class="nav-link {{#isactive}}active{{/isactive}} {{#classes}}{{.}} {{/classes}}"
                     href="{{{url}}}{{{action}}}"

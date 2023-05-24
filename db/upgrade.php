@@ -150,7 +150,8 @@ function xmldb_theme_boost_union_upgrade($oldversion) {
         $table->add_field('sortorder', XMLDB_TYPE_INTEGER, '18', XMLDB_UNSIGNED, null, null, null, 'showdesc');
         $table->add_field('location', XMLDB_TYPE_CHAR, '50', null, XMLDB_NOTNULL, null, null, 'sortorder');
         $table->add_field('type', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '0', 'location');
-        $table->add_field('cssclass', XMLDB_TYPE_CHAR, '50', null, null, null, null, 'type');
+        $table->add_field('mode', XMLDB_TYPE_INTEGER, '2', null, null, null, '1', 'type');
+        $table->add_field('cssclass', XMLDB_TYPE_CHAR, '50', null, null, null, null, 'mode');
         $table->add_field('moremenubehavior', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, null, null, '1', 'cssclass');
         $table->add_field('cardsize', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, null, null, '1', 'moremenubehavior');
         $table->add_field('cardform', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, null, null, '1', 'cardsize');
@@ -215,6 +216,21 @@ function xmldb_theme_boost_union_upgrade($oldversion) {
         }
         // Update the boost_union theme savepoint.
         upgrade_plugin_savepoint(true, 2023010512, 'theme', 'boost_union');
+    }
+
+    if ($oldversion < 2023010524) {
+
+        // Add a new column 'mode' to the theme_boost_union_menus table.
+        $table = new xmldb_table('theme_boost_union_menus');
+
+        // Define field mode to be added to theme_boost_union_menus.
+        $field = new xmldb_field('mode', XMLDB_TYPE_INTEGER, 2, null, null, null, "1", 'type');
+
+        // Conditionally launch add field mode.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        upgrade_plugin_savepoint(true, 2023010524, 'theme', 'boost_union');
     }
 
     return true;
