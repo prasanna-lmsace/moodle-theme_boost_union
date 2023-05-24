@@ -548,9 +548,9 @@ class smartmenu {
         }
 
         // Get the menu and its menu items from cache.
-        /* if ($nodes = $cache->get($this->menu->id)) {
-            return $nodes;
-        } */
+        if ($nodescache = $cache->get($this->menu->id)) {
+            return $nodescache;
+        }
 
         $this->menu->classes[] = $this->get_cardform(); // Html class for the card form size, Potrait, Square, landscape.
         $this->menu->classes[] = $this->get_cardsize(); // HTML class for the card Size, tiny, small, medium, large.
@@ -558,7 +558,7 @@ class smartmenu {
         $this->menu->classes[] = $this->menu->cssclass;// Custom class selector for menu.
 
         // Card type menus doesn't supports inline menus.
-        // MOde is submenu or not set anything then create the menusitems as submenus. otherwise add the menu items directoly as menu.
+        // MOde is submenu or not set anything then create the menuitems as submenu.otherwise add the menu items directoly as menu.
         if ($this->menu->mode != self::MODE_INLINE || $this->menu->type == self::TYPE_CARD) {
 
             $nodes = (object) [
@@ -662,7 +662,6 @@ class smartmenu {
         if (empty($menus) || $location == '') {
             return [];
         }
-        // echo $location;
         foreach ($menus as $menu) {
 
             $menu = (object) $menu;
@@ -765,7 +764,6 @@ class smartmenu {
         $locations = self::get_locations();
         return $locations[$location] ?? false;
     }
-
 
     /**
      * Get all available smart menu types. Either card or list.

@@ -860,9 +860,9 @@ class smartmenu_item {
         smartmenu_helper::purge_cache_date_reached($cache, $this->item, 'theme_boost_union_menuitemlastcheckdate');
 
         // Get the node data for item from cache if it is stored.
-        /* if ($result = $cache->get($this->item->id)) {
+        if ($result = $cache->get($this->item->id)) {
             return $result;
-        } */
+        }
 
         // Verify the restriction rules.
         if (empty($this->item) || !$this->helper->verify_access_restrictions()) {
@@ -883,8 +883,8 @@ class smartmenu_item {
         $class[] = 'menu-item-'.($types[$this->item->type] ?? '');
         // Add classes to item data.
         $this->item->classes = $class;
-
-        $this->item->location = $this->menu->location; // Load the location of menu, used to collect menus for locations in menu inline mode.
+        // Load the location of menu, used to collect menus for locations in menu inline mode.
+        $this->item->location = $this->menu->location;
 
         // Convert the item background color hexcode into rgba with opacity. Used in the overlay style.
         $this->convert_background_code();
@@ -970,7 +970,6 @@ class smartmenu_item {
             }
         }
 
-
         $data = [
             'itemdata' => $this->item,
             'menuclasses' => $this->item->classes, // If menu is inline, need to add the item custom class in dropdown.
@@ -986,8 +985,6 @@ class smartmenu_item {
             'link' => 1,
             'sort' => uniqid() // Support third level menu.
         ];
-
-        // if ()
 
         if ($haschildren && !empty($children)) {
             $data['children'] = $children;

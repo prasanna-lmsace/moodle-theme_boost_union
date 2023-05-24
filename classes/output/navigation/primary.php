@@ -88,17 +88,7 @@ class primary extends \core\navigation\output\primary {
         // Menubar.
         // Items of menus only added in the menubar.
         // Removed the menu nodes from menubar, each item will be displayed as menu in menubar.
-        $menubar = [];
         if (!empty($menubarmenus)) {
-            /* foreach ($menubarmenus as $menu) {
-                if (!empty($menu->children)) {
-                    // Remove the divider from menus, Menubar doesn't supports the menubar.
-                    $children = array_filter($menu->children, function($item) {
-                        return !isset($item['divider']) || !$item['divider'] ? true : false;
-                    });
-                    $menubar = array_merge($menubar, (array) $children);
-                }
-            } */
             $menubarmoremenu = new \core\navigation\output\more_menu((object) $menubarmenus, 'navbar-nav-menu-bar', false);
         }
 
@@ -113,8 +103,6 @@ class primary extends \core\navigation\output\primary {
         $languagemenu = new \core\output\language_menu($this->page);
         $usermenu = $this->get_user_menu($output);
         $this->build_usermenus($usermenu, $locationusermenus);
-
-        // print_object($usermenu);exit;
 
         return [
             'mobileprimarynav' => $mobileprimarynav,
