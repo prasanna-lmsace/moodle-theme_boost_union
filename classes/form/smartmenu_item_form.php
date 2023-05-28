@@ -156,6 +156,7 @@ class smartmenu_item_form extends \moodleform {
         $icons->setMultiple(false);
         $mform->setType('menuicon', PARAM_TEXT);
         $mform->addHelpButton('menuicon', 'smartmenu:menuicon', 'theme_boost_union');
+
         // Include the fontaswesome icon picker for menu icon select.
         $contextid = \context_system::instance()->id;
         $PAGE->requires->js_call_amd("theme_boost_union/fontawesome-popover", 'init', ["#id_menuicon", $contextid]);

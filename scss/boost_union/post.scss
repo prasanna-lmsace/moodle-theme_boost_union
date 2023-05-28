@@ -1557,11 +1557,21 @@ body.pagelayout-login:not(.loginbackgroundimage) #footnote {
                         /* max-height: calc(100vh - 300px); */
                         margin-top: 0;
                         margin-bottom: 0;
-                        overflow-y: auto;
+                        /* overflow-y: auto; */
                         top: auto;
                         bottom: 100%;
                         left: auto;
                         right: 0;
+                        /*The footer bottom dropdown submenu min-width, max-height, overflow and position to show the menus above the footer  */
+                        .dropdown-submenu ul {
+                            min-width: 150px;
+                            max-height: calc(100vh - 300px);
+                            overflow: auto;
+                            left: auto;
+                            right: 100%;
+                            bottom: 0;
+                            top: auto;
+                        }
                     }
                     /* Footer bottom dropdown style when the menus are in the "More" option in the responsive alignment */
                     &.dropdownmoremenu {
@@ -1582,6 +1592,106 @@ body.pagelayout-login:not(.loginbackgroundimage) #footnote {
                                 margin-right: 0;
                             }
                         }
+                    }
+                }
+                /*Footer bottom menu card-dropdown*/
+                /*The card dropdown Position is changed to static, so the dropdown menu will be in fullscreen */
+                &.card-dropdown {
+                    position: static;
+                    /* Card appearance - Card form style */
+                    /* Card form style - Square */
+                    &.card-form-square {
+                        /*Minimun and maximum width is added when the Card size "Tiny" with card form "Square"*/
+                        &.card-size-tiny .dropdown-menu .card-block {
+                            min-width: 90px;
+                            max-width: 90px;
+                        }
+                        /*Minimun and maximum width is added when the Card size "Small" with card form "Square"*/
+                        &.card-size-small .dropdown-menu .card-block {
+                            min-width: 140px;
+                            max-width: 140px;
+                        }
+                        /*Minimun and maximum width is added when the Card size "Medium" with card form "Square"*/
+                        &.card-size-medium .dropdown-menu .card-block {
+                            min-width: 190px;
+                            max-width: 190px;
+                        }
+                        /*Minimun and maximum width is added when the Card size "Large" with card form "Square"*/
+                        &.card-size-large .dropdown-menu .card-block {
+                            min-width: 240px;
+                            max-width: 240px;
+                        }
+                    }
+                    /* Card form style - Portrait */
+                    &.card-form-portrait {
+                        /*Minimun and maximum width is added when the Card size "Tiny" with card form "portrait"*/
+                        &.card-size-tiny .dropdown-menu .card-block {
+                            min-width: 60px;
+                            max-width: 60px;
+                        }
+                        /*Minimun and maximum width is added when the Card size "Small" with card form "portrait"*/
+                        &.card-size-small .dropdown-menu .card-block {
+                            min-width: 94px;
+                            max-width: 94px;
+                        }
+                        /*Minimun and maximum width is added when the Card size "Medium" with card form "portrait"*/
+                        &.card-size-medium .dropdown-menu .card-block {
+                            min-width: 127px;
+                            max-width: 127px;
+                        }
+                        /*Minimun and maximum width is added when the Card size "Large" with card form "portrait"*/
+                        &.card-size-large .dropdown-menu .card-block {
+                            min-width: 160px;
+                            max-width: 160px;
+                        }
+                    }
+                    /* Card form style - Landscape */
+                    &.card-form-landscape {
+                        /*Minimun and maximum width is added when the Card size "Tiny" with card form "Landscape"*/
+                        &.card-size-tiny .dropdown-menu .card-block {
+                            min-width: 135px;
+                            max-width: 135px;
+                        }
+                        /*Minimun and maximum width is added when the Card size "Small" with card form "Landscape"*/
+                        &.card-size-small .dropdown-menu .card-block {
+                            min-width: 210px;
+                            max-width: 210px;
+                        }
+                        /*Minimun and maximum width is added when the Card size "Medium" with card form "Landscape"*/
+                        &.card-size-medium .dropdown-menu .card-block {
+                            min-width: 285px;
+                            max-width: 285px;
+                        }
+                        /*Minimun and maximum width is added when the Card size "Large" with card form "Landscape"*/
+                        &.card-size-large .dropdown-menu .card-block {
+                            min-width: 360px;
+                            max-width: 360px;
+                        }
+                    }
+                    /* Card form style - Fullwidth */
+                    /*Full Width is added when the Card size "Tiny, Small, Medium and Large" with card form "Full width"*/
+                    &.card-form-fullwidth {
+                        &.card-size-tiny,
+                        &.card-size-small,
+                        &.card-size-medium,
+                        &.card-size-large {
+                            .dropdown-menu .card-block {
+                                min-width: 100%;
+                                width: 100%;
+                            }
+                        }
+                        /*Card size "large" has margin right none because the size of the card is full width of the screen*/
+                        &.card-overflow-wrap.card-size-large {
+                            .dropdown-menu .card-block {
+                                margin-right: 0;
+                            }
+                        }
+                    }
+                    /*The card dropdown menu width is 100%, so the dropdown menu will not overflow the screen */
+                    .dropdown-menu {
+                        width: 100%;
+                        max-height: calc(100vh - 300px);
+                        overflow-y: auto;
                     }
                 }
                 /* The position of the footer dropdown menu should not extend beyond the visible area of the screen */

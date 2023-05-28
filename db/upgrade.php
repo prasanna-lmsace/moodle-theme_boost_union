@@ -218,7 +218,7 @@ function xmldb_theme_boost_union_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2023010512, 'theme', 'boost_union');
     }
 
-    if ($oldversion < 2023010524) {
+    if ($oldversion < 2023010523) {
 
         // Add a new column 'mode' to the theme_boost_union_menus table.
         $table = new xmldb_table('theme_boost_union_menus');
@@ -230,7 +230,7 @@ function xmldb_theme_boost_union_upgrade($oldversion) {
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
-        upgrade_plugin_savepoint(true, 2023010524, 'theme', 'boost_union');
+        upgrade_plugin_savepoint(true, 2023010523, 'theme', 'boost_union');
     }
 
     return true;

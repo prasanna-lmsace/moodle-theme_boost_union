@@ -926,8 +926,10 @@ $string['smartmenu:order_help'] = 'Rearrange the position of item';
 $string['smartmenu:from_help'] = 'Select the date to display the menu items to users until the date reached';
 $string['smartmenu:durationuntil_help'] = 'Select the date to hide the menu items to users once the date reached';
 $string['smartmenu:category_help'] = 'Select a category to display its courses as menu items';
-$string['smartmenu:menumode'] = "Select the mode for where the menu should be visible.
+$string['smartmenu:menumode'] = 'Menu mode';
+$string['smartmenu:menumode_help'] = "Select the mode for where the menu should be visible.
 <ul><li>
 Inline: items in the menu will be displayed as a menu directly in the naivgation. This option did not support for card type menus.
 </li>
 <li> Submenu: This is default option, items will be display as submenu of this menu. </li></ul>";
+$string['smartmenu:menumode_help'] = "";

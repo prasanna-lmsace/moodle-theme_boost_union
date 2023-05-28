@@ -1076,6 +1076,7 @@ class smartmenu_item {
                 if ("select" == $field->get('type')) {
                     $elem = $mform->getElement("customfield_".$shortname);
                     $elem->setMultiple(true);
+                    $mform->setDefault("customfield_".$shortname, 0);
                 }
                 $mform->hideif("customfield_".$shortname, 'type', 'neq', self::TYPEDYNAMIC);
             }

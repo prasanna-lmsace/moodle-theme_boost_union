@@ -66,6 +66,8 @@ class menuitems extends \table_sql {
         $this->sortable(false);
 
         $this->guess_base_url();
+        // Table name for TESTING.
+        $this->set_attribute('id', 'smartmenus_item');
 
         parent::out($pagesize, $useinitialsbar, $downloadhelpbutton);
     }
