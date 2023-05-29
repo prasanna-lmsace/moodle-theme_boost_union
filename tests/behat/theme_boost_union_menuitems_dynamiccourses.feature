@@ -11,14 +11,14 @@ Feature: Configuring the theme_boost_union plugin on the "Smart menus" page, app
       | Category 02  | 0        | CAT2     |
       | Category 03  | 0        | CAT3     |
     And the following "courses" exist:
-      | fullname  | shortname | category    | enablecompletion |
-      | Course 01 | C1        | CAT1        |   1              |
-      | Course 02 | C2        | CAT1        |1              |
-      | Course 03 | C3        | CAT1        |1              |
-      | Course 04 | C4        | CAT2        |1              |
-      | Course 05 | C5        | CAT2        |1              |
-      | Course 06 | C6        | CAT3        |1              |
-      | Course 07 | C7        | CAT3        |1              |
+      | fullname  | shortname | category    |  enablecompletion |  startdate       | enddate         |
+      | Course 01 | C1        | CAT1        |   1               |  ## now ##       | ## +5 days ## |
+      | Course 02 | C2        | CAT1        |   1               |  ##1 year ago##  | ##1 month ago## |
+      | Course 03 | C3        | CAT1        |   1               |  ## +5 days ##   | 0 |
+      | Course 04 | C4        | CAT2        |   1               | 0 | 0 |
+      | Course 05 | C5        | CAT2        |   1               | 0 | 0 |
+      | Course 06 | C6        | CAT3        |   1               | 0 | 0 |
+      | Course 07 | C7        | CAT3        |   1               | 0 | 0 |
     And the following "activities" exist:
       | activity   | name                   | intro                         | course | idnumber    | section | completion |
       | assign     | Test assignment name   | Test assignment description   | C1     | assign1     | 0       |   1        |
@@ -31,22 +31,22 @@ Feature: Configuring the theme_boost_union plugin on the "Smart menus" page, app
       | student2 | student2  | User 2   | student2@test.com |
       | teacher  | Teacher   | User 1   | teacher2@test.com |
     And the following "course enrolments" exist:
-      | user     | course | role           | timestart | timeend   |
-      | teacher  | C1     | editingteacher |   0       |   0       |
-      | student1 | C1     | student        |   0       |   0       |
-      | student2 | C1     | student        |   ## now ##     | ## tomorrow ##|
-      | student1 | C2     | student        |   0       |   0       |
-      | student2 | C2     | student        |   0       | ## yesterday ##|
-      | student1 | C3     | student        |   0       |   0       |
-      | student2 | C3     | student        |## tomorrow ## |   0       |
-      | student1 | C4     | student        |   0       |   0       |
-      | student2 | C4     | student        |   0       |   0       |
-      | admin    | C1     | editingteacher |   0       |   0       |
-      | admin    | C2     | editingteacher |   0       |   0       |
-      | admin    | C3     | teacher        |   0       |   0       |
-      | admin    | C4     | manager        |   0       |   0       |
-      | admin    | C5     | student        |   0       |   0       |
-      | admin    | C6     | student        |   0       |   0       |
+      | user     | course | role           |
+      | teacher  | C1     | editingteacher |
+      | student1 | C1     | student        |
+      | student2 | C1     | student        |
+      | student1 | C2     | student        |
+      | student2 | C2     | student        |
+      | student1 | C3     | student        |
+      | student2 | C3     | student        |
+      | student1 | C4     | student        |
+      | student2 | C4     | student        |
+      | admin    | C1     | editingteacher |
+      | admin    | C2     | editingteacher |
+      | admin    | C3     | teacher        |
+      | admin    | C4     | manager        |
+      | admin    | C5     | student        |
+      | admin    | C6     | student        |
     Given I log in as "admin"
     And I create menu with the following fields to these values:
     | Title     | List menu                |
@@ -56,7 +56,7 @@ Feature: Configuring the theme_boost_union plugin on the "Smart menus" page, app
     | Type      | Dynamic courses |
 
   @javascript
-  Scenario: Smartmenu Dynamic courses Item: Check condition.
+  Scenario: Smartmenu Dynamic courses Item: Check condition
     Given I navigate to smartmenus
     And I should see "List menu" in the "smartmenus" "table"
     And I click on ".action-list-items" "css_element" in the "List menu" "table_row"
@@ -70,8 +70,7 @@ Feature: Configuring the theme_boost_union plugin on the "Smart menus" page, app
     Then I press "Save changes"
 
   @javascript
-  Scenario: Smartmenu Dynamic courses Item: list courses.
-    #And I should see menu "List menu" item "Dynamic courses" in location "Main, Menu, User, Bottom"
+  Scenario: Smartmenu Dynamic courses Item: list courses
     And I should see menu "List menu" item "Course 01" in location "Main, Menu, User, Bottom"
     And I should see menu "List menu" item "Course 02" in location "Main, Menu, User, Bottom"
     And I should see menu "List menu" item "Course 03" in location "Main, Menu, User, Bottom"
@@ -79,7 +78,7 @@ Feature: Configuring the theme_boost_union plugin on the "Smart menus" page, app
     And I should see menu "List menu" item "Course 05" in location "Main, Menu, User, Bottom"
 
   @javascript
-  Scenario: Smartmenu Dynamic courses Item: Category contidion.
+  Scenario: Smartmenu Dynamic courses Item: Category condition.
     Given I navigate to smartmenus
     And I click on ".action-list-items" "css_element" in the "List menu" "table_row"
     And I click on ".action-edit" "css_element" in the "Dynamic courses" "table_row"
@@ -92,7 +91,7 @@ Feature: Configuring the theme_boost_union plugin on the "Smart menus" page, app
     And I should not see menu "List menu" item "Course 05" in location "Main, Menu, User, Bottom"
 
   @javascript
-  Scenario: Smartmenu Dynamic courses Item: Enrolment contidion.
+  Scenario: Smartmenu Dynamic courses Item: Enrolment condition
     Given I navigate to smartmenus
     And I click on ".action-list-items" "css_element" in the "List menu" "table_row"
     And I click on ".action-edit" "css_element" in the "Dynamic courses" "table_row"
@@ -112,22 +111,27 @@ Feature: Configuring the theme_boost_union plugin on the "Smart menus" page, app
     And I should not see menu "List menu" item "Course 03" in location "Main, Menu, User, Bottom"
 
   @javascript
-  Scenario: Smartmenu Dynamic courses Item: Completion contidion.
+  Scenario: Smartmenu Dynamic courses Item: Completion condition
     Given I navigate to smartmenus
     And I click on ".action-list-items" "css_element" in the "List menu" "table_row"
     And I click on ".action-edit" "css_element" in the "Dynamic courses" "table_row"
     Then I set the field "Completion status" to "Enrolled, In progress, Completed"
     Then I press "Save changes"
-
     # need to set course completion to activity.
-    And I am on "Course 1" course homepage with editing mode on
+    And I am on "Course 01" course homepage with editing mode on
     And I navigate to "Course completion" in current page administration
-    And I click on "Condition: Completion of other courses" "link"
+    And I click on "Condition: Activity completion" "link"
     And I set the following fields to these values:
-      | Courses available| Course 2, Course 3, Course 4, Course 5 |
+      | Assignment - Test assignment name| 1  |
+      | Assignment - Test assignment name1| 1  |
     And I press "Save changes"
-
-
+    And I am on "Course 02" course homepage with editing mode on
+    And I navigate to "Course completion" in current page administration
+    And I click on "Condition: Activity completion" "link"
+    And I set the following fields to these values:
+      | Assignment - Test assignment name| 1  |
+      | Assignment - Test assignment name1| 1  |
+    And I press "Save changes"
     Then I log out
     Then I log in as "student1"
     Then I am on "Course 01" course homepage
@@ -138,6 +142,7 @@ Feature: Configuring the theme_boost_union plugin on the "Smart menus" page, app
     Then I am on "Course 02" course homepage
     And the manual completion button of "Test assignment name" is displayed as "Mark as done"
     And I toggle the manual completion state of "Test assignment name"
+    Then I follow "Dashboard"
     And I should see menu "List menu" item "Course 01" in location "Main, Menu, User, Bottom"
     And I should see menu "List menu" item "Course 02" in location "Main, Menu, User, Bottom"
     And I should see menu "List menu" item "Course 03" in location "Main, Menu, User, Bottom"
@@ -174,7 +179,7 @@ Feature: Configuring the theme_boost_union plugin on the "Smart menus" page, app
     And I log in as "admin"
 
   @javascript
-  Scenario: Smartmenu Dynamic courses Item: Date contidion.
+  Scenario: Smartmenu Dynamic courses Item: Date condition
     Given I navigate to smartmenus
     And I click on ".action-list-items" "css_element" in the "List menu" "table_row"
     And I click on ".action-edit" "css_element" in the "Dynamic courses" "table_row"
@@ -197,10 +202,9 @@ Feature: Configuring the theme_boost_union plugin on the "Smart menus" page, app
     Then I log out
     Then I log in as "student1"
     And I should not see menu "List menu" item "Course 01" in location "Main, Menu, User, Bottom"
-    And I should see not menu "List menu" item "Course 02" in location "Main, Menu, User, Bottom"
+    And I should not see menu "List menu" item "Course 02" in location "Main, Menu, User, Bottom"
     And I should see menu "List menu" item "Course 03" in location "Main, Menu, User, Bottom"
     Then I log out
-
 
     Then I log in as "admin"
     And I navigate to smartmenus
@@ -229,7 +233,11 @@ Feature: Configuring the theme_boost_union plugin on the "Smart menus" page, app
     Then I log out
 
   @javascript
-  Scenario: Smartmenu Dynamic courses Item: profile field contidion.
+  Scenario: Smartmenu Dynamic courses Item: profile field condition
+    Given the following "custom field categories" exist:
+      | name   | component   | area   | itemid |
+      | Others | core_course | course | 0      |
+    And I log in as "admin"
     And I navigate to "Courses > Course custom fields" in site administration
     And I click on "Add a new custom field" "link"
     And I click on "Short text" "link"
@@ -243,19 +251,16 @@ Feature: Configuring the theme_boost_union plugin on the "Smart menus" page, app
     And I set the following fields to these values:
       | Test field | value1 |
     And I click on "Save and display" "button"
-
     Then I am on "Course 02" course homepage
     And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Test field | value1 |
     And I click on "Save and display" "button"
-
     Then I am on "Course 03" course homepage
     And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
     | Test field | value2 |
     And I click on "Save and display" "button"
-
     Then I navigate to smartmenus
     And I click on ".action-list-items" "css_element" in the "List menu" "table_row"
     And I click on ".action-edit" "css_element" in the "Dynamic courses" "table_row"
@@ -266,22 +271,11 @@ Feature: Configuring the theme_boost_union plugin on the "Smart menus" page, app
     And I should see menu "List menu" item "Course 02" in location "Main, Menu, User, Bottom"
     And I should not see menu "List menu" item "Course 03" in location "Main, Menu, User, Bottom"
     And I should not see menu "List menu" item "Course 04" in location "Main, Menu, User, Bottom"
-
     And I click on ".action-edit" "css_element" in the "Dynamic courses" "table_row"
     Then I should see "Test field"
     Then I set the field "Test field" to "value2"
     Then I press "Save changes"
-
     And I should not see menu "List menu" item "Course 01" in location "Main, Menu, User, Bottom"
     And I should not see menu "List menu" item "Course 02" in location "Main, Menu, User, Bottom"
     And I should see menu "List menu" item "Course 03" in location "Main, Menu, User, Bottom"
     And I should not see menu "List menu" item "Course 04" in location "Main, Menu, User, Bottom"
-
-
-
-
-
-
-
-
-

@@ -174,7 +174,7 @@ class smartmenu_helper {
 
         $sql = " JOIN (SELECT count(*) AS member FROM {cohort_members} cm
             JOIN {cohort} c ON cm.cohortid = c.id
-            WHERE c.id $insql AND cm.userid=:chuserid $condition) ch";
+            WHERE c.id $insql AND cm.userid=:chuserid $condition) ch ON true";
 
         $params = ['chuserid' => $this->userid, 'chcount' => count($cohorts)] + $inparam;
         $query->params += $params;

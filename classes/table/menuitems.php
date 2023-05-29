@@ -45,12 +45,7 @@ class menuitems extends \table_sql {
      * @param string $downloadhelpbutton
      */
     public function out($pagesize, $useinitialsbar, $downloadhelpbutton = '') {
-        $columns = [
-            'title',
-            'type',
-            'restrictions',
-            'action'
-        ];
+        $columns = ['title', 'type', 'restrictions', 'sortorder'];
 
         $headers = [
             get_string('smartmenu:title', 'theme_boost_union'),
@@ -63,7 +58,7 @@ class menuitems extends \table_sql {
         $this->define_headers($headers);
 
         // Remove sorting for some fields.
-        $this->sortable(false);
+        $this->sortable(false, 'sortorder', SORT_ASC);
 
         $this->guess_base_url();
         // Table name for TESTING.
@@ -89,7 +84,7 @@ class menuitems extends \table_sql {
      */
     public function query_db($pagesize, $useinitialsbar = true) {
         // Fetch all avialable records from smart menu table.
-        $this->set_sql('*', '{theme_boost_union_menuitems}', 'menu=:menuid ORDER BY sortorder ASC', ['menuid' => $this->uniqueid]);
+        $this->set_sql('*', '{theme_boost_union_menuitems}', 'menu=:menuid', ['menuid' => $this->uniqueid]);
         parent::query_db($pagesize, $useinitialsbar);
     }
 
@@ -182,11 +177,11 @@ class menuitems extends \table_sql {
 
     /**
      * Actions Column, which contains the options to update the menuitem visibility, Update the menu, delete, duplicate, sort.
-     *
+     * Used sortorder column as actions column, if not mention the sortorder column in columns order doesn't works based sortorder.
      * @param  \stdclass $row
      * @return string
      */
-    public function col_action($row) {
+    public function col_sortorder($row) {
         global $OUTPUT;
 
         $baseurl = new \moodle_url('/theme/boost_union/smartmenus/items.php', [

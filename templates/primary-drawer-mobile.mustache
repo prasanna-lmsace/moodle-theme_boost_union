@@ -65,7 +65,7 @@
                     {{> theme_boost_union/primary-drawer-mobile-child }}
                 {{/haschildren}}
                 {{^haschildren}}
-                <a href="{{{url}}}" class="list-group-item list-group-item-action {{#isactive}}active{{/isactive}} {{#classes}}{{.}} {{/classes}}" {{#isactive}}aria-current="true"{{/isactive}}>
+                <a href="{{{url}}}" data-toggle="tooltip" title="{{tooltip}}" class="{{#menuclasses}} {{.}} {{/menuclasses}} list-group-item list-group-item-action {{#isactive}}active{{/isactive}} {{#classes}}{{.}} {{/classes}}" {{#isactive}}aria-current="true"{{/isactive}} {{#attributes}} {{#name}}{{name}}="{{value}}"{{/name}} {{/attributes}}>
                     {{{text}}}
                 </a>
                 {{/haschildren}}

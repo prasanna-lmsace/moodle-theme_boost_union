@@ -1118,6 +1118,9 @@ body.pagelayout-login:not(.loginbackgroundimage) #footnote {
             min-width: 200px;
             overflow-y: visible;
         }
+        .usermenu .dropdown-menu .submenu .items a.dropdown-item {
+            align-items: baseline;
+        }
     }
     .moremenu {
         .more-nav li.nav-item {
@@ -1181,12 +1184,16 @@ body.pagelayout-login:not(.loginbackgroundimage) #footnote {
                     }
                 }
                 /* The font size and opacity reduced when the Menu link is selected as "Heading" option in the settings  */
-                .dropdown-item.menu-item-heading {
-                    font-size: 14px;
-                    opacity: .6;
-                    /* Menu link icon font size when the menu link as "Heading" and "icon" option selected in the settings  */
-                    i.icon {
+                .dropdown-item {
+                    /*Dropdown menu link alignment at top*/
+                    align-items: baseline;
+                    &.menu-item-heading {
                         font-size: 14px;
+                        opacity: .6;
+                        /* Menu link icon font size when the menu link as "Heading" and "icon" option selected in the settings  */
+                        i.icon {
+                            font-size: 14px;
+                        }
                     }
                 }
                 /* The below styles are header dropdown submenu  */
@@ -1216,20 +1223,24 @@ body.pagelayout-login:not(.loginbackgroundimage) #footnote {
                     &.show {
                         position: relative;
                         /* The dropdown submenu style is added for the header menu */
-                        /* Border, border radius, background color, padding and its position styles are
-                        addded and display block is added for the submenu when the dropdown menu is clicked */
+                        /* Height added to control the menu with scrollbard, border, border radius, background color, padding and its position styles are
+                        addded and display block is added to show the submenu when the dropdown menu is clicked */
                         ul {
+                            max-height: 250px;
                             list-style: none;
                             border: 1px solid $border-color;
                             border-radius: 0.5rem;
                             background-color: #fff;
                             padding: .5rem 0;
                             margin-left: 1px;
+                            overflow-y: auto;
                             display: block;
                             position: absolute;
                             top: 0;
                             left: 100%;
+                            /*The full width of the dropdown submenu link*/
                             li {
+                                width: 100%;
                                 /* The height and padding is added for the header dropdown submenu links  */
                                 a.nav-link {
                                     width: 100%;
@@ -1238,20 +1249,20 @@ body.pagelayout-login:not(.loginbackgroundimage) #footnote {
                                 }
                                 /* The border radius has been added to the first child menu item in the header
                                 dropdown submenu so that the menu item background will not show without the border radius. */
-                                &:first-child {
+                                /* &:first-child {
                                     a.nav-link {
                                         border-top-left-radius: 0.5rem;
                                         border-top-right-radius: 0.5rem;
                                     }
-                                }
+                                } */
                                 /* The border radius has been added to the last child menu item in the header
                                 dropdown submenu so that the menu item background will not show without the border radius. */
-                                &:last-child {
+                                /* &:last-child {
                                     a.nav-link {
                                         border-bottom-left-radius: 0.5rem;
                                         border-bottom-right-radius: 0.5rem;
                                     }
-                                }
+                                } */
                             }
                         }
                     }
@@ -1719,6 +1730,7 @@ body.pagelayout-login:not(.loginbackgroundimage) #footnote {
         /* The padding left is added to the nav drawer menu dropdown menu in the mobile view*/
         .list-group-item-action {
             padding-left: 32px;
+            align-items: baseline;
         }
         /* The margin left is added to the dropdown submenu icon for the nav drawer menu in the mobile view*/
         .list-group-item .list-group-item-action i {

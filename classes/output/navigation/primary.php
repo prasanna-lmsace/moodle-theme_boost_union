@@ -75,6 +75,7 @@ class primary extends \core\navigation\output\primary {
 
         // Get the menus for mainmenu.
         $mainmenu = smartmenu::get_menus_forlocation(smartmenu::LOCATION_MAIN, $smartmenus);
+
         // Separate the menus for menubar.
         $menubarmenus = smartmenu::get_menus_forlocation(smartmenu::LOCATION_MENU, $smartmenus);
         // Separate the menus for usermenus.
@@ -168,7 +169,6 @@ class primary extends \core\navigation\output\primary {
 
                         unset($value['children']);
                     }
-                    unset($value['itemdata']); // Remove the item data before add to usermenu.
                 });
 
                 $submenu = [

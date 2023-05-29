@@ -618,7 +618,7 @@ class smartmenu_item {
             $haschildren = (count($items) > 0 ) ? true : false;
             $submenu[] = $this->generate_node_data(
                 $this->item->title, // Title.
-                'javascript:void(0)', // URL.
+                '', // URL.
                 null, // Default key.
                 $this->item->tooltip, // Tooltip.
                 'submenu', // Item type.
@@ -789,6 +789,7 @@ class smartmenu_item {
         $i = 0; // Multiple fields unique id for values.
         $params = [];
         $sql = [];
+
         foreach ($customfields as $shortname => $value) {
             // Filter the null, autocomplete fields dont displayed the empty value, user cannot able to remove the null fields.
             // Therfore remove the 0 or empty values from condition values.
@@ -798,9 +799,10 @@ class smartmenu_item {
                 });
             }
 
-            if ($value == 0 || empty($value)) {
+            if ($value == '' || $value === 0 || empty($value)) {
                 continue;
             }
+
             // Select from multiple values for a custom field.
             if (is_array($value)) {
                 list($insql, $inparams) = $DB->get_in_or_equal($value, SQL_PARAMS_NAMED, 'val_'.$i);
@@ -974,9 +976,10 @@ class smartmenu_item {
             'itemdata' => $this->item,
             'menuclasses' => $this->item->classes, // If menu is inline, need to add the item custom class in dropdown.
             'location' => $this->menu->location,
-            'url' => $url,
+            'url' => $url ?: 'javascript:void(0)',
             'key' => $key != null ? $key : 'item-'.$this->item->id,
             'text' => $title,
+            'icontitle' => $title, // Title with icon.
             'title' => $titleorg,
             'tooltip' => $tooltip ? format_string($tooltip) : '',
             'haschildren' => $haschildren,
@@ -990,7 +993,7 @@ class smartmenu_item {
             $data['children'] = $children;
         }
 
-        if ($this->item->target == self::TARGET_NEW) {
+        if ($this->item->target == self::TARGET_NEW && $url != '') {
             $data['attributes'] = array([
                 'name' => 'target',
                 'value' => '__blank'

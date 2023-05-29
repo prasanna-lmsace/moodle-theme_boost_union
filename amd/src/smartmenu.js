@@ -33,7 +33,6 @@ const addSubmenu = () => {
         submenu.forEach((item) => {
             // Add event listener to show the submenu on click.
             item.addEventListener('click', (e) => {
-                e.preventDefault();
                 var target = e.currentTarget;
                 // Hide the shown menu.
                 hideSubmenus(target);
