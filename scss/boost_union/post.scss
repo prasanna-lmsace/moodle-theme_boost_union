@@ -1223,8 +1223,9 @@ body.pagelayout-login:not(.loginbackgroundimage) #footnote {
                     &.show {
                         position: relative;
                         /* The dropdown submenu style is added for the header menu */
-                        /* Height added to control the menu with scrollbard, border, border radius, background color, padding and its position styles are
-                        addded and display block is added to show the submenu when the dropdown menu is clicked */
+                        /* Height added to control the menu with scrollbard, border, border radius, background color,
+                        padding and its position styles are addded and display block is added to show the submenu
+                        when the dropdown menu is clicked */
                         ul {
                             max-height: 250px;
                             list-style: none;
@@ -1247,22 +1248,6 @@ body.pagelayout-login:not(.loginbackgroundimage) #footnote {
                                     height: auto;
                                     padding: 0.1rem 1.5rem;
                                 }
-                                /* The border radius has been added to the first child menu item in the header
-                                dropdown submenu so that the menu item background will not show without the border radius. */
-                                /* &:first-child {
-                                    a.nav-link {
-                                        border-top-left-radius: 0.5rem;
-                                        border-top-right-radius: 0.5rem;
-                                    }
-                                } */
-                                /* The border radius has been added to the last child menu item in the header
-                                dropdown submenu so that the menu item background will not show without the border radius. */
-                                /* &:last-child {
-                                    a.nav-link {
-                                        border-bottom-left-radius: 0.5rem;
-                                        border-bottom-right-radius: 0.5rem;
-                                    }
-                                } */
                             }
                         }
                     }
@@ -1565,15 +1550,14 @@ body.pagelayout-login:not(.loginbackgroundimage) #footnote {
                     /* Footer bottom dropdown menu width, height and removed margin, position to stay the dropup menu */
                     .dropdown-menu {
                         width: auto;
-                        /* max-height: calc(100vh - 300px); */
                         margin-top: 0;
                         margin-bottom: 0;
-                        /* overflow-y: auto; */
                         top: auto;
                         bottom: 100%;
                         left: auto;
                         right: 0;
-                        /*The footer bottom dropdown submenu min-width, max-height, overflow and position to show the menus above the footer  */
+                        /* The footer bottom dropdown submenu min-width, max-height, overflow and position
+                        to show the menus above the footer */
                         .dropdown-submenu ul {
                             min-width: 150px;
                             max-height: calc(100vh - 300px);

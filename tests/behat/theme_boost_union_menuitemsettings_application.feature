@@ -32,7 +32,6 @@ Feature: Configuring the theme_boost_union plugin on the "Smart menus" items pag
       | Title     | Quick Links              |
       | Locations | Main, Menu, User, Bottom |
 
-
   @javascript
   Scenario: Smartmenuitem: Application - Add a item in smartmenu to the main navigation
     Given I log in as "admin"
