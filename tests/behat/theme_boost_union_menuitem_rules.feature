@@ -1,5 +1,6 @@
 @theme @theme_boost_union @theme_boost_union_smartmenu @theme_boost_union_menuitemrules
-Feature: Configuring the theme_boost_union plugin on the "Smart menus" page, applying different configuration to the individual smart menus
+
+Feature: Configuring the theme_boost_union plugin on the "Smart menu items" page, applying different configuration to the individual menu item
   In order to use th features
   As admin
   I need to be able to configure the theme Boost Union plugin
@@ -75,7 +76,7 @@ Feature: Configuring the theme_boost_union plugin on the "Smart menus" page, app
     And I should not see menu "Quick Links" item "Resources" in location "Main, Menu, User, Bottom"
     And I log out
     Then I log in as "admin"
-     And I navigate to smartmenu "Quick Links" items
+    And I navigate to smartmenu "Quick Links" items
     Then I click on ".action-edit" "css_element" in the "Resources" "table_row"
     And I expand all fieldsets
     And I set the field "By role" to "Manager, Student, Teacher"
@@ -108,7 +109,6 @@ Feature: Configuring the theme_boost_union plugin on the "Smart menus" page, app
     And I log out
     Then I log in as "teacher"
     And I should see menu "Quick Links" item "Resources" in location "Main, Menu, User, Bottom"
-
 
   @javascript
   Scenario: Smartmenuitem: Access Rules - Based on the user assignments in multiple cohorts
@@ -211,4 +211,3 @@ Feature: Configuring the theme_boost_union plugin on the "Smart menus" page, app
     And I log out
     Then I log in as "teacher"
     And I should see menu "Quick Links" item "Resources" in location "Main, Menu, User, Bottom"
-

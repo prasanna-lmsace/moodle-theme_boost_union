@@ -109,7 +109,6 @@ Feature: Configuring the theme_boost_union plugin on the "Smart menus" page, app
     Then I log in as "teacher"
     And I should see menu "Quick Links" in location "Main, Menu, User, Bottom"
 
-
   @javascript
   Scenario: Smartmenu: Access Rules - Based on the user assignments in multiple cohorts
     Given I navigate to smartmenus
@@ -217,4 +216,3 @@ Feature: Configuring the theme_boost_union plugin on the "Smart menus" page, app
     And I log out
     Then I log in as "teacher"
     And I should see menu "Quick Links" in location "Main, Menu, User, Bottom"
-

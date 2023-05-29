@@ -1,5 +1,5 @@
 @theme @theme_boost_union @theme_boost_union_smartmenu @theme_boost_union_menusettings @theme_boost_union_menusettings_application
-Feature: Configuring the theme_boost_union plugin on the "Smart menus" page, applying different configuration to the individual smart menus
+Feature: Configuring the theme_boost_union plugin on the "Smart menu items" page, applying different configuration to the individual menu items
   In order to use th features
   As admin
   I need to be able to configure the theme Boost Union plugin
@@ -64,7 +64,6 @@ Feature: Configuring the theme_boost_union plugin on the "Smart menus" page, app
     And I set the field "Show description" to "Never"
     And I click on "Save and return" "button"
     And "List of usefull external resources" "text" should not exist in the ".primary-navigation" "css_element"
-
 
   @javascript
   Scenario: Smartmenu: Application - Shown a menu in multiple locations
