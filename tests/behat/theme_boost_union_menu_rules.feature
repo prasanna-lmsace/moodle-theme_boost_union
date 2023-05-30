@@ -5,19 +5,23 @@ Feature: Configuring the theme_boost_union plugin on the "Smart menus" page, app
   I need to be able to configure the theme Boost Union plugin
 
   Background:
-
+    Given I log in as "admin"
+    And I navigate to "Language > Language packs" in site administration
+    And I set the field "Available language packs" to "fr"
+    When I press "Install selected language pack(s)"
+    Then I should see "Language pack 'fr' was successfully installed"
+    And I set the field "Available language packs" to "de"
+    When I press "Install selected language pack(s)"
+    Then I should see "Language pack 'de' was successfully installed"
+    And I am on homepage
     Given the following "courses" exist:
       | fullname| shortname | category |
-      | Test | C1 | 0 |
-    And the following "language pack" exists:
-      | language | de |
-    And the following "language pack" exists:
-      | language | fr |
+      | Test | C1 | 0 |   
     And the following "users" exist:
-      | username | firstname | lastname | email             | lang |
-      | student1 | student   | User 1   | student1@test.com | en   |
-      | student2 | student2  | User 2   | student2@test.com | fr   |
-      | teacher  | Teacher   | User 1   | teacher2@test.com | de   |
+      | username | firstname | lastname | email             |
+      | student1 | student   | User 1   | student1@test.com | 
+      | student2 | student2  | User 2   | student2@test.com | 
+      | teacher  | Teacher   | User 1   | teacher2@test.com |
     And the following "course enrolments" exist:
       | user     | course | role           |
       | teacher  | C1     | editingteacher |
@@ -30,13 +34,11 @@ Feature: Configuring the theme_boost_union plugin on the "Smart menus" page, app
     And the following "cohort members" exist:
       | user     | cohort |
       | student1 | CH1    |
-      | teacher  | CH2    |
+      | teacher  | CH2    |   
 
-    Given I log in as "admin"
     And I create menu with the following fields to these values:
     | Title     | Quick Links              |
     | Locations | Main, Menu, User, Bottom |
-
     And I set "Quick Links" items with the following fields to these values:
     | Title     | Resources           |
     | Type      | Static              |
@@ -151,6 +153,18 @@ Feature: Configuring the theme_boost_union plugin on the "Smart menus" page, app
 
   @javascript
   Scenario: Smartmenu: Access Rules - Display menus for based on user prefered language
+    Given I log in as "teacher"
+    And I click on "#user-menu-toggle" "css_element"
+    And I click on "Preferences" "link" in the "#usermenu-carousel" "css_element"
+    And I click on "Preferred language" "link"
+    And I set the field "Preferred language" to "Deutsch ‎(de)‎"
+    And I click on "Save changes" "button"
+    Given I log in as "student2"
+    And I click on "#user-menu-toggle" "css_element"
+    And I click on "Preferences" "link" in the "#usermenu-carousel" "css_element"
+    And I click on "Preferred language" "link"
+    And I set the field "Preferred language" to "Français ‎(fr)‎"
+    And I click on "Save changes" "button"
     Given I log in as "admin"
     And I navigate to smartmenus
     And I create menu with the following fields to these values:
@@ -186,7 +200,19 @@ Feature: Configuring the theme_boost_union plugin on the "Smart menus" page, app
 
   @javascript
   Scenario: Smartmenu: Access Rules - Display menus based on multiple conditions
-    Given I log in as "admin"
+    Given I log in as "teacher"
+    And I click on "#user-menu-toggle" "css_element"
+    And I click on "Preferences" "link" in the "#usermenu-carousel" "css_element"
+    And I click on "Preferred language" "link"
+    And I set the field "Preferred language" to "Deutsch ‎(de)‎"
+    And I click on "Save changes" "button"
+    Given I log in as "student2"
+    And I click on "#user-menu-toggle" "css_element"
+    And I click on "Preferences" "link" in the "#usermenu-carousel" "css_element"
+    And I click on "Preferred language" "link"
+    And I set the field "Preferred language" to "Français ‎(fr)‎"
+    And I click on "Save changes" "button"
+    Given I log in as "admin"    
     And I navigate to smartmenus
     And I create menu with the following fields to these values:
     | Title     | Notifications            |

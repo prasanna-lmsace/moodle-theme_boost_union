@@ -9,11 +9,7 @@ Feature: Configuring the theme_boost_union plugin on the "Smart menu items" page
 
     Given the following "courses" exist:
       | fullname| shortname | category |
-      | Test | C1 | 0 |
-    And the following "language pack" exists:
-      | language | de |
-    And the following "language pack" exists:
-      | language | fr |
+      | Test | C1 | 0 |  
     And the following "users" exist:
       | username | firstname | lastname | email             | lang |
       | student1 | student   | User 1   | student1@test.com | en   |
@@ -150,6 +146,18 @@ Feature: Configuring the theme_boost_union plugin on the "Smart menu items" page
 
   @javascript
   Scenario: Smartmenuitem: Access Rules - Display menus for based on user prefered language
+    Given I log in as "teacher"
+    And I click on "#user-menu-toggle" "css_element"
+    And I click on "Preferences" "link" in the "#usermenu-carousel" "css_element"
+    And I click on "Preferred language" "link"
+    And I set the field "Preferred language" to "Deutsch ‎(de)‎"
+    And I click on "Save changes" "button"
+    Given I log in as "student2"
+    And I click on "#user-menu-toggle" "css_element"
+    And I click on "Preferences" "link" in the "#usermenu-carousel" "css_element"
+    And I click on "Preferred language" "link"
+    And I set the field "Preferred language" to "Français ‎(fr)‎"
+    And I click on "Save changes" "button"
     Given I log in as "admin"
     And I navigate to smartmenu "Quick Links" items
     And I click on ".action-edit" "css_element" in the "Resources" "table_row"
@@ -183,6 +191,12 @@ Feature: Configuring the theme_boost_union plugin on the "Smart menu items" page
 
   @javascript
   Scenario: Smartmenuitem: Access Rules - Display menus based on multiple conditions
+    Given I log in as "teacher"
+    And I click on "#user-menu-toggle" "css_element"
+    And I click on "Preferences" "link" in the "#usermenu-carousel" "css_element"
+    And I click on "Preferred language" "link"
+    And I set the field "Preferred language" to "Deutsch ‎(de)‎"
+    And I click on "Save changes" "button"    
     Given I log in as "admin"
     And I navigate to smartmenu "Quick Links" items
     And I click on ".action-edit" "css_element" in the "Resources" "table_row"
