@@ -168,6 +168,19 @@ class smartmenu_item {
     const BACKGROUND_OPACITY = 5;
 
     /**
+     * Display the course shortname in menu for dynamic menu item.
+     *
+     * @var int
+     */
+    const FIELD_SHORTNAME = 1;
+
+    /**
+     * Display the course fullname in menu for dynamic menu item.
+     * @var int
+     */
+    const FIELD_FULLNAME = 0;
+
+    /**
      * The ID of the menu item.
      * @var int
      */
@@ -321,18 +334,23 @@ class smartmenu_item {
      */
     public function move_upward() {
         global $DB;
+
         $currentposition = $this->item->sortorder;
         // Confirm is moving upward is possible.
         if ($currentposition > 1) {
-            // TODO: remove the fetch based on sortorder, use get last element.
-            $previtem = $DB->get_record('theme_boost_union_menuitems', [
-                'sortorder' => $currentposition - 1,
+            // Find the previous item.
+            $sql = 'SELECT * FROM {theme_boost_union_menuitems} WHERE sortorder < :pos AND menu = :menu ORDER BY sortorder ASC';
+            $previtems = $DB->get_records_sql($sql, [
+                'pos' => $currentposition,
                 'menu' => $this->item->menu
             ]);
 
-            if (empty($previtem)) {
+            if (empty($previtems)) {
                 return false;
             }
+
+            $previtem = end($previtems);
+
             // Update the menu position to upwards.
             $DB->set_field('theme_boost_union_menuitems', 'sortorder', $previtem->sortorder, [
                 'id' => $this->id,
@@ -344,6 +362,10 @@ class smartmenu_item {
                 'menu' => $this->item->menu
             ]);
 
+            // Difference between two items is more than 1 then reorder the items.
+            if (($currentposition - $previtem->sortorder) > 1) {
+                $this->reorder_items();
+            }
             // Delete the cache and menu cache.
             $this->delete_cache();
 
@@ -364,37 +386,42 @@ class smartmenu_item {
     public function move_downward() {
         global $DB;
         $currentposition = $this->item->sortorder;
-        // Confirm, moving downward is possible.
-        if ($currentposition < self::get_itemscount($this->item->menu)) {
+        // Find the previous item.
+        $sql = 'SELECT * FROM {theme_boost_union_menuitems} WHERE sortorder > :pos AND menu = :menu ORDER BY sortorder ASC';
+        $nextitems = $DB->get_records_sql($sql, [
+            'pos' => $currentposition,
+            'menu' => $this->item->menu
+        ]);
 
-            $nextitem = $DB->get_record('theme_boost_union_menuitems', [
-                'sortorder' => $currentposition + 1,
-                'menu' => $this->item->menu
-            ]);
-
-            if (!$nextitem) {
-                return false;
-            }
-            // Update the menu position to down.
-            $DB->set_field('theme_boost_union_menuitems', 'sortorder', $nextitem->sortorder, [
-                'id' => $this->id,
-                'menu' => $this->item->menu
-            ]);
-            // Set the prevmenu position to up.
-            $DB->set_field('theme_boost_union_menuitems', 'sortorder', $currentposition, [
-                'id' => $nextitem->id,
-                'menu' => $this->item->menu
-            ]);
-
-            // Delete the cache and menu cache.
-            $this->delete_cache();
-
-            // Purge the menu items cache.
-            \cache_helper::purge_by_event('theme_boost_union_menuitems_sorted');
-
-            return true;
+        if (empty($nextitems)) {
+            return false;
         }
-        return false;
+
+        $nextitem = current($nextitems); // First item in the list.
+        // Update the menu position to down.
+        $DB->set_field('theme_boost_union_menuitems', 'sortorder', $nextitem->sortorder, [
+            'id' => $this->id,
+            'menu' => $this->item->menu
+        ]);
+        // Set the prevmenu position to up.
+        $DB->set_field('theme_boost_union_menuitems', 'sortorder', $currentposition, [
+            'id' => $nextitem->id,
+            'menu' => $this->item->menu
+        ]);
+
+        // Difference between two items is more than 1 then reorder the items.
+        if (($nextitem->sortorder - $currentposition) > 1) {
+            $this->reorder_items();
+        }
+
+        // Delete the cache and menu cache.
+        $this->delete_cache();
+
+        // Purge the menu items cache.
+        \cache_helper::purge_by_event('theme_boost_union_menuitems_sorted');
+
+        return true;
+
     }
 
     /**
@@ -407,17 +434,17 @@ class smartmenu_item {
         global $DB;
 
         $sql = 'SELECT * FROM {theme_boost_union_menuitems} WHERE menu=:menu ORDER BY sortorder ASC';
-        $records = $DB->get_records_sql($sql, ['menu' => $this->item->menu], 0, 1);
+        $records = $DB->get_records_sql($sql, ['menu' => $this->item->menu]);
 
         if (empty($records)) {
             return false;
         }
 
         // The last item order is not same as count of records.
-        if (current($records)->sortorder != count($records)) {
+        if (end($records)->sortorder != count($records)) {
             // Update the sortorder from lower order.
             $i = 1;
-            foreach (array_reverse($records) as $itemid => $item) {
+            foreach ($records as $itemid => $item) {
                 $DB->set_field('theme_boost_union_menuitems', 'sortorder', $i, ['id' => $item->id]);
                 $i++;
             }
@@ -610,7 +637,11 @@ class smartmenu_item {
             // Get the course image from overview files.
             $itemimage = $this->get_course_image($record);
             // Generate the navigation node for this course and add the note to items list.
-            $items[] = $this->generate_node_data($record->fullname, $url, $rkey, null, 'link', false, [], $itemimage);
+            $coursename = ($this->item->displayfield == self::FIELD_SHORTNAME) ? $record->shortname : $record->fullname;
+            // Shorten the course text name.
+            $coursename = ($this->item->textcount) ? shorten_text($coursename, $this->item->textcount, true, '..') : $coursename;
+
+            $items[] = $this->generate_node_data($coursename, $url, $rkey, null, 'link', false, [], $itemimage);
         }
 
         // Submenu only contains the title as separate node.
@@ -862,9 +893,9 @@ class smartmenu_item {
         smartmenu_helper::purge_cache_date_reached($cache, $this->item, 'theme_boost_union_menuitemlastcheckdate');
 
         // Get the node data for item from cache if it is stored.
-        if ($result = $cache->get($this->item->id)) {
+       /*  if ($result = $cache->get($this->item->id)) {
             return $result;
-        }
+        } */
 
         // Verify the restriction rules.
         if (empty($this->item) || !$this->helper->verify_access_restrictions()) {

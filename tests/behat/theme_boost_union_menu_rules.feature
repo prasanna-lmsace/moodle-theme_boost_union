@@ -16,11 +16,11 @@ Feature: Configuring the theme_boost_union plugin on the "Smart menus" page, app
     And I am on homepage
     Given the following "courses" exist:
       | fullname| shortname | category |
-      | Test | C1 | 0 |   
+      | Test | C1 | 0 |
     And the following "users" exist:
       | username | firstname | lastname | email             |
-      | student1 | student   | User 1   | student1@test.com | 
-      | student2 | student2  | User 2   | student2@test.com | 
+      | student1 | student   | User 1   | student1@test.com |
+      | student2 | student2  | User 2   | student2@test.com |
       | teacher  | Teacher   | User 1   | teacher2@test.com |
     And the following "course enrolments" exist:
       | user     | course | role           |
@@ -34,7 +34,7 @@ Feature: Configuring the theme_boost_union plugin on the "Smart menus" page, app
     And the following "cohort members" exist:
       | user     | cohort |
       | student1 | CH1    |
-      | teacher  | CH2    |   
+      | teacher  | CH2    |
 
     And I create menu with the following fields to these values:
     | Title     | Quick Links              |
@@ -212,7 +212,7 @@ Feature: Configuring the theme_boost_union plugin on the "Smart menus" page, app
     And I click on "Preferred language" "link"
     And I set the field "Preferred language" to "Français ‎(fr)‎"
     And I click on "Save changes" "button"
-    Given I log in as "admin"    
+    Given I log in as "admin"
     And I navigate to smartmenus
     And I create menu with the following fields to these values:
     | Title     | Notifications            |

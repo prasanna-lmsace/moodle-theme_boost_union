@@ -123,13 +123,15 @@
         </div>
     </div>
 
-    {{#bottombar}}
-    <nav class="navbar fixed-bottom navbar-light bg-white navbar-expand boost-union-bottom-menu d-block d-md-none" aria-label="{{#str}}sitemenubar, admin{{/str}}">
-        <div class="bottom-navigation">
-            {{> core/moremenu}}
-        </div>
-    </nav>
-    {{/bottombar}}
+    {{#bottombar.drawer}}
+        {{#bottombar}}
+        <nav class="navbar fixed-bottom navbar-light bg-white navbar-expand boost-union-bottom-menu d-block d-md-none" aria-label="{{#str}}sitemenubar, admin{{/str}}">
+            <div class="bottom-navigation">
+                {{> theme_boost_union/moremenu}}
+            </div>
+        </nav>
+        {{/bottombar}}
+    {{/bottombar.drawer}}
 </footer>
 {{#js}}
 require(['theme_boost/footer-popover'], function(FooterPopover) {

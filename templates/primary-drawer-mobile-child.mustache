@@ -52,7 +52,13 @@
 
         {{^haschildren}}
             {{^divider}}
-                <a href="{{{url}}}" data-toggle="tooltip" title="{{tooltip}}" class="pl-5 bg-light list-group-item list-group-item-action {{#itemdata.classes}} {{.}} {{/itemdata.classes}}" {{#attributes}} {{#name}}{{name}}="{{value}}"{{/name}} {{/attributes}}> {{{text}}} </a>
+                <a href="{{{url}}}" data-toggle="tooltip" title="{{tooltip}}" class="pl-5 bg-light list-group-item list-group-item-action {{#itemdata.classes}} {{.}} {{/itemdata.classes}}" {{#attributes}} {{#name}}{{name}}="{{value}}"{{/name}} {{/attributes}}>
+                    {{#icon.pix}}
+                        {{#pix}}{{{icon.pix}}}, {{{icon.component}}}, {{{icon.alt}}}{{/pix}}
+                    {{/icon.pix}}
+
+                    {{{text}}}
+                </a>
             {{/divider}}
         {{/haschildren}}
 

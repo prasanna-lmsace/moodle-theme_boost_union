@@ -233,5 +233,25 @@ function xmldb_theme_boost_union_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2023010523, 'theme', 'boost_union');
     }
 
+    if ($oldversion < 2023010527) {
+
+        // Add a new column 'mode' to the theme_boost_union_menus table.
+        $table = new xmldb_table('theme_boost_union_menuitems');
+
+        // Define field mode to be added to theme_boost_union_menus.
+        $field = new xmldb_field('displayfield', XMLDB_TYPE_INTEGER, 2, null, null, null, null, 'type');
+        // Conditionally launch add field mode.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $field = new xmldb_field('textcount', XMLDB_TYPE_INTEGER, 9, null, null, null, null, 'displayfield');
+        // Conditionally launch add field mode.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        upgrade_plugin_savepoint(true, 2023010527, 'theme', 'boost_union');
+    }
+
     return true;
 }

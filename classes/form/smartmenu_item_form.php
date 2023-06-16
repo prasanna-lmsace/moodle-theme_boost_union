@@ -138,19 +138,34 @@ class smartmenu_item_form extends \moodleform {
         $mform->addElement('header', 'appearance_header', get_string('appearance', 'core'));
         $mform->addElement('static', 'appearanceheader_desc', get_string('smartmenu:appearanceheader_desc', 'theme_boost_union'));
 
+        // Display field value option.
+        $displayfields = [
+            menuitem::FIELD_FULLNAME => get_string('smartmenu:fullname', 'theme_boost_union'),
+            menuitem::FIELD_SHORTNAME => get_string('smartmenu:shortname', 'theme_boost_union'),
+        ];
+        $mform->addElement('select', 'displayfield', get_string('smartmenu:displayfield', 'theme_boost_union'), $displayfields);
+        $mform->hideIf('displayfield', 'type', 'neq', menuitem::TYPEDYNAMIC);
+        $mform->addHelpButton('displayfield', 'smartmenu:displayfield', 'theme_boost_union');
+
+        // Numer of charaters need to display in menu item title.
+        $mform->addElement('text', 'textcount', get_string('smartmenu:textcount', 'theme_boost_union'));
+        $mform->setType('textcount', PARAM_INT);
+        $mform->hideIf('textcount', 'type', 'neq', menuitem::TYPEDYNAMIC);
+        $mform->addHelpButton('textcount', 'smartmenu:textcount', 'theme_boost_union');
+
         // Display options field.
         $displayoptions = [
             menuitem::MODE_INLINE => get_string('smartmenu:inline', 'theme_boost_union'),
             menuitem::MODE_SUBMENU => get_string('smartmenu:submenu', 'theme_boost_union'),
         ];
         $mform->addElement('select', 'mode', get_string('smartmenu:mode', 'theme_boost_union'), $displayoptions);
-        $mform->addHelpButton('mode', 'smartmenu:mode', 'theme_boost_union');
 
         // Menu Icon.
         $options = [];
         $theme = \theme_config::load($PAGE->theme->name);
         $faiconsystem = \core\output\icon_system_fontawesome::instance($theme->get_icon_system());
         $iconlist = $faiconsystem->get_core_icon_map();
+        array_unshift($iconlist, '');
         // Icon element.
         $icons = $mform->addElement('select', 'menuicon', get_string('icon', 'core'), $iconlist);
         $icons->setMultiple(false);
@@ -196,7 +211,7 @@ class smartmenu_item_form extends \moodleform {
 
         // CSS class field.
         $mform->addElement('text', 'cssclass', get_string('smartmenu:cssclass', 'theme_boost_union'));
-        $mform->setType('cssclass', PARAM_ALPHANUMEXT);
+        $mform->setType('cssclass', PARAM_TEXT);
         $mform->addHelpButton('cssclass', 'smartmenu:cssclass', 'theme_boost_union');
 
         // Responsive fields.

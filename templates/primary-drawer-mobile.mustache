@@ -48,7 +48,7 @@
 
 {{< theme_boost/drawer }}
     {{$id}}theme_boost-drawers-primary{{/id}}
-    {{$drawerclasses}}drawer drawer-left drawer-primary{{/drawerclasses}}
+    {{$drawerclasses}}drawer {{#bottombar.drawer}} drawer-bottom {{/bottombar.drawer}} {{^bottombar.drawer}} drawer-left {{/bottombar.drawer}} drawer-primary{{/drawerclasses}}
     {{$drawercloseonresize}}1{{/drawercloseonresize}}
     {{$drawerheading}}
         {{# output.should_display_navbar_logo }}
@@ -59,6 +59,9 @@
         {{/ output.should_display_navbar_logo }}
     {{/drawerheading}}
     {{$drawercontent}}
+        {{#bottombar.drawer}}
+        <div class="menu-title">{{#str}} menu, core {{/str}}</div>
+        {{/bottombar.drawer}}
         <div class="list-group">
             {{#mobileprimarynav}}
                 {{#haschildren}}
@@ -66,6 +69,9 @@
                 {{/haschildren}}
                 {{^haschildren}}
                 <a href="{{{url}}}" data-toggle="tooltip" title="{{tooltip}}" class="{{#menuclasses}} {{.}} {{/menuclasses}} list-group-item list-group-item-action {{#isactive}}active{{/isactive}} {{#classes}}{{.}} {{/classes}}" {{#isactive}}aria-current="true"{{/isactive}} {{#attributes}} {{#name}}{{name}}="{{value}}"{{/name}} {{/attributes}}>
+                    {{#icon.pix}}
+                    {{#pix}}{{{icon.pix}}}, {{{icon.component}}}, {{{icon.alt}}}{{/pix}}
+                    {{/icon.pix}}
                     {{{text}}}
                 </a>
                 {{/haschildren}}

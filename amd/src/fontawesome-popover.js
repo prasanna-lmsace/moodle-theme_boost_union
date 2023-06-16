@@ -53,6 +53,7 @@ define(['jquery', 'theme_boost/popover', 'core/fragment'], function($, popover, 
      */
     const filterIcons = (target) => {
         var filter = target.value.toLowerCase();
+        SELECTBOX.value = filter || 0;
         var ul = document.querySelector('.fontawesome-iconpicker-popover ul.fontawesome-icon-suggestions');
         if (ul === undefined || ul === null) {
             return;
@@ -82,6 +83,7 @@ define(['jquery', 'theme_boost/popover', 'core/fragment'], function($, popover, 
         input.setAttribute('type', 'text');
         input.classList.add('fontawesome-autocomplete');
         input.classList.add('form-control');
+        input.setAttribute('name', 'iconsearch');
 
         if (SELECTBOX.value != '') {
             input.value = SELECTBOX.querySelector('option[selected]') !== null
@@ -149,7 +151,7 @@ define(['jquery', 'theme_boost/popover', 'core/fragment'], function($, popover, 
                         var value = target.getAttribute('aria-value');
                         var label = target.getAttribute('aria-label');
                         pickerInput.value = label;
-                        SELECTBOX.value = value;
+                        SELECTBOX.value = value || 0;
                         $(pickerInput).popover('hide');
                     });
                 });
@@ -199,6 +201,7 @@ define(['jquery', 'theme_boost/popover', 'core/fragment'], function($, popover, 
         pickerInput.addEventListener('keyup', function(e) {
             filterIcons(e.target);
         });
+
     };
 
     return {

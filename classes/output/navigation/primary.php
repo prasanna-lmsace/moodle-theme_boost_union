@@ -58,7 +58,7 @@ class primary extends \core\navigation\output\primary {
      * @return array
      */
     public function export_for_template(?renderer_base $output = null): array {
-        global $DB;
+        global $DB, $PAGE;
 
         $dbman = $DB->get_manager();
         // Backward support check.
@@ -95,10 +95,11 @@ class primary extends \core\navigation\output\primary {
 
         // Bottom bar.
         $mobileprimarynav = array_merge($this->get_primary_nav(), $this->get_custom_menu($output), $locationbottom);
-        $bottombar = new \core\navigation\output\more_menu((object) $mobileprimarynav, 'navbar-nav-bottom-bar', false);
-        $bottombardata = $bottombar->export_for_template($output);
-        $bottombardata['drawer'] = true;
-
+        if (!empty($mobileprimarynav)) {
+            $bottombar = new \core\navigation\output\more_menu((object) $mobileprimarynav, 'navbar-nav-bottom-bar', false);
+            $bottombardata = $bottombar->export_for_template($output);
+            $bottombardata['drawer'] = (!empty($locationbottom)) ? true : false;
+        }
         // Usermenu.
         // Merge the smartmenu nodes which contians the location for usermenu, with the default core usermenu nodes.
         $languagemenu = new \core\output\language_menu($this->page);
@@ -111,7 +112,7 @@ class primary extends \core\navigation\output\primary {
             'menubar' => isset($menubarmoremenu) ? $menubarmoremenu->export_for_template($output) : false,
             'lang' => !isloggedin() || isguestuser() ? $languagemenu->export_for_template($output) : [],
             'user' => $usermenu ?? [],
-            'bottombar' => $bottombardata
+            'bottombar' => $bottombardata ?? false
         ];
     }
 

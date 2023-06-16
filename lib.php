@@ -479,7 +479,7 @@ function theme_boost_union_output_fragment_icons_list($args) {
         $theme = \theme_config::load($PAGE->theme->name);
         $faiconsystem = \core\output\icon_system_fontawesome::instance($theme->get_icon_system());
         $iconlist = $faiconsystem->get_core_icon_map();
-
+        array_unshift($iconlist, '');
         foreach ($iconlist as $iconkey => $icontxt) {
             $icon = explode(':', $iconkey);
             $iconstr = isset($icon[1]) ? $icon[1] : 'moodle';

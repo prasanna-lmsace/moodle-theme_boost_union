@@ -6,10 +6,18 @@ Feature: Configuring the theme_boost_union plugin on the "Smart menu items" page
   I need to be able to configure the theme Boost Union plugin
 
   Background:
-
+    Given I log in as "admin"
+    And I navigate to "Language > Language packs" in site administration
+    And I set the field "Available language packs" to "fr"
+    When I press "Install selected language pack(s)"
+    Then I should see "Language pack 'fr' was successfully installed"
+    And I set the field "Available language packs" to "de"
+    When I press "Install selected language pack(s)"
+    Then I should see "Language pack 'de' was successfully installed"
+    And I am on homepage
     Given the following "courses" exist:
       | fullname| shortname | category |
-      | Test | C1 | 0 |  
+      | Test | C1 | 0 |
     And the following "users" exist:
       | username | firstname | lastname | email             | lang |
       | student1 | student   | User 1   | student1@test.com | en   |
@@ -196,7 +204,7 @@ Feature: Configuring the theme_boost_union plugin on the "Smart menu items" page
     And I click on "Preferences" "link" in the "#usermenu-carousel" "css_element"
     And I click on "Preferred language" "link"
     And I set the field "Preferred language" to "Deutsch ‎(de)‎"
-    And I click on "Save changes" "button"    
+    And I click on "Save changes" "button"
     Given I log in as "admin"
     And I navigate to smartmenu "Quick Links" items
     And I click on ".action-edit" "css_element" in the "Resources" "table_row"

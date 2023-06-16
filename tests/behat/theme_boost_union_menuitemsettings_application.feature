@@ -194,3 +194,32 @@ Feature: Configuring the theme_boost_union plugin on the "Smart menus" items pag
     Then I change the viewport size to "750x900"
     And the "class" attribute of "//div[@class='bottom-navigation']//a[contains(normalize-space(.), 'Resources')]" "xpath_element" should not contain "static-item-resources"
     And the "class" attribute of "//div[@class='bottom-navigation']//a[contains(normalize-space(.), 'Resources')]" "xpath_element" should contain "course-resource-links"
+
+  @javascript
+  Scenario: Smartmenuitem: Application - Display the different field for menu item title
+    Given I log in as "admin"
+    And I set "Quick Links" items with the following fields to these values:
+      | Title             | Available courses |
+      | Type              | Dynamic courses   |
+      | Category          | Category 1        |
+      | Select name field | Short name         |
+    And I should see "Available courses" in the "smartmenus_item" "table"
+    And I click on "Quick Links" "link" in the ".primary-navigation" "css_element"
+    And I should see "C1" in the ".primary-navigation" "css_element"
+    And I should not see "Test course" in the ".primary-navigation" "css_element"
+    And I navigate to smartmenu "Quick Links" items
+    And I click on ".action-edit" "css_element" in the "Available courses" "table_row"
+    And I set the field "Select name field" to "Full name"
+    And I click on "Save changes" "button"
+    And I click on "Quick Links" "link" in the ".primary-navigation" "css_element"
+    And I should not see "C1" in the ".primary-navigation" "css_element"
+    And I should see "Test course" in the ".primary-navigation" "css_element"
+    # Set the words count.
+    And I navigate to smartmenu "Quick Links" items
+    And I click on ".action-edit" "css_element" in the "Available courses" "table_row"
+    And I set the field "Number of words" to "10"
+    And I click on "Save changes" "button"
+    And I should see "Available courses" in the "smartmenus_item" "table"
+    And I click on "Quick Links" "link" in the ".primary-navigation" "css_element"
+    And I should see "Test cou.." in the ".primary-navigation" "css_element"
+

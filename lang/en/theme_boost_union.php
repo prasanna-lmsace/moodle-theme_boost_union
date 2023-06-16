@@ -759,7 +759,7 @@ $string['smartmenu:above'] = 'Above';
 $string['smartmenu:below'] = 'Below';
 $string['smartmenu:help'] = 'Help';
 $string['smartmenu:advancedsettings'] = 'Advanced settings';
-$string['smartmenu:cssclass'] = 'CSS class';
+$string['smartmenu:cssclass'] = 'CSS classes';
 $string['smartmenu:default'] = 'Default';
 $string['smartmenu:forcedintomoremenu'] = 'Forced into more menu';
 $string['smartmenu:forcedoutsideofmoremenu'] = 'Forced out side of moremenu';
@@ -866,7 +866,9 @@ $string['smartmenu:url'] = 'Menu URL';
 // ...Smartmenu form elements help text.
 $string['smartmenu:description_help'] = 'Description about the menu';
 $string['smartmenu:menutitle_help'] = 'Enter the title for menu.';
-$string['smartmenu:location_help'] = 'Select the location where you want the menu to appear on the page.';
+$string['smartmenu:location_help'] = "Select the location where you want the menu to appear on the page. The menu bar is located above the main navigation, at the top of the page.
+The user menu can be accessed by clicking on the user profile in the navigation bar. The bottom bar is placed at the bottom of the screen and can be used to implement a thumb navigation for easy access to important areas,
+such as the dashboard, the my courses page or the home page. Please note that upon enabling the bottom bar, the hamburger icon will be replaced by your site's logo, because users can reach the main navigation then using the bottom bar.";
 $string['smartmenu:types_help'] = 'Select the type of menu you want to create, choosing between card, and list.';
 $string['smartmenu:moremenubehavior_help'] = 'Choose whether to display the menu when there are too many items to fit in the menu or not. If enabled, excess items will be moved inside the "more" menu.
 You can choose whether to force the menus to display inside the "more" menu or outside of it.';
@@ -932,4 +934,12 @@ $string['smartmenu:menumode_help'] = "Select the mode for where the menu should 
 Inline: items in the menu will be displayed as a menu directly in the naivgation. This option did not support for card type menus.
 </li>
 <li> Submenu: This is default option, items will be display as submenu of this menu. </li></ul>";
-$string['smartmenu:menumode_help'] = "";
+
+$string['smartmenu:shortname'] = 'Short name';
+$string['smartmenu:fullname'] = 'Full name';
+$string['smartmenu:displayfield'] = 'Select name field';
+$string['smartmenu:textcount'] = 'Number of words';
+$string['smartmenu:displayfield_help'] = 'This setting allows you to choose the field to display as the course name. Select one of the following options:
+<ul><li>Short Name: Displays the short name of the course.</li>
+<li>Full Name: Displays the full name of the course.</li></ul>';
+$string['smartmenu:textcount_help'] = 'Specify the maximum number of words to be displayed for the course title in the menu.';
