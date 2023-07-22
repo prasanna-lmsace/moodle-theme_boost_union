@@ -1,5 +1,5 @@
 /*=======================================
- * Settings: Look -> Branding
+ * Settings: Look -> Site branding
  ======================================*/
 
 /*---------------------------------------
@@ -109,6 +109,20 @@
     .login a:hover {
         color: $white;
     }
+
+    /* Change the color of the notification action buttons to dark grey.
+       This has to use !important as Moodle core already uses !important for the icon colors. */
+    .popover-region-container a .icon {
+        color: #343a40 !important; /* stylelint-disable-line declaration-no-important */
+    }
+
+    /* Change the color of the language selector link in the navbar to a light grey and to white when hovered. */
+    .langmenu .dropdown .dropdown-toggle {
+        color: #c8c8c8;
+        &:hover {
+            color: $white;
+        }
+    }
 }
 
 /* Tweak the dark navbar with light font color a little bit more. */
@@ -129,6 +143,17 @@
     /* Change the background color of the search panel in the navbar. */
     #searchform-navbar {
         background-color: #343a40;
+    }
+
+    /* Change the color of the language selector drop down items when hovered, focused and active to dark grey
+       as this would be presented in the primary color otherwise. */
+    .langmenu {
+        .dropdown-item:active,
+        .dropdown-item:hover,
+        .dropdown-item:focus,
+        .dropdown-item:focus-within {
+            background-color: $dark;
+        }
     }
 }
 
@@ -151,14 +176,26 @@
     #searchform-navbar {
         background-color: $primary;
     }
+
+    /* Change the color of the active nav items's bottom border to white as this would be presented in the
+   primary color otherwise. */
+    .nav-link.active {
+        border-bottom-color: $white;
+    }
+
+    /* Change the color of the language selector icon to a light grey as well.
+        This has to use !important as Moodle core already uses !important for the icon colors. */
+    .langmenu .icon {
+        color: #c8c8c8 !important; /* stylelint-disable-line declaration-no-important */
+    }
 }
 
 /* Tweak the primary color navbar with dark font color. */
 .navbar.navbar-light.bg-primary {
-    /* Change the color of the active nav items's bottom border to white as this would be presented in the
+    /* Change the color of the active nav items's bottom border to dark grey as this would be presented in the
        primary color as well otherwise. */
     .nav-link.active {
-        border-bottom-color: $white;
+        border-bottom-color: rgba($black, .6);
     }
 
     /* Change the background color and colors of open custom menu parent navigation items in the navbar
@@ -190,6 +227,21 @@
     /* Change the background color of the search panel in the navbar. */
     #searchform-navbar {
         background-color: $primary;
+    }
+
+    /* Change the color of the login link in the navbar to dark grey and to darker grey when hovered. */
+    .login,
+    .login a {
+        color: rgba($black, .6);
+        &:hover {
+            color: rgba($black, .9);
+        }
+    }
+
+    /* Change the color of the divider to dark grey.
+       This has to use !important as Moodle core already uses !important for the border-left color.*/
+    .divider {
+        border-left: 1px solid rgba($black, .6) !important; /* stylelint-disable-line declaration-no-important */
     }
 }
 
@@ -307,6 +359,17 @@ body.hasstickyfooter #back-to-top {
 /*=======================================
  * Settings: Feel -> Blocks.
  ======================================*/
+
+/*---------------------------------------
+ * Settings: Additional block regions - General.
+ --------------------------------------*/
+
+/* To support additional block regions around the main content area, Boost Union introduced
+   the main-inner-wrapper HTML element. Unfortunately, this breaks the Flexbox flow of Moodle core.
+   To make it work again, we have to set the Flexbox flex attribute in the main-inner-wrapper element as well. */
+.main-inner-wrapper {
+    flex: 1 0 auto;
+}
 
 /*---------------------------------------
  * Settings: Additional block regions - The offcanvas region.
@@ -513,16 +576,20 @@ body.hasstickyfooter #back-to-top {
 
 /* Block regions: Outside top and outside bottom. */
 #theme-block-region-outside-top,
-#theme-block-region-outside-bottom {
+#theme-block-region-outside-bottom,
+#theme-block-region-footer {
     /* On larger screens. */
     @include media-breakpoint-up(md) {
         /* Position and size. */
         &.theme-block-region-outside-fullwidth,
-        &.theme-block-region-outside-coursecontentwidth {
+        &.theme-block-region-outside-coursecontentwidth,
+        &.theme-block-region-footer-fullwidth,
+        &.theme-block-region-footer-coursecontentwidth {
             margin: 1rem auto;
             width: 100%;
         }
-        &.theme-block-region-outside-herowidth {
+        &.theme-block-region-outside-herowidth,
+        &.theme-block-region-footer-herowidth {
             margin: 0 -3rem 0 -3rem;
             /* We do not set any width at all.
                100% would be too small, 100vw would add horizontal scrollbars (for whatever reason). */
@@ -532,13 +599,16 @@ body.hasstickyfooter #back-to-top {
     /* And on smaller screens. */
     @include media-breakpoint-down(sm) {
         &.theme-block-region-outside-fullwidth,
-        &.theme-block-region-outside-coursecontentwidth {
+        &.theme-block-region-outside-coursecontentwidth,
+        &.theme-block-region-footer-fullwidth,
+        &.theme-block-region-footer-coursecontentwidth {
             /* Just show the block full width with some horizontal space. */
             padding-left: 15px;
             padding-right: 15px;
             width: 100%;
         }
-        &.theme-block-region-outside-herowidth {
+        &.theme-block-region-outside-herowidth,
+        &.theme-block-region-footer-herowidth {
             /* Remove the margin. */
             margin: 0;
         }
@@ -546,12 +616,14 @@ body.hasstickyfooter #back-to-top {
 }
 
 /* Additional styling for content width regions to limit the block region size on Moodle pages with limited width. */
-body.limitedwidth .theme-block-region-outside-coursecontentwidth {
+body.limitedwidth .theme-block-region-outside-coursecontentwidth,
+body.limitedwidth .theme-block-region-footer-coursecontentwidth {
     max-width: $course-content-maxwidth;
 }
 
 /* Additional styling for hero-width regions to remove some styling which is counterproductive. */
-.theme-block-region-outside-herowidth {
+.theme-block-region-outside-herowidth,
+.theme-block-region-footer-herowidth {
     .block {
         border-width: 0;
         border-radius: 0;
@@ -855,7 +927,8 @@ body.pagelayout-login:not(.loginbackgroundimage) #footnote {
 
     /* Remove the margin of a Dash block when used in the outside top region in hero width mode. */
     #theme-block-region-outside-top.theme-block-region-outside-herowidth .block_dash,
-    #theme-block-region-outside-bottom.theme-block-region-outside-herowidth .block_dash {
+    #theme-block-region-outside-bottom.theme-block-region-outside-herowidth .block_dash,
+    #theme-block-region-footer.theme-block-region-footer-herowidth .block_dash {
         margin: 0;
     }
 
@@ -953,18 +1026,20 @@ body.pagelayout-login:not(.loginbackgroundimage) #footnote {
             background-color: #f8f9fa;
             z-index: 1031;
             /* The position of the side drawer has been adjusted slightly below to accommodate the top header. */
-            ~ .drawer.drawer-left,
+            ~ .drawer.drawer-left {
+                top: 0;
+            }
             ~ .drawer.drawer-right {
-                top: 100px;
+                top: 101px;
             }
             /* The position of the main page has been adjusted slightly below to accommodate the top header. */
             ~ #page.drawers {
                 margin-top: 100px;
                 /* The position of the drawer button to toggle has been adjusted slightly
-                below to accommodate the top header. */
+                below to accommodate the top header.
                 .drawer-toggles .drawer-toggler {
                     top: 110px;
-                }
+                }*/
             }
             .moremenu {
                 .more-nav {
@@ -1170,7 +1245,7 @@ body.pagelayout-login:not(.loginbackgroundimage) #footnote {
                     }
                 }
                 /* Header dropdown menu border added and position added not to conflict
-                    with the screen in the respnsive alignment */
+                    with the screen in the responsive alignment */
                 .dropdown-menu {
                     border: 1px solid rgba(0, 0, 0, 0.15);
                     padding: 0.5rem 0;
@@ -1182,6 +1257,18 @@ body.pagelayout-login:not(.loginbackgroundimage) #footnote {
                     .dropdown-item {
                         &:not(:hover):not(:focus):not(:active) {
                             background: none;
+                        }
+                    }
+                }
+                &.card-dropdown {
+                    .dropdown-menu {
+                        min-width: 420px;
+                        max-height: calc(100vh - 120px);
+                        text-align: center;
+                    }
+                    &.card-form-fullwidth {
+                        .dropdown-menu .card-block-wrapper {
+                            padding: 0 15px;
                         }
                     }
                 }
@@ -1534,11 +1621,24 @@ body.pagelayout-login:not(.loginbackgroundimage) #footnote {
         }
     }
 }
+.drawer-primary .drawercontent .list-group .list-group-item {
+    align-items: center;
+}
 
 /* The nav drawer position to the top in the responsive alignment */
 @media (max-width: 991px) {
     .navbar.fixed-top.boost-union-menubar ~ .drawer {
         top: 40px;
+        &.drawer-right {
+            top: 0;
+        }
+    }
+}
+
+/* The nav drawer position to the top in the responsive alignment */
+@media (min-width: 768px) {
+    .navbar.fixed-top.boost-union-menubar ~ #page.drawers .drawer-toggles .drawer-toggler {
+        top: 110px;
     }
 }
 
@@ -1549,8 +1649,13 @@ body.pagelayout-login:not(.loginbackgroundimage) #footnote {
             z-index: 1050;
         }
         /* The Header menubar z-index is increased to show at top in responsive */
-        &.boost-union-menubar.smartmenu-bottom-navigation {
-            z-index: 1051;
+        &.boost-union-menubar {
+            &.smartmenu-bottom-navigation {
+                z-index: 1051;
+            }
+            ~ .drawer.drawer-right {
+                z-index: 1052;
+            }
             /* When the menu in the footer bottom is clicked, its navigation drawer
             position appears below the header. */
             ~ .drawer-bottom.drawer {
@@ -1576,17 +1681,18 @@ body.pagelayout-login:not(.loginbackgroundimage) #footnote {
             position appears below the header when the header menubar is disabled. */
         ~ .drawer.drawer-left,
         ~ .drawer.drawer-right {
-            padding-bottom: 121px;
-            top: 61px;
+            max-width: 315px;
+            padding-bottom: 0;
+            /* top: 61px; */
         }
-        ~ #page.drawers {
-            /* The position of the drawer button to toggle has been adjusted slightly
-            below on the course view page to accommodate the top header. */
+        /*~ #page.drawers {
+             The position of the drawer button to toggle has been adjusted slightly
+            below on the course view page to accommodate the top header.
             .drawer-toggles .drawer-left-toggle,
             .drawer-toggles .drawer-right-toggle {
                 top: calc(60px + 0.7rem);
             }
-        }
+        }*/
     }
 }
 
@@ -1634,7 +1740,7 @@ body.pagelayout-login:not(.loginbackgroundimage) #footnote {
             .bottom-navigation .more-nav {
                 > li {
                     /* The footer bottom dropdown menu icon and text are displayed in separate rows. */
-                    &:not(.dropdown):not([data-key=""]) a {
+                    &.dropdown > a {
                         flex-direction: column;
                         /* The footer bottom dropdown menu icon margin is removed. */
                         i {
@@ -1642,8 +1748,23 @@ body.pagelayout-login:not(.loginbackgroundimage) #footnote {
                         }
                     }
                     /* The footer bottom menu item border bottom is removed when it's not active. */
-                    a:not(.active) {
-                        border-bottom: 0;
+                    > a {
+                        &:not(.active) {
+                            border-bottom: 0;
+                            flex-wrap: wrap;
+                            /* flex-basis: min-content; */
+                            flex-direction: column;
+                            justify-content: center;
+                            position: relative;
+                            i {
+                                margin-right: 0;
+                            }
+                            &:after {
+                                margin-left: 5px;
+                                position: absolute;
+                                right: 0;
+                            }
+                        }
                     }
                 }
                 li {

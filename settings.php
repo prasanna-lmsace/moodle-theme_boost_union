@@ -86,13 +86,13 @@ if ($hassiteconfig || has_capability('theme/boost_union:configure', context_syst
                 'theme/boost_union:configure');
         $ADMIN->add('theme_boost_union', $flavourspage);
 
-        // Create Smart Menus settings page.
+        // Create Smart Menus settings page as external page.
         // (and allow users with the theme/boost_union:configure capability to access it).
-        $tab = new admin_externalpage('theme_boost_union_smartmenus',
+        $smartmenuspage = new admin_externalpage('theme_boost_union_smartmenus',
                 get_string('smartmenus', 'theme_boost_union', null, true),
                 new moodle_url('/theme/boost_union/smartmenus/menus.php'),
                 'theme/boost_union:configure');
-        $ADMIN->add('theme_boost_union', $tab);
+        $ADMIN->add('theme_boost_union', $smartmenuspage);
     }
 
     // Create full settings page structure.
@@ -102,6 +102,7 @@ if ($hassiteconfig || has_capability('theme/boost_union:configure', context_syst
         // Require the necessary libraries.
         require_once($CFG->dirroot . '/theme/boost_union/lib.php');
         require_once($CFG->dirroot . '/theme/boost_union/locallib.php');
+        require_once($CFG->dirroot . '/course/lib.php');
 
         // Prepare options array for select settings.
         // Due to MDL-58376, we will use binary select settings instead of checkbox settings throughout this theme.
@@ -224,8 +225,9 @@ if ($hassiteconfig || has_capability('theme/boost_union:configure', context_syst
         $page->add($tab);
 
 
-        // Create branding tab.
-        $tab = new admin_settingpage('theme_boost_union_look_branding', get_string('brandingtab', 'theme_boost_union', null, true));
+        // Create site branding tab.
+        $tab = new admin_settingpage('theme_boost_union_look_sitebranding',
+                get_string('sitebrandingtab', 'theme_boost_union', null, true));
 
         // Create logos heading.
         $name = 'theme_boost_union/logosheading';
@@ -343,6 +345,37 @@ if ($hassiteconfig || has_capability('theme/boost_union:configure', context_syst
         $setting->set_updatedcallback('theme_reset_all_caches');
         $tab->add($setting);
 
+        // Create navbar heading.
+        $name = 'theme_boost_union/navbarheading';
+        $title = get_string('navbarheading', 'theme_boost_union', null, true);
+        $setting = new admin_setting_heading($name, $title, null);
+        $tab->add($setting);
+
+        // Setting: Navbar color.
+        $name = 'theme_boost_union/navbarcolor';
+        $title = get_string('navbarcolorsetting', 'theme_boost_union', null, true);
+        $description = get_string('navbarcolorsetting_desc', 'theme_boost_union', null, true);
+        $navbarcoloroptions = array(
+                THEME_BOOST_UNION_SETTING_NAVBARCOLOR_LIGHT =>
+                        get_string('navbarcolorsetting_light', 'theme_boost_union'),
+                THEME_BOOST_UNION_SETTING_NAVBARCOLOR_DARK =>
+                        get_string('navbarcolorsetting_dark', 'theme_boost_union'),
+                THEME_BOOST_UNION_SETTING_NAVBARCOLOR_PRIMARYLIGHT =>
+                        get_string('navbarcolorsetting_primarylight', 'theme_boost_union'),
+                THEME_BOOST_UNION_SETTING_NAVBARCOLOR_PRIMARYDARK =>
+                        get_string('navbarcolorsetting_primarydark', 'theme_boost_union'));
+        $setting = new admin_setting_configselect($name, $title, $description, THEME_BOOST_UNION_SETTING_NAVBARCOLOR_LIGHT,
+                $navbarcoloroptions);
+        $tab->add($setting);
+
+        // Add tab to settings page.
+        $page->add($tab);
+
+
+        // Create activity branding tab.
+        $tab = new admin_settingpage('theme_boost_union_look_activitybranding',
+                get_string('activitybrandingtab', 'theme_boost_union', null, true));
+
         // Create activity icon colors heading.
         $name = 'theme_boost_union/activityiconcolorsheading';
         $title = get_string('activityiconcolorsheading', 'theme_boost_union', null, true);
@@ -397,6 +430,47 @@ if ($hassiteconfig || has_capability('theme/boost_union:configure', context_syst
         $setting->set_updatedcallback('theme_reset_all_caches');
         $tab->add($setting);
 
+        // Create activity icons purpose heading.
+        $name = 'theme_boost_union/activitypurposeheading';
+        $title = get_string('activitypurposeheading', 'theme_boost_union', null, true);
+        $description = get_string('activitypurposeheading_desc', 'theme_boost_union', null, true).'<br /><br />'.
+                get_string('activitypurposeheadingtechnote', 'theme_boost_union',
+                        get_string('githubissueslink', 'theme_boost_union', null, true),
+                true);
+        $setting = new admin_setting_heading($name, $title, $description);
+        $tab->add($setting);
+
+        // Prepare activity purposes.
+        $purposesoptions = array(
+                MOD_PURPOSE_ADMINISTRATION => get_string('activitypurposeadministration', 'theme_boost_union'),
+                MOD_PURPOSE_ASSESSMENT => get_string('activitypurposeassessment', 'theme_boost_union'),
+                MOD_PURPOSE_COLLABORATION => get_string('activitypurposecollaboration', 'theme_boost_union'),
+                MOD_PURPOSE_COMMUNICATION => get_string('activitypurposecommunication', 'theme_boost_union'),
+                MOD_PURPOSE_CONTENT => get_string('activitypurposecontent', 'theme_boost_union'),
+                MOD_PURPOSE_INTERFACE => get_string('activitypurposeinterface', 'theme_boost_union'),
+                MOD_PURPOSE_OTHER => get_string('activitypurposeother', 'theme_boost_union')
+        );
+        // Get installed activity modules.
+        $installedactivities = get_module_types_names();
+        // Iterate over all existing activities.
+        foreach ($installedactivities as $modname => $modinfo) {
+            // Get default purpose of activity module.
+            $defaultpurpose = plugin_supports('mod', $modname, FEATURE_MOD_PURPOSE, MOD_PURPOSE_OTHER);
+            // If the plugin does not have any default purpose.
+            if (!$defaultpurpose) {
+                // Fallback to "other" purpose.
+                $defaultpurpose = MOD_PURPOSE_OTHER;
+            }
+
+            // Create the setting.
+            $name = 'theme_boost_union/activitypurpose'.$modname;
+            $title = get_string('modulename', $modname, null, true);
+            $description = '';
+            $setting = new admin_setting_configselect($name, $title, $description, $defaultpurpose, $purposesoptions);
+            $setting->set_updatedcallback('theme_reset_all_caches');
+            $tab->add($setting);
+        }
+
         // Create activity icons heading.
         $name = 'theme_boost_union/modicons';
         $title = get_string('modiconsheading', 'theme_boost_union', null, true);
@@ -445,29 +519,6 @@ if ($hassiteconfig || has_capability('theme/boost_union:configure', context_syst
             $setting = new admin_setting_description($name, $title, $description);
             $tab->add($setting);
         }
-
-        // Create navbar heading.
-        $name = 'theme_boost_union/navbarheading';
-        $title = get_string('navbarheading', 'theme_boost_union', null, true);
-        $setting = new admin_setting_heading($name, $title, null);
-        $tab->add($setting);
-
-        // Setting: Navbar color.
-        $name = 'theme_boost_union/navbarcolor';
-        $title = get_string('navbarcolorsetting', 'theme_boost_union', null, true);
-        $description = get_string('navbarcolorsetting_desc', 'theme_boost_union', null, true);
-        $navbarcoloroptions = array(
-                THEME_BOOST_UNION_SETTING_NAVBARCOLOR_LIGHT =>
-                        get_string('navbarcolorsetting_light', 'theme_boost_union'),
-                THEME_BOOST_UNION_SETTING_NAVBARCOLOR_DARK =>
-                        get_string('navbarcolorsetting_dark', 'theme_boost_union'),
-                THEME_BOOST_UNION_SETTING_NAVBARCOLOR_PRIMARYLIGHT =>
-                        get_string('navbarcolorsetting_primarylight', 'theme_boost_union'),
-                THEME_BOOST_UNION_SETTING_NAVBARCOLOR_PRIMARYDARK =>
-                        get_string('navbarcolorsetting_primarydark', 'theme_boost_union'));
-        $setting = new admin_setting_configselect($name, $title, $description, THEME_BOOST_UNION_SETTING_NAVBARCOLOR_LIGHT,
-                $navbarcoloroptions);
-        $tab->add($setting);
 
         // Add tab to settings page.
         $page->add($tab);
@@ -1236,6 +1287,14 @@ if ($hassiteconfig || has_capability('theme/boost_union:configure', context_syst
                 THEME_BOOST_UNION_SETTING_OUTSIDEREGIONSWITH_FULLWIDTH, $outsideregionswidthoptions);
         $tab->add($setting);
 
+        // Setting: Block region width for Footer region.
+        $name = 'theme_boost_union/blockregionfooterwidth';
+        $title = get_string('blockregionfooterwidth', 'theme_boost_union', null, true);
+        $description = get_string('blockregionfooterwidth_desc', 'theme_boost_union', null, true);
+        $setting = new admin_setting_configselect($name, $title, $description,
+                THEME_BOOST_UNION_SETTING_OUTSIDEREGIONSWITH_FULLWIDTH, $outsideregionswidthoptions);
+        $tab->add($setting);
+
         // Setting: Outside regions horizontal placement.
         $outsideregionsplacementoptions = array(
             // Don't use string lazy loading (= false) because the string will be directly used and would produce a
@@ -1276,6 +1335,27 @@ if ($hassiteconfig || has_capability('theme/boost_union:configure', context_syst
         $title = get_string('showsitehomerighthandblockdraweronguestloginsetting', 'theme_boost_union', null, true);
         $description = get_string('showsitehomerighthandblockdraweronguestloginsetting_desc', 'theme_boost_union', null, true);
         $setting = new admin_setting_configselect($name, $title, $description, THEME_BOOST_UNION_SETTING_SELECT_NO, $yesnooption);
+        $tab->add($setting);
+
+        // Add tab to settings page.
+        $page->add($tab);
+
+
+        // Create links tab.
+        $tab = new admin_settingpage('theme_boost_union_feel_links', get_string('linkstab', 'theme_boost_union', null, true));
+
+        // Create Special Links Markup heading.
+        $name = 'theme_boost_union/speciallinksmarkupheading';
+        $title = get_string('speciallinksmarkupheading', 'theme_boost_union', null, true);
+        $setting = new admin_setting_heading($name, $title, null);
+        $tab->add($setting);
+
+        // Setting: Mark external links.
+        $name = 'theme_boost_union/markexternallinks';
+        $title = get_string('markexternallinkssetting', 'theme_boost_union', null, true);
+        $description = get_string('markexternallinkssetting_desc', 'theme_boost_union', null, true);
+        $setting = new admin_setting_configselect($name, $title, $description, THEME_BOOST_UNION_SETTING_SELECT_NO, $yesnooption);
+        $setting->set_updatedcallback('theme_reset_all_caches');
         $tab->add($setting);
 
         // Add tab to settings page.

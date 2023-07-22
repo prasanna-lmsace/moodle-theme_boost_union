@@ -18,7 +18,7 @@
  * Theme Boost Union - Smart menu item edit form
  *
  * @package    theme_boost_union
- * @copyright  bdecent GmbH 2023
+ * @copyright  2023 bdecent GmbH <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -83,7 +83,7 @@ class smartmenu_item_form extends \moodleform {
 
         $mform->addElement('text', 'url', get_string('smartmenu:url', 'theme_boost_union'));
         $mform->setType('url', PARAM_URL);
-        $mform->disabledIf('url', 'type', 'neq', menuitem::TYPESTATIC);
+        $mform->hideIf('url', 'type', 'neq', menuitem::TYPESTATIC);
         $mform->addHelpButton('url', 'smartmenu:url', 'theme_boost_union');
 
         // List of categories selector.
@@ -147,7 +147,7 @@ class smartmenu_item_form extends \moodleform {
         $mform->hideIf('displayfield', 'type', 'neq', menuitem::TYPEDYNAMIC);
         $mform->addHelpButton('displayfield', 'smartmenu:displayfield', 'theme_boost_union');
 
-        // Numer of charaters need to display in menu item title.
+        // Number of charaters to display in menu item title.
         $mform->addElement('text', 'textcount', get_string('smartmenu:textcount', 'theme_boost_union'));
         $mform->setType('textcount', PARAM_INT);
         $mform->hideIf('textcount', 'type', 'neq', menuitem::TYPEDYNAMIC);
@@ -159,6 +159,7 @@ class smartmenu_item_form extends \moodleform {
             menuitem::MODE_SUBMENU => get_string('smartmenu:submenu', 'theme_boost_union'),
         ];
         $mform->addElement('select', 'mode', get_string('smartmenu:mode', 'theme_boost_union'), $displayoptions);
+        $mform->addHelpButton('mode', 'smartmenu:mode', 'theme_boost_union');
 
         // Menu Icon.
         $options = [];

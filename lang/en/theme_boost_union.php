@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 $string['pluginname'] = 'Boost Union';
 $string['choosereadme'] = '<p>Theme Boost Union is an enhanced child theme of Boost which is intended, on the one hand, to make Boost simply more configurable and, on the other hand, to provide helpful additional features for the daily Moodle operation of admins, teachers and students.</p><p>Boost Union is maintained by<br />Moodle an Hochschulen e.V.,</p><p>in cooperation with<br />lern.link GmbH</p><p>together with<br />bdecent GmbH</p>';
 $string['configtitle'] = 'Boost Union';
+$string['githubissueslink'] = '<a href="https://github.com/moodle-an-hochschulen/moodle-theme_boost_union/issues">Github issues</a>';
 
 // Settings: General strings.
 $string['dontchange'] = 'Do not change anything';
@@ -55,8 +56,8 @@ $string['coursecontentmaxwidthsetting_desc'] = 'With this setting, you can overr
 $string['mediumcontentmaxwidthsetting'] = 'Medium content max width';
 $string['mediumcontentmaxwidthsetting_desc'] = 'With this setting, you can override Moodle\'s medium content width without manual SCSS modifications. This page width is used in certain activities like the database activity. By default, Moodle uses a medium content max width of 1120px. You can enter other pixel-based values like 1200px, but you can also enter a percentage-based value like 100% or a viewport-width value like 90vw.';
 
-// Settings: Branding tab.
-$string['brandingtab'] = 'Branding';
+// Settings: Site branding tab.
+$string['sitebrandingtab'] = 'Site branding';
 // ... Section: Logos.
 $string['logosheading'] = 'Logos';
 $string['logosheading_desc'] = 'Please note: Boost Union has its own logo upload and does not use the logo from <a href="{$a}">Moodle core\'s logo setting</a>.<br />Boost Union especially allows you to upload more image formats that Moodle core allows and allows you to override the uploaded logos within its flavours.';
@@ -93,6 +94,18 @@ $string['bootstrapcolorwarningsetting_desc'] = 'The Bootstrap color for "Warning
 // ... ... Setting: Bootstrap color for 'Danger'.
 $string['bootstrapcolordangersetting'] = 'Bootstrap color for "Danger"';
 $string['bootstrapcolordangersetting_desc'] = 'The Bootstrap color for "Danger"';
+// ... Section: Navbar.
+$string['navbarheading'] = 'Navbar';
+// ... ... Setting: Navbar color.
+$string['navbarcolorsetting'] = 'Navbar color';
+$string['navbarcolorsetting_desc'] = 'With this setting, you can change the navbar color from the default light navbar to a dark one or a colored one.';
+$string['navbarcolorsetting_light'] = 'Light navbar with dark font color (unchanged as presented by Moodle core)';
+$string['navbarcolorsetting_dark'] = 'Dark navbar with light font color';
+$string['navbarcolorsetting_primarydark'] = 'Primary color navbar with light font color';
+$string['navbarcolorsetting_primarylight'] = 'Primary color navbar with dark font color';
+
+// Settings: Activity branding tab.
+$string['activitybrandingtab'] = 'Activity branding';
 // ... Section: Activity icon colors.
 $string['activityiconcolorsheading'] = 'Activity icon colors';
 // ... ... Setting: Activity icon color for 'Administration'.
@@ -113,6 +126,17 @@ $string['activityiconcolorcontentsetting_desc'] = 'The activity icon color for "
 // ... ... Setting: Activity icon color for 'Interface'.
 $string['activityiconcolorinterfacesetting'] = 'Activity icon color for "Interface"';
 $string['activityiconcolorinterfacesetting_desc'] = 'The activity icon color for "Interface"';
+// ... Section: Activity icon purposes.
+$string['activitypurposeheading'] = 'Activity icon purposes';
+$string['activitypurposeheading_desc'] = 'With these settings, you can override the activity icon background color which is defined by the activity\'s purpose (and which is a hardcoded plugin feature in each activity).';
+$string['activitypurposeheadingtechnote'] = 'Technical note: Due to the way how Moodle core implements the activity purposes and their colors, the activity purposes are only overridden with CSS by Boost Union. Currently, all areas in Moodle core which show colored activity icons should be covered. If you spot any area or third party plugin which continues to show the unchanged activity purpose colors, please report it on {$a}.';
+$string['activitypurposeadministration'] = 'Administration';
+$string['activitypurposeassessment'] = 'Assessment';
+$string['activitypurposecollaboration'] = 'Collaboration';
+$string['activitypurposecommunication'] = 'Communication';
+$string['activitypurposecontent'] = 'Content';
+$string['activitypurposeinterface'] = 'Interface';
+$string['activitypurposeother'] = 'Other';
 // ... Section: Activity icons.
 $string['modiconsheading'] = 'Activity icons';
 // ... ... Setting: Enable custom icons for activities and resources.
@@ -136,15 +160,6 @@ $string['modiconactivityunknown'] = 'Unknown';
 $string['modiconversion'] = 'Icon version';
 $string['modicongtmoodle4'] = 'Moodle 4 icon';
 $string['modiconltmoodle311'] = 'Moodle 3 legacy icon';
-// ... Section: Navbar.
-$string['navbarheading'] = 'Navbar';
-// ... ... Setting: Navbar color.
-$string['navbarcolorsetting'] = 'Navbar color';
-$string['navbarcolorsetting_desc'] = 'With this setting, you can change the navbar color from the default light navbar to a dark one or a colored one.';
-$string['navbarcolorsetting_light'] = 'Light navbar with dark font color (unchanged as presented by Moodle core)';
-$string['navbarcolorsetting_dark'] = 'Dark navbar with light font color';
-$string['navbarcolorsetting_primarydark'] = 'Primary color navbar with light font color';
-$string['navbarcolorsetting_primarylight'] = 'Primary color navbar with dark font color';
 
 // Settings: Login page tab.
 $string['loginpagetab'] = 'Login page';
@@ -414,11 +429,22 @@ $string['outsideregionswidthherowidth'] = 'Hero width';
 // ... ... Setting: Block region width for Outside (bottom) region.
 $string['blockregionoutsidebottomwidth'] = 'Block region width for \'Outside (bottom)\' region';
 $string['blockregionoutsidebottomwidth_desc'] = 'With this setting, you can set the width of the \'Outside (bottom)\' block region which is shown below the main content. You can choose between full width, course content width and hero width.';
+// ... ... Setting: Block region width for Footer region.
+$string['blockregionfooterwidth'] = 'Block region width for \'Footer\' region';
+$string['blockregionfooterwidth_desc'] = 'With this setting, you can set the width of the \'Footer\' block region. You can choose between full width, course content width and hero width.';
 // ... ... Setting: Outside regions horizontal placement.
 $string['outsideregionsplacement'] = 'Outside regions horizontal placement';
 $string['outsideregionsplacement_desc'] = 'With this setting, you can control if, on larger screens, the \'Outside (left)\' and \'Outside (right)\' block regions should be placed near the main content area or rather near the window edges.';
 $string['outsideregionsplacementnextmaincontent'] = 'Display \'Outside (left)\' and \'Outside (right)\' regions next to the main content area';
 $string['outsideregionsplacementnearwindowedges'] = 'Display \'Outside (left)\' and \'Outside (right)\' regions near the window edges';
+
+// Settings: Links tab.
+$string['linkstab'] = 'Links';
+// ... Section: Special links markup.
+$string['speciallinksmarkupheading'] = 'Special links markup';
+// ... ... Setting: Mark external links.
+$string['markexternallinkssetting'] = 'Mark external links';
+$string['markexternallinkssetting_desc'] = 'Adds an "external link" icon after external links (which lead the user to a target outside Moodle).';
 
 // Settings: Misc tab.
 $string['misctab'] = 'Miscellaneous';
@@ -736,10 +762,8 @@ $string['upgradenotice_2022080922_notcopied'] = 'The <strong>{$a}</strong> setti
 // Smart menus.
 // ...Smart menu edit form.
 $string['smartmenus'] = 'Smart menus';
-$string['smartmenus_desc'] = '"Smart Menu" allows site administrators to create customizable menus that can be placed in different locations on the site, such as the site main menu, bottom mobile menu, and user menu. The menus can be configured to display different types of content,
-including links to other pages or resources, category links, or user profile links.
-<br>
-Site administrator can create a new menu and specify the menu items, and display settings. The administrator can also choose where the menu will be displayed on the site and whether it should be visible to all users or only to certain user roles.';
+$string['smartmenus_desc'] = '<p>Smart menus allow site administrators to create customizable menus that can be placed in different locations on the site, such as the site main menu, bottom mobile menu, and user menu. The menus can be configured to display different types of content,
+including links to other pages or resources, category links, or user profile links.</p><p>Site administrators can create a new menu and specify the menu items, and display settings. The administrator can also choose where the menu will be displayed on the site and whether it should be visible to all users or only to certain user roles.</p>';
 // Smartmenu: Menu form element strings.
 $string['smartmenu:generalsection'] = 'General sections';
 $string['smartmenu:title'] = 'Title';
@@ -837,10 +861,10 @@ $string['smartmenu:addnewdynamicitem'] = 'Add new dynamic item';
 // Smartmenu: Menu items form elements text.
 $string['smartmenu:menuheading'] = ' "{$a}" - items';
 $string['smartmenu:rolecontext'] = 'Context';
-$string['smartmenu:accessbyroles'] = 'Restrict access by roles';
-$string['smartmenu:accessbycohorts'] = 'Restrict access by cohorts';
-$string['smartmenu:accessbylanguage'] = 'Restrict access by language';
-$string['smartmenu:accessbydateselector'] = 'Restrict access by date';
+$string['smartmenu:accessbyroles'] = 'Restrict visibility by roles';
+$string['smartmenu:accessbycohorts'] = 'Restrict visibility by cohorts';
+$string['smartmenu:accessbylanguage'] = 'Restrict visibility by language';
+$string['smartmenu:accessbydateselector'] = 'Restrict visibility by date';
 $string['smartmenu:operator'] = 'Operator';
 $string['smartmenu:submenu'] = 'Submenu';
 $string['smartmenu:inline'] = 'Inline';
@@ -855,38 +879,28 @@ $string['smartmenu:deleteconfirmmenu'] = 'Are you sure you want to delete this m
 $string['smartmenu:deleteconfirmitem'] = 'Are you sure you want to delete this menu item from the smart menus?';
 $string['smartmenu:copyitem'] = 'Copy menu item';
 $string['smartmenu:copymenu'] = 'Copy menu and it items';
-$string['menusnothingtodisplay'] = "There aren't any smart menus are created. Please create your first smart menu.";
-$string['itemsnothingtodisplay'] = "There aren't any items are created for this menu. Please add first item to this menu.";
+$string['menusnothingtodisplay'] = 'There aren\'t any smart menus created yet. Please create your first smart menu to get things going.';
+$string['itemsnothingtodisplay'] = 'There aren\'t any items added to this smart menu yet. Please add an item to this menu.';
 $string['smartmenu:menuicon'] = 'Icon';
 $string['smartmenu:order'] = 'Order';
 $string['smartmenu:from'] = 'From';
 $string['smartmenu:durationuntil'] = 'Until';
 $string['smartmenu:category'] = 'Category';
-$string['smartmenu:url'] = 'Menu URL';
+$string['smartmenu:url'] = 'Menu item URL';
 // ...Smartmenu form elements help text.
-$string['smartmenu:description_help'] = 'Description about the menu';
-$string['smartmenu:menutitle_help'] = 'Enter the title for menu.';
-$string['smartmenu:location_help'] = "Select the location where you want the menu to appear on the page. The menu bar is located above the main navigation, at the top of the page.
-The user menu can be accessed by clicking on the user profile in the navigation bar. The bottom bar is placed at the bottom of the screen and can be used to implement a thumb navigation for easy access to important areas,
-such as the dashboard, the my courses page or the home page. Please note that upon enabling the bottom bar, the hamburger icon will be replaced by your site's logo, because users can reach the main navigation then using the bottom bar.";
-$string['smartmenu:types_help'] = 'Select the type of menu you want to create, choosing between card, and list.';
+$string['smartmenu:description_help'] = 'The description of the menu.';
+$string['smartmenu:menutitle_help'] = 'The title of the menu. This will be used as the label of the parent node of this menu.';
+$string['smartmenu:location_help'] = '<p>Select the location(s) where you want the menu to appear on the page:</p><ul><li>The main navigation is at the top of the page where Moodle core shows the Home, Dashboard, My courses and Site administration navigation items already.</li><li>The menu bar is located above the main navigation, at the top of the page.</li><li>The user menu can be accessed by clicking on the user avatar in the navigation bar.</li><li>The bottom bar is placed at the bottom of the screen and can be used to implement a thumb navigation for easy access to important areas, such as the dashboard, the my courses page or the home page.</li></ul><p>Please note that upon enabling the bottom bar, the hamburger icon will be replaced by your site\'s logo, because users can reach the main navigation then using the bottom bar.</p>';
+$string['smartmenu:types_help'] = 'Select the type of menu you want to create, choosing between card and list.';
 $string['smartmenu:moremenubehavior_help'] = 'Choose whether to display the menu when there are too many items to fit in the menu or not. If enabled, excess items will be moved inside the "more" menu.
 You can choose whether to force the menus to display inside the "more" menu or outside of it.';
-$string['smartmenu:cardsize_help'] = 'Set the size of the card for card-style menus. choosing between tiny, small, medium, or large';
-$string['smartmenu:cardform_help'] = 'Select the form of the card for card-style menus, choosing between square, portrait, landscape or fullwidth';
+$string['smartmenu:cardsize_help'] = 'Set the size of the card for card-style menus, choosing between tiny, small, medium, or large.';
+$string['smartmenu:cardform_help'] = 'Select the form of the card for card-style menus, choosing between square, portrait, landscape or fullwidth.';
 $string['smartmenu:overflowbehavior_help'] = 'Choose how the menu should behave when it overflows its container, either by showing a scrollbar or wrap the overflowing items.';
 // Help strings for menu item form elements.
-$string['smartmenu:title_help'] = "Enter the title for the menu item. Use hash signs (###) to display the menu item as a separator for heading type items.";
-$string['smartmenu:type_help'] = "Select the type of menu item you want to create: static, heading, or dynamic. <br>
-<ul>
-<li> Static: A static menu item is simply a link to a fixed URL that does not change. </li>
-<li> Heading: A heading menu item is used to group related menu items together under a common heading.
-It does not have a link and is not clickable. </li>
-<li> Dynamic: A dynamic menu item is used to display a list of courses based on certain criteria,
-such as category, enrollment role, completion status, date range, etc.
-The content displayed in a dynamic menu item will update automatically as the criteria changes.</li>
-</ul>";
-$string['smartmenu:url_help'] = "Enter the URL for the menu item. This is the link that will be followed when the menu item is clicked.";
+$string['smartmenu:title_help'] = 'Enter the title for the menu item. If you want to display a separator in the menu, use hash signs (###) as title and choose Heading as type.';
+$string['smartmenu:type_help'] = '<p>Select the type of menu item you want to create, choosing between static, heading and dynamic courses.</p><ul><li>Static: A static menu item is simply a link to a fixed URL that does not change.</li><li>Heading: A heading menu item is used to group related menu items together under a common heading. It does not have a link and is not clickable.</li><li>Dynamic courses: A dynamic courses menu item is used to display a list of courses based on certain criteria, such as category, enrollment role, completion status, date range, etc. The content displayed in a dynamic courses menu item will update automatically as the criteria changes.</li></ul>';
+$string['smartmenu:url_help'] = 'Enter the URL for the menu item. This is the link that will be followed when the menu item is clicked.';
 $string['smartmenu:enrolmentrole_help'] = "Select the role for which the menu item should be visible.
 The menu item will only be displayed to users who have this role.";
 $string['smartmenu:completionstatus_help'] = "For dynamic menu items,
@@ -908,7 +922,7 @@ You can display both the title and icon, hide the title, or hide the title only 
 $string['smartmenu:tooltip_help'] = "Enter a tooltip to display when the user hovers over the menu item.";
 $string['smartmenu:sortorder_help'] = "Enter a sort order for the menu item. Menu items are displayed in ascending order based on their sort order.";
 $string['smartmenu:target_help'] = "Select the target for the link. The menu item will open in this target when clicked (e.g. in a new window or tab).";
-$string['smartmenu:cssclass_help'] = "Enter a CSS class for the menu item. This can be used to apply custom styling to the menu item.";
+$string['smartmenu:cssclass_help'] = 'Enter a CSS class for the menu item. This can be used to apply custom styling to the menu item.';
 $string['smartmenu:image_help'] = "Select an image to display next to the menu item.
 The item image will be used for card type menus and will be displayed as the card image for the item";
 $string['smartmenu:textposition_help'] = "Select the position of the menu item text in relation to the icon or image.
@@ -919,21 +933,17 @@ Options include top overlay, bottom overlay, and below image.
 <li> Below image: Displays the item title below the card image.</li> </ul>";
 $string['smartmenu:textcolor_help'] = "Select the color for the menu item text.";
 $string['smartmenu:backgroundcolor_help'] = "Select the background color for the menu item.";
-$string['smartmenu:byrole_help'] = "Select whether to show or hide the menu item based on the user's role.";
-$string['smartmenu:rolecontext_help'] = "Select the context for which the user's role should be checked (e.g. any or system context).";
-$string['smartmenu:bycohort_help'] = "Select whether to show or hide the menu item based on the user's cohort.";
-$string['smartmenu:operator_help'] = "Select the operator for the cohort condition (e.g. \"Any\" or \"All\").";
-$string['smartmenu:bylanguage_help'] = "Select whether to show or hide the menu item based on the user's language.";
+$string['smartmenu:byrole_help'] = 'Restrict the visibility based on the user\'s roles.';
+$string['smartmenu:rolecontext_help'] = 'Select the context for which the user\'s role should be checked (Any context or system context only).';
+$string['smartmenu:bycohort_help'] = 'Restrict the visibility based on the user\'s cohorts.';
+$string['smartmenu:operator_help'] = 'Select the operator for the cohort condition (Any or All).';
+$string['smartmenu:bylanguage_help'] = 'Restrict the visibility based on the user\'s language';
 $string['smartmenu:order_help'] = 'Rearrange the position of item';
-$string['smartmenu:from_help'] = 'Select the date to display the menu items to users until the date reached';
-$string['smartmenu:durationuntil_help'] = 'Select the date to hide the menu items to users once the date reached';
+$string['smartmenu:from_help'] = 'Hide this menu / menu item before the given date is reached.';
+$string['smartmenu:durationuntil_help'] = 'Hide this menu / menu item after the given date is reached.';
 $string['smartmenu:category_help'] = 'Select a category to display its courses as menu items';
 $string['smartmenu:menumode'] = 'Menu mode';
-$string['smartmenu:menumode_help'] = "Select the mode for where the menu should be visible.
-<ul><li>
-Inline: items in the menu will be displayed as a menu directly in the naivgation. This option did not support for card type menus.
-</li>
-<li> Submenu: This is default option, items will be display as submenu of this menu. </li></ul>";
+$string['smartmenu:menumode_help'] = '<p>Select the mode how the menu\'s items should be displayed.</p><ul><li>Submenu: The menu items will be displayed as a submenu with the menu\'s title as parent node. This is default option.</li><li>Inline: The menu items will be displayed directly in the navigation, one after another. Please note that this option is not supported for card type menus.</li></ul>';
 
 $string['smartmenu:shortname'] = 'Short name';
 $string['smartmenu:fullname'] = 'Full name';

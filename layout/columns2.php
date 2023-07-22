@@ -20,7 +20,6 @@
  * This layoutfile is based on theme/boost/layout/columns2.php
  *
  * Modifications compared to this layout file:
- * * Render theme_boost_union/columns2 instead of theme_boost/columns2 template
  * * Include activity navigation
  * * Include course related hints
  * * Include back to top button
@@ -29,7 +28,7 @@
  * * Include static pages
  * * Include Jvascript disabled hint
  * * Include info banners
- * * Load the theme_boost_union/output/navigation/primary instead of core primary navigation.
+ * * Include smart menus
  *
  * @package   theme_boost_union
  * @copyright 2022 Luca Bösch, BFH Bern University of Applied Sciences luca.boesch@bfh.ch
@@ -97,9 +96,7 @@ $templatecontext = [
     'hasregionmainsettingsmenu' => !empty($regionmainsettingsmenu),
     'headercontent' => $headercontent,
     'overflow' => $overflow,
-    'addblockbutton' => $addblockbutton,
-    'menubar' => $primarymenu['menubar'] ?? [],
-    'bottombar' => $primarymenu['bottombar'] ?? []
+    'addblockbutton' => $addblockbutton
 ];
 
 // Include the template content for the course related hints.
@@ -126,5 +123,8 @@ require_once(__DIR__ . '/includes/infobanners.php');
 // Include the template content for the navbar styling.
 require_once(__DIR__ . '/includes/navbar.php');
 
-// Render columns2.mustache from boost_union.
-echo $OUTPUT->render_from_template('theme_boost_union/columns2', $templatecontext);
+// Include the template content for the smart menus.
+require_once(__DIR__ . '/includes/smartmenus.php');
+
+// Render columns2.mustache from theme_boost (which is overridden in theme_boost_union).
+echo $OUTPUT->render_from_template('theme_boost/columns2', $templatecontext);

@@ -136,12 +136,12 @@ function xmldb_theme_boost_union_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2022080922, 'theme', 'boost_union');
     }
 
-    // Create smartmenu menus and menuitems table.
-    if ($oldversion < 2023010512) {
+    if ($oldversion < 2023010516) {
 
-        // Create the table for smart menus.
+        // Define table theme_boost_union_menus to be created.
         $table = new xmldb_table('theme_boost_union_menus');
-        // Field definitions for the table theme_boost_union_menus.
+
+        // Adding fields to table theme_boost_union_menus.
         $table->add_field('id', XMLDB_TYPE_INTEGER, '18', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE);
         $table->add_field('title', XMLDB_TYPE_CHAR, '255', null, null);
         $table->add_field('description', XMLDB_TYPE_TEXT, null, null, null, null, null, 'title');
@@ -165,16 +165,18 @@ function xmldb_theme_boost_union_upgrade($oldversion) {
         $table->add_field('end_date', XMLDB_TYPE_INTEGER, '18', null, null, null, null, 'start_date');
         $table->add_field('visible', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '1', 'end_date');
 
+        // Adding keys to table theme_boost_union_menus.
         $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
 
-        // Create the table if not already created.
+        // Conditionally launch create table for theme_boost_union_menus.
         if (!$dbman->table_exists($table)) {
             $dbman->create_table($table);
         }
 
-        // Create the table for smart menus items.
+        // Define table theme_boost_union_menuitems to be created.
         $table = new xmldb_table('theme_boost_union_menuitems');
-        // Field definitions for the table theme_boost_union_smartmenu_items.
+
+        // Adding fields to table theme_boost_union_menuitems.
         $table->add_field('id', XMLDB_TYPE_INTEGER, '18', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE);
         $table->add_field('title', XMLDB_TYPE_CHAR, '255', null, null);
         $table->add_field('menu', XMLDB_TYPE_INTEGER, '18', XMLDB_UNSIGNED, null, null, null, 'title');
@@ -186,6 +188,8 @@ function xmldb_theme_boost_union_upgrade($oldversion) {
         $table->add_field('completionstatus', XMLDB_TYPE_CHAR, '20', null, null, null, null, 'sortorder');
         $table->add_field('daterange', XMLDB_TYPE_CHAR, '20', null, null, null, null, 'sortorder');
         $table->add_field('customfields', XMLDB_TYPE_TEXT, null, null, null, null, null, 'daterange');
+        $table->add_field('displayfield', XMLDB_TYPE_INTEGER, 2, null, null, null, null, 'type');
+        $table->add_field('textcount', XMLDB_TYPE_INTEGER, 9, null, null, null, null, 'displayfield');
         $table->add_field('mode', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, null, null, null, 'customfields');
         $table->add_field('menuicon', XMLDB_TYPE_CHAR, '50', null, null, null, null, 'mode');
         $table->add_field('display', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, null, null, null, 'menuicon');
@@ -208,49 +212,16 @@ function xmldb_theme_boost_union_upgrade($oldversion) {
         $table->add_field('visible', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '1', 'end_date');
         $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '18', null, null, null, null, 'visible');
 
+        // Adding keys to table theme_boost_union_menuitems.
         $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
 
-        // Create the table if not already created.
+        // Conditionally launch create table for theme_boost_union_menuitems.
         if (!$dbman->table_exists($table)) {
             $dbman->create_table($table);
         }
-        // Update the boost_union theme savepoint.
-        upgrade_plugin_savepoint(true, 2023010512, 'theme', 'boost_union');
-    }
 
-    if ($oldversion < 2023010523) {
-
-        // Add a new column 'mode' to the theme_boost_union_menus table.
-        $table = new xmldb_table('theme_boost_union_menus');
-
-        // Define field mode to be added to theme_boost_union_menus.
-        $field = new xmldb_field('mode', XMLDB_TYPE_INTEGER, 2, null, null, null, "1", 'type');
-
-        // Conditionally launch add field mode.
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-        upgrade_plugin_savepoint(true, 2023010523, 'theme', 'boost_union');
-    }
-
-    if ($oldversion < 2023010527) {
-
-        // Add a new column 'mode' to the theme_boost_union_menus table.
-        $table = new xmldb_table('theme_boost_union_menuitems');
-
-        // Define field mode to be added to theme_boost_union_menus.
-        $field = new xmldb_field('displayfield', XMLDB_TYPE_INTEGER, 2, null, null, null, null, 'type');
-        // Conditionally launch add field mode.
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        $field = new xmldb_field('textcount', XMLDB_TYPE_INTEGER, 9, null, null, null, null, 'displayfield');
-        // Conditionally launch add field mode.
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-        upgrade_plugin_savepoint(true, 2023010527, 'theme', 'boost_union');
+        // Boost_union savepoint reached.
+        upgrade_plugin_savepoint(true, 2023010516, 'theme', 'boost_union');
     }
 
     return true;

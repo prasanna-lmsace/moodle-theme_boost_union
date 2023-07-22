@@ -6,6 +6,23 @@ Changes
 
 ### Unreleased
 
+* 2023-07-11 - Improvement: Place mustache templates which are overridden from theme_boost into subfolder, solves #337.
+* 2023-07-10 - Bugfix: Omit warning when no CSS cached folder present, solves #330.
+* 2023-07-10 - Bugfix: Overwriting module purposes did not affect all places where the activity icon is displayed, solves #318.
+* 2023-07-07 - Bugfix: Changing module purpose to "other" made icon background white instead of grey, solves #333.
+* 2023-07-07 - Bugfix: Changing module purpose to "other" made icon invisible, solves #319.
+* 2023-06-26 - Bugfix: If the settings blockregionoutsiderightwidth or blockregionoutsiderightwidth were not set for any reason, the SCSS was not compiled, solves #325.
+
+### v4.1-r8
+
+* 2023-06-18 - Improvement: Split "Branding" tab into "Site branding" and "Activity branding", solves #315.
+* 2023-06-17 - Bugfix: Hide nodes in primary navigation had no effect on site administration menu item, solves #312.
+* 2023-06-14 - Feature: Add admin option to configure block size in footer, solves first part of #253.
+* 2023-06-03 - Bugfix: Help fixing PHPUnit runs with Boost Union, solves #305.
+* 2023-06-14 - Bugfix: Fix footer and footnote placement, solves #269.
+* 2023-06-13 - Feature: Add admin option to mark external links, solves #307.
+* 2023-06-13 - Feature: Allow the admin to overwrite the modules purpose, solves #288.
+* 2023-05-17 - Improvement: Improve SCSS for dark navbar and primary color navbar, solves #273.
 * 2023-05-11 - Feature: Allow the admin to upload custom icons for activities and resources, solves #175.
 
 ### v4.1-r7

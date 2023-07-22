@@ -18,7 +18,7 @@
  * Table to list the items for menu. Display the items access rules and it type.
  *
  * @package    theme_boost_union
- * @copyright  bdecent GmbH 2023
+ * @copyright  2023 bdecent GmbH <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -263,6 +263,9 @@ class menuitems extends \table_sql {
         global $OUTPUT;
 
         // Show notification as html element.
-        echo $OUTPUT->heading(get_string('itemsnothingtodisplay', 'theme_boost_union'));
+        $notification = new \core\output\notification(
+                get_string('itemsnothingtodisplay', 'theme_boost_union'), \core\output\notification::NOTIFY_INFO);
+        $notification->set_show_closebutton(false);
+        echo $OUTPUT->render($notification);
     }
 }

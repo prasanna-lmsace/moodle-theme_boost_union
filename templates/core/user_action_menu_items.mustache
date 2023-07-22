@@ -57,6 +57,13 @@
         ]
     }
 }}
+{{!
+    This template is a modified version of core/user_menu
+
+    Modifications compared to the original template:
+    * Add menu classes to items
+    * Add icons to items
+}}
 {{#items}}
     {{#link}}
         <a href="{{{url}}}" class="dropdown-item {{#menuclasses}} {{.}} {{/menuclasses}}" role="menuitem" tabindex="-1" data-toggle="tooltip" title="{{tooltip}}" {{#attributes}}{{#name}}{{name}}="{{value}}"{{/name}} {{/attributes}}>

@@ -18,7 +18,7 @@
  * Item controller for managing menu items. Build the item as node to attach as submenu.
  *
  * @package    theme_boost_union
- * @copyright  bdecent GmbH 2023
+ * @copyright  2023 bdecent GmbH <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -42,7 +42,7 @@ require_once($CFG->dirroot.'/theme/boost_union/smartmenus/menulib.php');
  * updating existing items, deleting items, and sorting the order of items.
  *
  * @package    theme_boost_union
- * @copyright  bdecent GmbH 2023
+ * @copyright  2023 bdecent GmbH <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class smartmenu_item {
@@ -168,14 +168,14 @@ class smartmenu_item {
     const BACKGROUND_OPACITY = 5;
 
     /**
-     * Display the course shortname in menu for dynamic menu item.
+     * Display the course shortname as title in menu for dynamic menu item.
      *
      * @var int
      */
     const FIELD_SHORTNAME = 1;
 
     /**
-     * Display the course fullname in menu for dynamic menu item.
+     * Display the course fullname as title in menu for dynamic menu item.
      * @var int
      */
     const FIELD_FULLNAME = 0;
@@ -219,29 +219,40 @@ class smartmenu_item {
     /**
      * Create a new instance of this class.
      *
-     * @param int $id The ID of the item to retrieve.
+     * @param int|stdclass $item The ID of the item or record data of item.
+     * @param stdclass|null $menu Data of the menu the item belongs to.
      * @return smartmenu_item A new instance of this class.
      */
-    public static function instance($id) {
-        return new self($id);
+    public static function instance($item, $menu=null) {
+        return new self($item, $menu);
     }
 
     /**
      * Menu item constructor, Retrive the item data, Create smartmenu_helper for this item,
      * Creates the cache instance for item and its menu.
      *
-     * @param int $id Record id of the menu.
+     * @param int|stdclass $item Record id of the menu.
+     * @param stdclass|null $menu Menu data belongs to this item, Not passed then it fetch the menus data.
      */
-    public function __construct(int $id) {
+    public function __construct($item, $menu=null) {
 
-        // Item id.
-        $this->id = $id;
+        if (is_scalar($item)) {
+            $item = $this->get_item($item);
+        }
 
-        // Item data.
-        $this->item = $this->get_item($id);
+        // Item ID.
+        $this->id = $item->id;
+
+        // Format the item values.
+        $this->item = $this->update_item_valuesformat($item);
+
+        // Verify the item data is object or array, otherwise throws an exeception.
+        if (!is_array($item) && !is_object($item)) {
+            throw new \moodle_exception('itemnotfound', 'theme_boost_union');
+        }
 
         // Menu data, the current item belongs to.
-        $this->menu = smartmenu::get_menu($this->item->menu);
+        $this->menu = $menu ?: smartmenu::get_menu($this->item->menu);
 
         // Smartmenu helper to verify the access rules.
         $this->helper = new smartmenu_helper($this->item);
@@ -249,7 +260,8 @@ class smartmenu_item {
         // Cache instance for the items.
         $this->cache = cache::make('theme_boost_union', 'smartmenu_items');
 
-        // Cache instance for the item`s menus.
+        // Menus cache instance.
+        // Purge the menu related to the item, when the item is updated, created and sorted.
         $this->menucache = cache::make('theme_boost_union', 'smartmenus');
     }
 
@@ -259,45 +271,27 @@ class smartmenu_item {
      * @return void
      */
     public function delete_cache() {
-        // Delete this item cached.
-        if ($this->cache->has($this->id)) {
-            $this->cache->delete($this->id);
-        }
+        // Remove cache of current item for all users.
+        $this->cache->delete_menu($this->item->id);
         // Delete the cached data of current items menu.
-        if ($this->menucache->has($this->item->menu)) {
-            $this->menucache->delete($this->item->menu);
-        }
+        $this->menucache->delete_menu($this->item->menu);
     }
 
     /**
      * Fetches a item record from the database by ID and returns it as an object with convert the json values to array.
      *
+     * @param int $itemid Id of the item.
      * @return \stdclass Menu record if found or false.
      * @throws \moodle_exception When menu is not found.
      */
-    public function get_item() {
+    public function get_item($itemid=null) {
         global $DB;
 
         // Verfiy and Fetch menu record from DB.
-        if ($record = $DB->get_record('theme_boost_union_menuitems', ['id' => $this->id])) {
+        if ($record = $DB->get_record('theme_boost_union_menuitems', ['id' => $itemid ?: $this->id ])) {
 
             // Decode the multiple option select elements values to array.
-            $record->category = json_decode($record->category) ?: [];
-            $record->enrolmentrole = json_decode($record->enrolmentrole) ?: [];
-            $record->completionstatus = json_decode($record->completionstatus) ?: [];
-            $record->daterange = json_decode($record->daterange) ?: [];
-
-            // Restrict access rules.
-            $record->roles = json_decode($record->roles) ?: [];
-            $record->cohorts = json_decode($record->cohorts) ?: [];
-            $record->languages = json_decode($record->languages) ?: [];
-
-            // Seperate the customfields.
-            $customfields = json_decode($record->customfields) ?: [];
-            foreach ($customfields as $field => $value) {
-                $record->{'customfield_'.$field} = $value;
-            }
-            return $record;
+            return $this->update_item_valuesformat($record);
 
         } else {
             // TODO: string for menu not found.
@@ -305,6 +299,37 @@ class smartmenu_item {
         }
 
         return false;
+    }
+
+    /**
+     * Updated the items values format, Some the values like category and other restriction options are stored as json.
+     * Convert the json values to array.
+     *
+     * @param stdclass $itemdata
+     * @return stdclass Items data in updated format.
+     */
+    public function update_item_valuesformat($itemdata) {
+        // Verify the format is already updated.
+        if (!is_scalar($itemdata->category)) {
+            return $itemdata;
+        }
+        $itemdata->category = json_decode($itemdata->category) ?: [];
+        $itemdata->enrolmentrole = json_decode($itemdata->enrolmentrole) ?: [];
+        $itemdata->completionstatus = json_decode($itemdata->completionstatus) ?: [];
+        $itemdata->daterange = json_decode($itemdata->daterange) ?: [];
+
+        // Restrict access rules.
+        $itemdata->roles = json_decode($itemdata->roles) ?: [];
+        $itemdata->cohorts = json_decode($itemdata->cohorts) ?: [];
+        $itemdata->languages = json_decode($itemdata->languages) ?: [];
+
+        // Seperate the customfields.
+        $customfields = json_decode($itemdata->customfields) ?: [];
+        foreach ($customfields as $field => $value) {
+            $itemdata->{'customfield_'.$field} = $value;
+        }
+
+        return $itemdata;
     }
 
     /**
@@ -366,11 +391,8 @@ class smartmenu_item {
             if (($currentposition - $previtem->sortorder) > 1) {
                 $this->reorder_items();
             }
-            // Delete the cache and menu cache.
+            // Delete the menu cache, recreate the menu with updated items order.
             $this->delete_cache();
-
-            // Purge the menu items cache.
-            \cache_helper::purge_by_event('theme_boost_union_menuitems_sorted');
 
             return true;
         }
@@ -414,7 +436,7 @@ class smartmenu_item {
             $this->reorder_items();
         }
 
-        // Delete the cache and menu cache.
+        // Delete the menu cache, recreate the menu with updated items order.
         $this->delete_cache();
 
         // Purge the menu items cache.
@@ -535,7 +557,7 @@ class smartmenu_item {
     public function get_course_image($course) {
 
         $courseimage = course_summary_exporter::get_course_image($course);
-        if (!$courseimage) {
+        if (!$courseimage && $this->menu->type == smartmenu::TYPE_CARD) {
             // Course image not available, then check current parent item image,
             // If found then use the image otherwise generate the Custom image.
             $courseimage = $this->get_itemimage($this->item->id);
@@ -636,10 +658,10 @@ class smartmenu_item {
             $rkey = 'item-'.$this->item->id.'-dynamic-'.$record->id;
             // Get the course image from overview files.
             $itemimage = $this->get_course_image($record);
-            // Generate the navigation node for this course and add the note to items list.
+            // Generate the navigation node for this course and add the node to items list.
             $coursename = ($this->item->displayfield == self::FIELD_SHORTNAME) ? $record->shortname : $record->fullname;
-            // Shorten the course text name.
-            $coursename = ($this->item->textcount) ? shorten_text($coursename, $this->item->textcount, true, '..') : $coursename;
+            // Short the course text name. used custom end (2) dots instead of three dots to display more words from coursenames.
+            $coursename = ($this->item->textcount) ? $this->shorten_words($coursename, $this->item->textcount) : $coursename;
 
             $items[] = $this->generate_node_data($coursename, $url, $rkey, null, 'link', false, [], $itemimage);
         }
@@ -658,9 +680,25 @@ class smartmenu_item {
             );
             return $submenu;
         }
-
         return $items;
     }
+
+    /**
+     * Given some text and an ideal length, this function truncates the text based on words count.
+     *
+     * @param string $text text to be shortened
+     * @param int $count Length of the words
+     * @return string $text shortened string
+     */
+    protected function shorten_words($text, $count) {
+        if (str_word_count($text, 0) > $count) {
+            $words = str_word_count($text, 2); // Find the position of last word.
+            $positions = array_keys($words);
+            $text = trim(substr($text, 0, $positions[$count])).'..';
+        }
+        return $text;
+    }
+
 
     /**
      * Adds category filter to the SQL query.
@@ -858,6 +896,8 @@ class smartmenu_item {
         $query->params += $params;
     }
 
+
+
     /**
      * Defines a build method that generates the HTML markup for a menu item.
      *
@@ -877,25 +917,14 @@ class smartmenu_item {
      * @return false|array Returns false if the menu is not visible or a item array otherwise.
      */
     public function build() {
+        global $USER;
 
-        // If the flag to purge the menuitems cache is set for this user.
-        if (get_user_preferences('theme_boost_union_menuitem_purgesessioncache', false) == true) {
-            // Purge the menuitems cache for this user.
-            \cache_helper::purge_by_definition('theme_boost_union', 'smartmenu_items');
-            // Clear the user preference for purge the menuitem cache.
-            \smartmenu_helper::clear_user_cachepreferenceitem();
-        }
+        smartmenu_helper::purge_cache_date_reached($this->cache, $this->item, 'itemlastcheckdate');
 
-        // Cache for menu.
-        $cache = cache::make('theme_boost_union', 'smartmenu_items');
-
-        // Purge the cached menus data if the menu date restrictions are reached or passed.
-        smartmenu_helper::purge_cache_date_reached($cache, $this->item, 'theme_boost_union_menuitemlastcheckdate');
-
-        // Get the node data for item from cache if it is stored.
-       /*  if ($result = $cache->get($this->item->id)) {
+        $cachekey = "{$this->item->id}_u_{$USER->id}";
+        if ($result = $this->cache->get($cachekey)) {
             return $result;
-        } */
+        }
 
         // Verify the restriction rules.
         if (empty($this->item) || !$this->helper->verify_access_restrictions()) {
@@ -944,9 +973,7 @@ class smartmenu_item {
         endswitch;
 
         // Save the items cache.
-        $cache->set($this->item->id, $result);
-        // Delete the cache of items menu, Recreate the menu.
-        $this->menucache->delete($this->item->menu);
+        $this->cache->set($cachekey, $result);
 
         return $result;
     }
@@ -1014,7 +1041,7 @@ class smartmenu_item {
             'title' => $titleorg,
             'tooltip' => $tooltip ? format_string($tooltip) : '',
             'haschildren' => $haschildren,
-            'itemimage' => $itemimage ?: $this->get_itemimage($this->item->id),
+            'itemimage' => $itemimage,
             'itemtype' => 'link',
             'link' => 1,
             'sort' => uniqid() // Support third level menu.
@@ -1200,8 +1227,10 @@ class smartmenu_item {
 
         $transaction = $DB->start_delegated_transaction();
 
-        // Cache for menu.
+        // Cache for menus.
         $menucache = cache::make('theme_boost_union', 'smartmenus');
+        // Cache for menu items.
+        $cache = cache::make('theme_boost_union', 'smartmenu_items');
 
         if (isset($formdata->id) && $oldrecord = $DB->get_record('theme_boost_union_menuitems', ['id' => $formdata->id])) {
             $itemid = $formdata->id;
@@ -1224,10 +1253,10 @@ class smartmenu_item {
                 ]);
             }
 
-            // Delete the item cached.
-            \cache_helper::purge_by_event('theme_boost_union_menuitems_edited');
-            // Delete the cached data of its menu.
-            \cache_helper::purge_by_event('theme_boost_union_menus_edited');
+            // Delete the cached data of its menu. Menu will recreate with this item.
+            $menucache->delete_menu($formdata->menu);
+            // Purge the current item cache for all users.
+            $cache->delete_menu($formdata->id);
 
             // Show the edited success notification.
             \core\notification::success(get_string('smartmenu:updatesuccess', 'theme_boost_union'));
@@ -1244,7 +1273,7 @@ class smartmenu_item {
             \core\notification::success(get_string('smartmenu:insertsuccess', 'theme_boost_union'));
 
             // Delete the cached data of its menu. Menu will recreate with this item.
-            $menucache->delete($formdata->menu);
+            $menucache->delete_menu($formdata->menu);
         }
 
         // Save the item image files to the file directory.

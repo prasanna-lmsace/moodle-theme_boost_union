@@ -21,7 +21,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define(["jquery", "core/moremenu"], function($, moremenu) {
+define(["jquery", "core/moremenu"], function($) {
     /**
      * Implement the second level of submenu support.
      * Find the submenus inside the dropdown add event listener for click event, on the click show the submenu list.
@@ -44,6 +44,42 @@ define(["jquery", "core/moremenu"], function($, moremenu) {
 
             });
         }
+
+        // Hide the submenus on hidden of its parent dropdown.
+        $(document).on('hidden.bs.dropdown', e => {
+            var target = e.relatedTarget.parentNode;
+            var submenus = target.querySelectorAll('.dropdown-submenu.show');
+            if (submenus !== null) {
+                submenus.forEach((e) => e.classList.remove('show'));
+            }
+        });
+
+        // Provide the thirdlevel menu support inside the more menu.
+        // StopPropagation used in the toggledropdown method on Moremenu.js, It prevents the opening of the thirdlevel menus.
+        // Used the document delegation method to find the click on moremenu and submenu.
+        document.addEventListener('click', (e) => {
+            var dropdown = e.target.closest('.dropdownmoremenu');
+            var subMenu = e.target.closest('.dropdown-submenu');
+            if (dropdown && subMenu !== null) {
+                // Hide the previously opend submenus. before open the new one.
+                dropdown.querySelectorAll('.dropdown-submenu.show').forEach((menu) => {
+                    menu.classList.remove('show');
+                });
+                subMenu.classList.toggle('show');
+            }
+
+            // Hide the opened menus before open the other menus.
+            var dropdownMenu = e.target.parentNode.classList.contains('dropdown');
+            if (dropdown && dropdownMenu) {
+                dropdown.querySelectorAll('.dropdown-menu.show').forEach((menu) => {
+                    // Hide the opened menus in more menu.
+                    if (menu != e.target.closest('.dropdown-menu')) {
+                        menu.classList.remove('show');
+                    }
+                });
+            }
+
+        }, true);
 
         // Prevent the closing of dropdown during the click on help icon.
         var helpIcon = document.querySelectorAll('.moremenu .dropdown .menu-helpicon');
@@ -166,7 +202,7 @@ define(["jquery", "core/moremenu"], function($, moremenu) {
         var newPosition = navLength - length || 0;
         // Insert the stored menus before the more menu.
         menuslist.forEach((menu) => navMenu.insertBefore(menu, navMenu.children[newPosition]));
-        moremenu(navMenu);
+        window.dispatchEvent(new Event('resize')); // Dispatch the resize event to create more menu.
     };
 
     return {

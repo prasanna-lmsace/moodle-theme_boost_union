@@ -34,7 +34,7 @@ define('THEME_BOOST_UNION_SETTING_STATICPAGELINKPOSITION_BOTH', 'both');
 define('THEME_BOOST_UNION_SETTING_HIDENODESPRIMARYNAVIGATION_HOME', 'home');
 define('THEME_BOOST_UNION_SETTING_HIDENODESPRIMARYNAVIGATION_MYHOME', 'myhome');
 define('THEME_BOOST_UNION_SETTING_HIDENODESPRIMARYNAVIGATION_MYCOURSES', 'courses');
-define('THEME_BOOST_UNION_SETTING_HIDENODESPRIMARYNAVIGATION_SITEADMIN', 'siteadmin');
+define('THEME_BOOST_UNION_SETTING_HIDENODESPRIMARYNAVIGATION_SITEADMIN', 'siteadminnode');
 
 define('THEME_BOOST_UNION_SETTING_INFOBANNER_COUNT', 5);
 define('THEME_BOOST_UNION_SETTING_INFOBANNERPAGES_MY', 'mydashboard');
@@ -200,14 +200,23 @@ function theme_boost_union_get_pre_scss($theme) {
         $scss .= $activityiconscss."\n";
     }
 
-    // Set custom Boost Union SCSS variables.
-    if (get_config('theme_boost_union', 'blockregionoutsideleftwidth')) {
-        $scss .= '$blockregionoutsideleftwidth: '.get_config('theme_boost_union', 'blockregionoutsideleftwidth').";\n";
+    // Set custom Boost Union SCSS variable: The block region outside left width.
+    $blockregionoutsideleftwidth = get_config('theme_boost_union', 'blockregionoutsideleftwidth');
+    // If the setting is not set.
+    if (!$blockregionoutsideleftwidth) {
+        // Set the variable to the default setting to make sure that the SCSS variable does not remain uninitialized.
+        $blockregionoutsideleftwidth = '300px';
     }
-    if (get_config('theme_boost_union', 'blockregionoutsiderightwidth')) {
-        $scss .= '$blockregionoutsiderightwidth: '.get_config('theme_boost_union', 'blockregionoutsiderightwidth').
-                ";\n";
+    $scss .= '$blockregionoutsideleftwidth: '.$blockregionoutsideleftwidth.";\n";
+
+    // Set custom Boost Union SCSS variable: The block region outside left width.
+    $blockregionoutsiderightwidth = get_config('theme_boost_union', 'blockregionoutsiderightwidth');
+    // If the setting is not set.
+    if (!$blockregionoutsiderightwidth) {
+        // Set the variable to the default setting to make sure that the SCSS variable does not remain uninitialized.
+        $blockregionoutsiderightwidth = '300px';
     }
+    $scss .= '$blockregionoutsiderightwidth: '.$blockregionoutsiderightwidth.";\n";
 
     // Prepend pre-scss.
     if (get_config('theme_boost_union', 'scsspre')) {
@@ -224,6 +233,11 @@ function theme_boost_union_get_pre_scss($theme) {
  * @return string
  */
 function theme_boost_union_get_extra_scss($theme) {
+    global $CFG;
+
+    // Require the necessary libraries.
+    require_once($CFG->dirroot . '/course/lib.php');
+
     // Initialize extra SCSS.
     $content = '';
 
@@ -279,6 +293,55 @@ function theme_boost_union_get_extra_scss($theme) {
     // In contrast to the other flavour assets like the favicon overriding, this isn't done here in place as this function
     // is composing Moodle core CSS which has to remain flavour-independent.
     // Instead, the flavour is overriding the background image later in flavours/styles.php.
+
+    // For the rest of this function, we add SCSS snippets to the SCSS stack based on enabled admin settings.
+    // This is done here as it is quite easy to do. As an alternative, it could also been done in post.css by using
+    // SCSS variables with @if conditions and SCSS variables. However, we preferred to do it here in a single place.
+
+    // Setting: Activity icon purpose.
+
+    // Get installed activity modules.
+    $installedactivities = get_module_types_names();
+    // Iterate over all existing activities.
+    foreach ($installedactivities as $modname => $modinfo) {
+        // Get default purpose of activity module.
+        $defaultpurpose = plugin_supports('mod', $modname, FEATURE_MOD_PURPOSE, MOD_PURPOSE_OTHER);
+        // If the plugin does not have any default purpose.
+        if (!$defaultpurpose) {
+            // Fallback to "other" purpose.
+            $defaultpurpose = MOD_PURPOSE_OTHER;
+        }
+        // If the activity purpose setting is set and differs from the activity's default purpose.
+        $configname = 'activitypurpose'.$modname;
+        if (isset($theme->settings->{$configname}) && $theme->settings->{$configname} != $defaultpurpose) {
+            // Add CSS to modify the activity purpose color in the activity chooser and the activity icon.
+            $content .= '.activity.modtype_'.$modname.' .activityiconcontainer.courseicon,';
+            $content .= '.modchoosercontainer .modicon_'.$modname.'.activityiconcontainer,';
+            $content .= '#page-header .modicon_'.$modname.'.activityiconcontainer,';
+            $content .= '.block_recentlyaccesseditems .theme-boost-union-'.$modname.'.activityiconcontainer,';
+            $content .= '.block_timeline .theme-boost-union-mod_'.$modname.'.activityiconcontainer {';
+            // If the purpose is now different than 'other', change the background color to the new color.
+            if ($theme->settings->{$configname} != MOD_PURPOSE_OTHER) {
+                $content .= 'background-color: var(--activity' . $theme->settings->{$configname} . ') !important;';
+
+                // Otherwise, the background color is set to light grey (as there is no '--activityother' variable).
+            } else {
+                $content .= 'background-color: $light !important;';
+            }
+            // If the default purpose originally was 'other' and now is overridden, make the icon white.
+            if ($defaultpurpose == MOD_PURPOSE_OTHER) {
+                $content .= '.activityicon, .icon { filter: brightness(0) invert(1); }';
+            }
+            // If the default purpose was not 'other' and now it is, make the icon black.
+            if ($theme->settings->{$configname} == MOD_PURPOSE_OTHER) {
+                $content .= '.activityicon, .icon { filter: none; }';
+            }
+            $content .= '}';
+        }
+    }
+
+    // Setting: Mark external links.
+    $content .= theme_boost_union_get_scss_to_mark_external_links($theme);
 
     return $content;
 }
@@ -418,14 +481,18 @@ function theme_boost_union_pluginfile($course, $cm, $context, $filearea, $args, 
         // Send stored file (and cache it for 90 days, similar to other static assets within Moodle).
         send_stored_file($file, DAYSECS * 90, 0, $forcedownload, $options);
 
+        // Serve the files from the smart menu card images.
     } else if ($filearea === 'smartmenus_itemimage' && $context->contextlevel === CONTEXT_SYSTEM) {
-        // Serve smart menu card image for items.
+        // Get file storage.
         $fs = get_file_storage();
 
+        // Get the file from the filestorage.
         $file = $fs->get_file($context->id, 'theme_boost_union', $filearea, $args[0], '/', $args[1]);
         if (!$file) {
             send_file_not_found();
         }
+
+        // Send stored file (and cache it for 90 days, similar to other static assets within Moodle).
         send_stored_file($file, DAYSECS * 90, 0, $forcedownload, $options);
 
     } else {
@@ -474,16 +541,34 @@ function theme_boost_union_before_standard_html_head() {
 function theme_boost_union_output_fragment_icons_list($args) {
     global $OUTPUT, $PAGE;
 
+    // Proceed only if a context was given as argument.
     if ($args['context']) {
-        $data = [];
+        // Initialize rendered icon list.
+        $icons = [];
+
+        // Load the theme config.
         $theme = \theme_config::load($PAGE->theme->name);
+
+        // Get the FA system.
         $faiconsystem = \core\output\icon_system_fontawesome::instance($theme->get_icon_system());
+
+        // Get the icon list.
         $iconlist = $faiconsystem->get_core_icon_map();
+
+        // Add an empty element to the beginning of the icon list.
         array_unshift($iconlist, '');
+
+        // Iterate over the icons.
         foreach ($iconlist as $iconkey => $icontxt) {
+            // Split the component from the icon key.
             $icon = explode(':', $iconkey);
+
+            // Pick the icon key.
             $iconstr = isset($icon[1]) ? $icon[1] : 'moodle';
+
+            // Pick the component.
             $component = isset($icon[0]) ? $icon[0] : '';
+
             // Render the pix icon.
             $icon = new \pix_icon($iconstr,  "", $component);
             $icons[] = [
@@ -492,6 +577,8 @@ function theme_boost_union_output_fragment_icons_list($args) {
                 'label' => $icontxt
             ];
         }
+
+        // Return the rendered icon list.
         return $OUTPUT->render_from_template('theme_boost_union/fontawesome_list', ['options' => $icons]);
     }
 }

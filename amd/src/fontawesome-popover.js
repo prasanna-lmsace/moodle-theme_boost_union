@@ -17,7 +17,7 @@
  * Shows the footer content in a popover. Modified version of theme_boost\footer-popover by Bas Brands
  *
  * @module     theme_boost_union/fontawesome-popover
- * @copyright  bdecent GmbH 2023
+ * @copyright  2023 bdecent GmbH <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

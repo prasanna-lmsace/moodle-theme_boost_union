@@ -786,8 +786,8 @@ function theme_boost_union_get_webfonts_extensions() {
 function theme_boost_union_register_webfonts_filetypes() {
     global $CFG;
 
-    // If customfiletypes are set in config.php, we can't do anything.
-    if (array_key_exists('customfiletypes', $CFG->config_php_settings)) {
+    // If customfiletypes are set in config.php or PHP tests are running, we can't do anything.
+    if (array_key_exists('customfiletypes', $CFG->config_php_settings) || PHPUNIT_TEST) {
         return false;
     }
 
@@ -1199,15 +1199,18 @@ function theme_boost_union_add_fontawesome_to_page() {
         // Get the cached data for the CSS folder (we do not need to add files from any other folders in the cache).
         $cachedfolder = $cache->get('css');
 
-        // Iterate over the files in the cached folder structure.
-        foreach ($cachedfolder as $cachedfile) {
+        // If we have found any folder in the cache.
+        if ($cachedfolder !== false) {
+            // Iterate over the files in the cached folder structure.
+            foreach ($cachedfolder as $cachedfile) {
 
-            // Build the FontAwesome CSS file URL.
-            $facssurl = new moodle_url('/pluginfile.php/1/theme_boost_union/fontawesome/' .
-                    theme_get_revision().'/css/'.$cachedfile);
+                // Build the FontAwesome CSS file URL.
+                $facssurl = new moodle_url('/pluginfile.php/1/theme_boost_union/fontawesome/' .
+                        theme_get_revision().'/css/'.$cachedfile);
 
-            // Add the CSS file to the page.
-            $PAGE->requires->css($facssurl);
+                // Add the CSS file to the page.
+                $PAGE->requires->css($facssurl);
+            }
         }
     }
 }
@@ -1599,4 +1602,42 @@ function theme_boost_union_get_modicon_templatecontext () {
     }
 
     return $templatedata;
+}
+
+/**
+ * Adds an external link icon after external links to mark them visually.
+ *
+ * @param theme_config $theme The theme config object.
+ * @return string
+ */
+function theme_boost_union_get_scss_to_mark_external_links($theme) {
+    global $CFG;
+
+    // Initialize SCSS snippet.
+    $scss = '';
+
+    // If the corresponding setting is set to 'yes'.
+    if ($theme->settings->markexternallinks == THEME_BOOST_UNION_SETTING_SELECT_YES) {
+
+        // SCSS to add external link icon after the link and respect LTR and RTL while doing this.
+        $scss = 'body.dir-ltr a:not([href^="' . $CFG->wwwroot . '"])[href^="http://"]::after,
+            body.dir-ltr a:not([href^="' . $CFG->wwwroot . '"])[href^="https://"]::after {
+            font-family: "FontAwesome";
+            content: "\f08e" !important;
+            padding-left: 0.25rem;
+        }';
+        $scss .= 'body.dir-rtl a:not([href^="' . $CFG->wwwroot . '"])[href^="http://"]::before,
+            body.dir-rtl a:not([href^="' . $CFG->wwwroot . '"])[href^="https://"]::before {
+            font-family: "FontAwesome";
+            content: "\f08e" !important;
+            padding-right: 0.25rem;
+        }';
+
+        // Moodle adds a hardcoded external-link icon to the "services and support" link in the questionmark menu.
+        // This becomes obsolete now. We remove it with the sledgehammer.
+        $scss .= '.footer-support-link a[href^="https://moodle.com/help/"] .fa-external-link {
+            display: none;
+        }';
+    }
+    return $scss;
 }
