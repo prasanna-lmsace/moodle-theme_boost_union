@@ -1030,6 +1030,11 @@ class smartmenu_item {
             }
         }
 
+        // Generate dynamic image for empty image cards.
+        if (empty($itemimage) && $this->menu->type == smartmenu::TYPE_CARD) {
+            $itemimage = $this->get_itemimage($this->item->id);
+        }
+
         $data = [
             'itemdata' => $this->item,
             'menuclasses' => $this->item->classes, // If menu is inline, need to add the item custom class in dropdown.
