@@ -59,7 +59,7 @@ if ($action !== null && confirm_sesskey()) {
             // Delete the menu.
             if ($menu->delete_menu()) {
                 // Notification to user for menu deleted success.
-                \core\notification::success(get_string('smartmenu:menudeleted', 'theme_boost_union'));
+                \core\notification::success(get_string('smartmenusmenudeleted', 'theme_boost_union'));
             }
             break;
         // Move the menu order to down.

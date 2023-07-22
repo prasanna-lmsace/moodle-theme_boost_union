@@ -113,7 +113,7 @@ if ($id !== null && $id > 0) {
         $menuform->set_data($record);
     } else {
         // Direct the user to list page with error message, when the requested menu is not available.
-        \core\notification::error(get_string('smartmenu:recordmissing', 'theme_boost_union'));
+        \core\notification::error(get_string('smartmenusrecordmissing', 'theme_boost_union'));
         redirect($overviewurl);
     }
 }

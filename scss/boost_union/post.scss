@@ -1424,6 +1424,9 @@ body.pagelayout-login:not(.loginbackgroundimage) #footnote {
                                 height: 100%;
                                 object-fit: cover;
                             }
+                            > a {
+                                padding: 0;
+                            }
                         }
                         /* The card dropdown items content block width, padding, background color
                         and aligned center styles added */

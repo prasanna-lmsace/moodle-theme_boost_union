@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * File contains definition of class MoodleQuickForm_boostunioncolorpicker
+ * Theme Boost Union Login - Form element for color picker
  *
  * @package    theme_boost_union
  * @copyright  2023 bdecent GmbH <https://bdecent.de>
@@ -24,18 +24,18 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once("HTML/QuickForm/input.php");
-require_once($CFG->dirroot.'\lib\form\templatable_form_element.php');
-require_once($CFG->dirroot.'\lib\form\text.php');
+require_once('HTML/QuickForm/input.php');
+require_once($CFG->dirroot.'/lib/form/templatable_form_element.php');
+require_once($CFG->dirroot.'/lib/form/text.php');
 
 /**
- * Form element for handling colorpicker
+ * Form element for color picker
  *
  * @package   theme_boost_union
  * @copyright bdecent GmbH 2021
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class moodlequickform_boostunioncolorpicker extends MoodleQuickForm_text implements templatable {
+class moodlequickform_themeboostunion_colorpicker extends MoodleQuickForm_text implements templatable {
 
     use templatable_form_element {
         export_for_template as export_for_template_base;
@@ -68,12 +68,13 @@ class moodlequickform_boostunioncolorpicker extends MoodleQuickForm_text impleme
      */
     public function export_for_template(renderer_base $output) {
         global $PAGE;
-
+        // Compose template context for Mform element.
         $context = $this->export_for_template_base($output);
-        $PAGE->requires->js_init_call('M.util.init_colour_picker', array($this->getAttribute('id'), ''));
-
+        // Build loading icon.
         $icon = new pix_icon('i/loading', get_string('loading', 'admin'), 'moodle', ['class' => 'loadingicon']);
         $context['icon'] = $icon->export_for_template($output);
+        // Add JS init call to page.
+        $PAGE->requires->js_init_call('M.util.init_colour_picker', array($this->getAttribute('id'), ''));
 
         return $context;
     }

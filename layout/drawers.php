@@ -127,13 +127,10 @@ if ($PAGE->has_secondary_navigation()) {
 
 // Load the navigation from boost_union primary navigation, the extended version of core primary navigation.
 // It includes the smart menus and menu items, for multiple locations.
-global $DB;
-// $DB->set_debug(true);
 $primary = new theme_boost_union\output\navigation\primary($PAGE);
 $renderer = $PAGE->get_renderer('core');
 $primarymenu = $primary->export_for_template($renderer);
 $buildregionmainsettings = !$PAGE->include_region_main_settings_in_header_actions() && !$PAGE->has_secondary_navigation();
-// $DB->set_debug(false);
 // If the settings menu will be included in the header then don't add it here.
 $regionmainsettingsmenu = $buildregionmainsettings ? $OUTPUT->region_main_settings_menu() : false;
 

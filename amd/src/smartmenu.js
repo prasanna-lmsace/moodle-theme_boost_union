@@ -14,17 +14,17 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Theme Boost Union - JS for smartmenu to make the third level submenu support.
+ * Theme Boost Union - JS for smart menu to realize the third level submenu support.
  *
  * @module     theme_boost_union/smartmenu
- * @copyright  bdecent GmbH 2023
+ * @copyright  2023 bdecent GmbH <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 define(["jquery", "core/moremenu"], function($) {
     /**
      * Implement the second level of submenu support.
-     * Find the submenus inside the dropdown add event listener for click event, on the click show the submenu list.
+     * Find the submenus inside the dropdown, add an event listener for click event which - on the click - shows the submenu list.
      */
     const addSubmenu = () => {
         // Fetch the list of submenus from moremenu.
@@ -37,15 +37,13 @@ define(["jquery", "core/moremenu"], function($) {
                     // Hide the shown menu.
                     hideSubmenus(target);
                     target.classList.toggle('show');
-                    // Prevent the hide of parent menu.
+                    // Prevent hiding the parent menu.
                     e.stopPropagation();
                 });
-
-
             });
         }
 
-        // Hide the submenus on hidden of its parent dropdown.
+        // Hide the submenus when its parent dropdown is hidden.
         $(document).on('hidden.bs.dropdown', e => {
             var target = e.relatedTarget.parentNode;
             var submenus = target.querySelectorAll('.dropdown-submenu.show');
@@ -54,9 +52,9 @@ define(["jquery", "core/moremenu"], function($) {
             }
         });
 
-        // Provide the thirdlevel menu support inside the more menu.
-        // StopPropagation used in the toggledropdown method on Moremenu.js, It prevents the opening of the thirdlevel menus.
-        // Used the document delegation method to find the click on moremenu and submenu.
+        // Provide the third level menu support inside the more menu.
+        // StopPropagation used in the toggledropdown method on Moremenu.js, It prevents the opening of the third level menus.
+        // Used the document delegation method to fetch the click on moremenu and submenu.
         document.addEventListener('click', (e) => {
             var dropdown = e.target.closest('.dropdownmoremenu');
             var subMenu = e.target.closest('.dropdown-submenu');
@@ -153,7 +151,7 @@ define(["jquery", "core/moremenu"], function($) {
                 scrollElement.addEventListener('mouseup', () => {
                     scrollStart = false;
                 });
-        });
+            });
         }
     };
 
@@ -169,10 +167,10 @@ define(["jquery", "core/moremenu"], function($) {
     };
 
     /**
-     * Move the items from moremenu, items which is set to force outside moremenu.
+     * Move the items from more menu, items which is set to force outside more menu.
      * Remove those items from more menu and insert the menu before the last normal item.
-     * Find the length and childrens length to insert the out menus in that positions.
-     * Rerun the moremenu it will more the other normal menus into more menu to fix the alignmenu issue.
+     * Find the length and children's length to insert the out menus in that positions.
+     * Rerun the more menu it will more the other normal menus into more menu to fix the alignmenu issue.
      *
      * @param {HTMLElement} navMenu The navbar container.
      */
@@ -196,7 +194,7 @@ define(["jquery", "core/moremenu"], function($) {
             menuslist.push(menu);
             menu.parentNode.removeChild(menu);
         });
-        // Find the length and childrens length to insert the out menus in that positions.
+        // Find the length and children's length to insert the out menus in that positions.
         var length = menuslist.length;
         var navLength = navMenu.children.length - 1; // Remove more menu.
         var newPosition = navLength - length || 0;
@@ -212,5 +210,4 @@ define(["jquery", "core/moremenu"], function($) {
             autoCollapse();
         }
     };
-
 });

@@ -579,6 +579,6 @@ function theme_boost_union_output_fragment_icons_list($args) {
         }
 
         // Return the rendered icon list.
-        return $OUTPUT->render_from_template('theme_boost_union/fontawesome_list', ['options' => $icons]);
+        return $OUTPUT->render_from_template('theme_boost_union/fontawesome-iconpicker-popover', ['options' => $icons]);
     }
 }
