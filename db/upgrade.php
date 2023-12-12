@@ -95,10 +95,10 @@ function xmldb_theme_boost_union_upgrade($oldversion) {
                     $file = reset($files);
 
                     // Create the filerecord with the modified information.
-                    $filerecord = array(
+                    $filerecord = [
                             'component' => 'theme_boost_union',
                             'filearea' => $setting,
-                    );
+                    ];
 
                     // Copy the logo file to Boost Union.
                     $newfile = $fs->create_file_from_storedfile($filerecord, $file);
@@ -136,7 +136,7 @@ function xmldb_theme_boost_union_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2022080922, 'theme', 'boost_union');
     }
 
-    if ($oldversion < 2023010516) {
+    if ($oldversion < 2023010517) {
 
         // Define table theme_boost_union_menus to be created.
         $table = new xmldb_table('theme_boost_union_menus');
@@ -221,7 +221,45 @@ function xmldb_theme_boost_union_upgrade($oldversion) {
         }
 
         // Boost_union savepoint reached.
-        upgrade_plugin_savepoint(true, 2023010516, 'theme', 'boost_union');
+        upgrade_plugin_savepoint(true, 2023010517, 'theme', 'boost_union');
+    }
+
+    if ($oldversion < 2023010519) {
+
+        // Define table theme_boost_union_menus to be altered.
+        $table = new xmldb_table('theme_boost_union_menus');
+
+        // Define field overflowbehavior to be altered.
+        $field = new xmldb_field('overflowbehavior', XMLDB_TYPE_INTEGER, '9', null, null, null, null, 'cardform');
+
+        // Launch rename field to cardoverflowbehavior.
+        $dbman->rename_field($table, $field, 'cardoverflowbehavior');
+
+        // Boost_union savepoint reached.
+        upgrade_plugin_savepoint(true, 2023010519, 'theme', 'boost_union');
+    }
+
+    if ($oldversion < 2023010521) {
+
+        // Remove the THEME_BOOST_UNION_SETTING_COURSEBREADCRUMBS_DONTCHANGE option from the categorybreadcrumbs setting
+        // and replace it with THEME_BOOST_UNION_SETTING_SELECT_NO if necessary.
+        $oldconfig = get_config('theme_boost_union', 'categorybreadcrumbs');
+        if ($oldconfig == 'dontchange') {
+            set_config('categorybreadcrumbs', THEME_BOOST_UNION_SETTING_SELECT_NO, 'theme_boost_union');
+        }
+
+        // Boost_union savepoint reached.
+        upgrade_plugin_savepoint(true, 2023010521, 'theme', 'boost_union');
+    }
+
+    if ($oldversion < 2023090100) {
+        // Remove the files from the FontAwesome filearea of Boost Union as this setting was removed.
+        $systemcontext = context_system::instance();
+        $fs = get_file_storage();
+        $fs->delete_area_files($systemcontext->id, 'theme_boost_union', 'fontawesome');
+
+        // Boost_union savepoint reached.
+        upgrade_plugin_savepoint(true, 2023090100, 'theme', 'boost_union');
     }
 
     return true;

@@ -44,7 +44,7 @@ $templatecontext = [
     'loginwrapperclass' => 'login-wrapper-'.get_config('theme_boost_union', 'loginformposition'),
     'logincontainerclass' =>
             (get_config('theme_boost_union', 'loginformtransparency') == THEME_BOOST_UNION_SETTING_SELECT_YES) ?
-                    'login-container-80t' : ''
+                    'login-container-80t' : '',
 ];
 
 // Include the template content for the footnote.
@@ -52,6 +52,9 @@ require_once(__DIR__ . '/includes/footnote.php');
 
 // Include the template content for the static pages.
 require_once(__DIR__ . '/includes/staticpages.php');
+
+// Include the template content for the footer button.
+require_once(__DIR__ . '/includes/footer.php');
 
 // Include the template content for the info banners.
 require_once(__DIR__ . '/includes/infobanners.php');

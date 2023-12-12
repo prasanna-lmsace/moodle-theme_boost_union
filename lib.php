@@ -86,13 +86,20 @@ define('THEME_BOOST_UNION_SETTING_NAVBARCOLOR_DARK', 'dark');
 define('THEME_BOOST_UNION_SETTING_NAVBARCOLOR_PRIMARYLIGHT', 'primarylight');
 define('THEME_BOOST_UNION_SETTING_NAVBARCOLOR_PRIMARYDARK', 'primarydark');
 
-define('THEME_BOOST_UNION_SETTING_COURSEBREADCRUMBS_DONTCHANGE', 'dontchange');
-
 define('THEME_BOOST_UNION_SETTING_OUTSIDEREGIONSPLACEMENT_NEXTMAINCONTENT', 'nextmaincontent');
 define('THEME_BOOST_UNION_SETTING_OUTSIDEREGIONSPLACEMENT_NEARWINDOW', 'nearwindowedges');
 define('THEME_BOOST_UNION_SETTING_OUTSIDEREGIONSWITH_FULLWIDTH', 'fullwidth');
 define('THEME_BOOST_UNION_SETTING_OUTSIDEREGIONSWITH_COURSECONTENTWIDTH', 'coursecontentwidth');
 define('THEME_BOOST_UNION_SETTING_OUTSIDEREGIONSWITH_HEROWIDTH', 'herowidth');
+
+define('THEME_BOOST_UNION_SETTING_ENABLEFOOTER_ALL', 'enablefooterbuttonall');
+define('THEME_BOOST_UNION_SETTING_ENABLEFOOTER_DESKTOP', 'enablefooterbuttondesktop');
+define('THEME_BOOST_UNION_SETTING_ENABLEFOOTER_MOBILE', 'enablefooterbuttonmobile');
+define('THEME_BOOST_UNION_SETTING_ENABLEFOOTER_NONE', 'enablefooterbuttonnone');
+
+define('THEME_BOOST_UNION_SETTING_COURSEOVERVIEW_SHOWCOURSEIMAGES_CARD', 'card');
+define('THEME_BOOST_UNION_SETTING_COURSEOVERVIEW_SHOWCOURSEIMAGES_LIST', 'list');
+define('THEME_BOOST_UNION_SETTING_COURSEOVERVIEW_SHOWCOURSEIMAGES_SUMMARY', 'summary');
 
 /**
  * Returns the main SCSS content.
@@ -124,7 +131,7 @@ function theme_boost_union_get_main_scss_content($theme) {
  * Get SCSS to prepend.
  *
  * @param theme_config $theme The theme config object.
- * @return array
+ * @return string
  */
 function theme_boost_union_get_pre_scss($theme) {
     global $CFG;
@@ -145,6 +152,12 @@ function theme_boost_union_get_pre_scss($theme) {
         'bootstrapcolorinfo' => ['info'],
         'bootstrapcolorwarning' => ['warning'],
         'bootstrapcolordanger' => ['danger'],
+        'activityiconcoloradministration' => ['activity-icon-administration-bg'],
+        'activityiconcolorassessment' => ['activity-icon-assessment-bg'],
+        'activityiconcolorcollaboration' => ['activity-icon-collaboration-bg'],
+        'activityiconcolorcommunication' => ['activity-icon-communication-bg'],
+        'activityiconcolorcontent' => ['activity-icon-content-bg'],
+        'activityiconcolorinterface' => ['activity-icon-interface-bg'],
     ];
 
     // Prepend variables first.
@@ -170,34 +183,6 @@ function theme_boost_union_get_pre_scss($theme) {
     // Set variables which are influenced by the h5pcontentmaxwidth setting.
     if (get_config('theme_boost_union', 'h5pcontentmaxwidth')) {
         $scss .= '$h5p-content-maxwidth: '.get_config('theme_boost_union', 'h5pcontentmaxwidth').";\n";
-    }
-
-    // Overwrite Boost core SCSS variables which are stored in a SCSS map and thus couldn't be added to $configurable above.
-    // Set variables for the activity icon colors.
-    $activityiconcolors = array();
-    if (get_config('theme_boost_union', 'activityiconcoloradministration')) {
-        $activityiconcolors[] = '"administration": '.get_config('theme_boost_union', 'activityiconcoloradministration');
-    }
-    if (get_config('theme_boost_union', 'activityiconcolorassessment')) {
-        $activityiconcolors[] = '"assessment": '.get_config('theme_boost_union', 'activityiconcolorassessment');
-    }
-    if (get_config('theme_boost_union', 'activityiconcolorcollaboration')) {
-        $activityiconcolors[] = '"collaboration": '.get_config('theme_boost_union', 'activityiconcolorcollaboration');
-    }
-    if (get_config('theme_boost_union', 'activityiconcolorcommunication')) {
-        $activityiconcolors[] = '"communication": '.get_config('theme_boost_union', 'activityiconcolorcommunication');
-    }
-    if (get_config('theme_boost_union', 'activityiconcolorcontent')) {
-        $activityiconcolors[] = '"content": '.get_config('theme_boost_union', 'activityiconcolorcontent');
-    }
-    if (get_config('theme_boost_union', 'activityiconcolorinterface')) {
-        $activityiconcolors[] = '"interface": '.get_config('theme_boost_union', 'activityiconcolorinterface');
-    }
-    if (count($activityiconcolors) > 0) {
-        $activityiconscss = '$activity-icon-colors: ('."\n";
-        $activityiconscss .= implode(",\n", $activityiconcolors);
-        $activityiconscss .= ');';
-        $scss .= $activityiconscss."\n";
     }
 
     // Set custom Boost Union SCSS variable: The block region outside left width.
@@ -283,8 +268,17 @@ function theme_boost_union_get_extra_scss($theme) {
         $content .= '}';
     }
 
-    // Lastly, we make sure that the background image is fixed and not repeated. Just to be sure.
+    // If a login background image is present, we set its background image position.
+    if (!empty($loginbackgroundimagepresent)) {
+        $content .= 'body.pagelayout-login { ';
+        $content .= "background-position: ".get_config('theme_boost_union', 'loginbackgroundimageposition').";";
+        $content .= '}';
+    }
+    // And we set the normal background image position in any case.
     $content .= 'body { ';
+    $content .= "background-position: ".get_config('theme_boost_union', 'backgroundimageposition').";";
+
+    // Lastly, we make sure that the (normal and login) background image is fixed and not repeated. Just to be sure.
     $content .= "background-repeat: no-repeat;";
     $content .= "background-attachment: fixed;";
     $content .= '}';
@@ -299,49 +293,13 @@ function theme_boost_union_get_extra_scss($theme) {
     // SCSS variables with @if conditions and SCSS variables. However, we preferred to do it here in a single place.
 
     // Setting: Activity icon purpose.
-
-    // Get installed activity modules.
-    $installedactivities = get_module_types_names();
-    // Iterate over all existing activities.
-    foreach ($installedactivities as $modname => $modinfo) {
-        // Get default purpose of activity module.
-        $defaultpurpose = plugin_supports('mod', $modname, FEATURE_MOD_PURPOSE, MOD_PURPOSE_OTHER);
-        // If the plugin does not have any default purpose.
-        if (!$defaultpurpose) {
-            // Fallback to "other" purpose.
-            $defaultpurpose = MOD_PURPOSE_OTHER;
-        }
-        // If the activity purpose setting is set and differs from the activity's default purpose.
-        $configname = 'activitypurpose'.$modname;
-        if (isset($theme->settings->{$configname}) && $theme->settings->{$configname} != $defaultpurpose) {
-            // Add CSS to modify the activity purpose color in the activity chooser and the activity icon.
-            $content .= '.activity.modtype_'.$modname.' .activityiconcontainer.courseicon,';
-            $content .= '.modchoosercontainer .modicon_'.$modname.'.activityiconcontainer,';
-            $content .= '#page-header .modicon_'.$modname.'.activityiconcontainer,';
-            $content .= '.block_recentlyaccesseditems .theme-boost-union-'.$modname.'.activityiconcontainer,';
-            $content .= '.block_timeline .theme-boost-union-mod_'.$modname.'.activityiconcontainer {';
-            // If the purpose is now different than 'other', change the background color to the new color.
-            if ($theme->settings->{$configname} != MOD_PURPOSE_OTHER) {
-                $content .= 'background-color: var(--activity' . $theme->settings->{$configname} . ') !important;';
-
-                // Otherwise, the background color is set to light grey (as there is no '--activityother' variable).
-            } else {
-                $content .= 'background-color: $light !important;';
-            }
-            // If the default purpose originally was 'other' and now is overridden, make the icon white.
-            if ($defaultpurpose == MOD_PURPOSE_OTHER) {
-                $content .= '.activityicon, .icon { filter: brightness(0) invert(1); }';
-            }
-            // If the default purpose was not 'other' and now it is, make the icon black.
-            if ($theme->settings->{$configname} == MOD_PURPOSE_OTHER) {
-                $content .= '.activityicon, .icon { filter: none; }';
-            }
-            $content .= '}';
-        }
-    }
+    $content .= theme_boost_union_get_scss_for_activity_icon_purpose($theme);
 
     // Setting: Mark external links.
     $content .= theme_boost_union_get_scss_to_mark_external_links($theme);
+
+    // Setting: Course overview block.
+    $content .= theme_boost_union_get_scss_courseoverview_block($theme);
 
     return $content;
 }
@@ -369,7 +327,7 @@ function theme_boost_union_get_precompiled_css() {
  * @param array $options
  * @return bool
  */
-function theme_boost_union_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = array()) {
+function theme_boost_union_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = []) {
     global $CFG;
 
     // Serve the (general) logo files or favicon file from the theme settings.
@@ -415,18 +373,14 @@ function theme_boost_union_pluginfile($course, $cm, $context, $filearea, $args, 
             send_file_not_found();
         }
 
-        // No need for resizing, but if the file should be cached we save it so we can serve it fast next time.
-        if (empty($maxwidth) && empty($maxheight)) {
+        // Check whether width/height are specified, and we can resize the image (some types such as ICO cannot be resized).
+        if (($maxwidth === 0 && $maxheight === 0) ||
+                !$filedata = $file->resize_image($maxwidth, $maxheight)) {
+
             if ($lifetime) {
                 file_safe_save_content($file->get_content(), $candidate);
             }
             send_stored_file($file, $lifetime, 0, false, $options);
-        }
-
-        // Proceed with the resizing.
-        $filedata = $file->resize_image($maxwidth, $maxheight);
-        if (!$filedata) {
-            send_file_not_found();
         }
 
         // If we don't want to cached the file, serve now and quit.
@@ -442,7 +396,7 @@ function theme_boost_union_pluginfile($course, $cm, $context, $filearea, $args, 
         // This code is copied and modified from theme_boost_pluginfile() in theme/boost/lib.php.
     } else if ($context->contextlevel == CONTEXT_SYSTEM && ($filearea === 'backgroundimage' ||
         $filearea === 'loginbackgroundimage' || $filearea === 'additionalresources' ||
-                $filearea === 'customfonts' || $filearea === 'fontawesome' || $filearea === 'courseheaderimagefallback' ||
+                $filearea === 'customfonts' || $filearea === 'courseheaderimagefallback' ||
                 preg_match("/tilebackgroundimage[2-9]|1[0-2]?/", $filearea))) {
         $theme = theme_config::load('boost_union');
         // By default, theme files must be cache-able by both browsers and proxies.
@@ -503,7 +457,7 @@ function theme_boost_union_pluginfile($course, $cm, $context, $filearea, $args, 
 /**
  * Callback to add head elements.
  *
- * We use this callback to inject the FontAwesome CSS code and the flavour's CSS code to the page.
+ * We use this callback to inject the flavour's CSS code to the page.
  *
  * @return string
  */
@@ -521,9 +475,6 @@ function theme_boost_union_before_standard_html_head() {
 
     // Require local library.
     require_once($CFG->dirroot . '/theme/boost_union/locallib.php');
-
-    // Add the FontAwesome icons to the page.
-    theme_boost_union_add_fontawesome_to_page();
 
     // Add the flavour CSS to the page.
     theme_boost_union_add_flavourcss_to_page();
@@ -574,11 +525,33 @@ function theme_boost_union_output_fragment_icons_list($args) {
             $icons[] = [
                 'icon' => $faiconsystem->render_pix_icon($OUTPUT, $icon),
                 'value' => $iconkey,
-                'label' => $icontxt
+                'label' => $icontxt,
             ];
         }
 
         // Return the rendered icon list.
         return $OUTPUT->render_from_template('theme_boost_union/fontawesome-iconpicker-popover', ['options' => $icons]);
     }
+}
+
+/**
+ * Define preferences which may be set via the core_user_set_user_preferences external function.
+ *
+ * @uses core_user::is_current_user
+ *
+ * @return array[]
+ */
+function theme_boost_union_user_preferences(): array {
+    // Build preferences array.
+    $preferences = [];
+    for ($i = 1; $i <= THEME_BOOST_UNION_SETTING_INFOBANNER_COUNT; $i++) {
+        $preferences['theme_boost_union_infobanner'.$i.'_dismissed'] = [
+            'type' => PARAM_INT,
+            'null' => NULL_NOT_ALLOWED,
+            'default' => 0,
+            'choices' => [0, 1],
+            'permissioncallback' => [core_user::class, 'is_current_user'],
+        ];
+    }
+    return $preferences;
 }

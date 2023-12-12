@@ -56,9 +56,6 @@ if ($activitynavigation == THEME_BOOST_UNION_SETTING_SELECT_YES) {
 // Add block button in editing mode.
 $addblockbutton = $OUTPUT->addblockbutton();
 
-user_preference_allow_ajax_update('drawer-open-index', PARAM_BOOL);
-user_preference_allow_ajax_update('drawer-open-block', PARAM_BOOL);
-
 if (isloggedin()) {
     $courseindexopen = (get_user_preferences('drawer-open-index', true) == true);
 
@@ -79,7 +76,7 @@ if (isloggedin()) {
     }
 }
 
-if (defined('BEHAT_SITE_RUNNING')) {
+if (defined('BEHAT_SITE_RUNNING') && get_user_preferences('behat_keep_drawer_closed') != 1) {
     try {
         if (
             get_config('theme_boost_union', 'showsitehomerighthandblockdraweronvisit') === false &&
@@ -110,7 +107,6 @@ if (!$courseindex) {
     $courseindexopen = false;
 }
 
-$bodyattributes = $OUTPUT->body_attributes($extraclasses);
 $forceblockdraweropen = $OUTPUT->firstview_fakeblocks();
 
 $secondarynavigation = false;
@@ -130,9 +126,21 @@ if ($PAGE->has_secondary_navigation()) {
 $primary = new theme_boost_union\output\navigation\primary($PAGE);
 $renderer = $PAGE->get_renderer('core');
 $primarymenu = $primary->export_for_template($renderer);
+
+// Add special class selectors to improve the Smart menus SCSS selectors.
+if (isset($primarymenu['includesmartmenu']) && $primarymenu['includesmartmenu'] == true) {
+    $extraclasses[] = 'theme-boost-union-smartmenu';
+}
+if (isset($primarymenu['bottombar']) && !empty($primarymenu['includesmartmenu'])) {
+    $extraclasses[] = 'theme-boost-union-bottombar';
+}
+
 $buildregionmainsettings = !$PAGE->include_region_main_settings_in_header_actions() && !$PAGE->has_secondary_navigation();
 // If the settings menu will be included in the header then don't add it here.
 $regionmainsettingsmenu = $buildregionmainsettings ? $OUTPUT->region_main_settings_menu() : false;
+
+$bodyattributes = $OUTPUT->body_attributes($extraclasses); // In the original layout file, this line is place more above,
+                                                           // but we amended $extraclasses and had to move it.
 
 $header = $PAGE->activityheader;
 $headercontent = $header->export_for_template($renderer);
@@ -156,7 +164,7 @@ $templatecontext = [
     'hasregionmainsettingsmenu' => !empty($regionmainsettingsmenu),
     'overflow' => $overflow,
     'headercontent' => $headercontent,
-    'addblockbutton' => $addblockbutton
+    'addblockbutton' => $addblockbutton,
 ];
 
 // Include the template content for the course related hints.
@@ -176,6 +184,9 @@ require_once(__DIR__ . '/includes/footnote.php');
 
 // Include the template content for the static pages.
 require_once(__DIR__ . '/includes/staticpages.php');
+
+// Include the template content for the footer button.
+require_once(__DIR__ . '/includes/footer.php');
 
 // Include the template content for the JavaScript disabled hint.
 require_once(__DIR__ . '/includes/javascriptdisabledhint.php');

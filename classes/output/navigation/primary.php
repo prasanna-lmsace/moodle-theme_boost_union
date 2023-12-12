@@ -28,7 +28,7 @@ use renderable;
 use renderer_base;
 use templatable;
 use custom_menu;
-use \theme_boost_union\smartmenu;
+use theme_boost_union\smartmenu;
 
 /**
  * Primary navigation renderable.
@@ -45,7 +45,7 @@ use \theme_boost_union\smartmenu;
  */
 class primary extends \core\navigation\output\primary {
 
-    /** @var moodle_page $page the moodle page that the navigation belongs to */
+    /** @var \moodle_page $page the moodle page that the navigation belongs to */
     private $page = null;
 
     /**
@@ -71,10 +71,13 @@ class primary extends \core\navigation\output\primary {
     public function export_for_template(?renderer_base $output = null): array {
         global $DB;
 
+        // Create smart menu cache.
         $cache = \cache::make('theme_boost_union', 'smartmenus');
 
+        // Check if the smart menus are already there in the cache.
         if (!$cache->get(smartmenu::CACHE_MENUSLIST)) {
             // If the smart menu feature is not installed at all, use the parent function.
+            // This will help to avoid hickups during a theme upgrade.
             $dbman = $DB->get_manager();
             if (!$dbman->table_exists('theme_boost_union_menus')) {
                 return parent::export_for_template($output);
@@ -105,8 +108,8 @@ class primary extends \core\navigation\output\primary {
         $locationbottom = smartmenu::get_menus_forlocation(smartmenu::LOCATION_BOTTOM, $smartmenus);
 
         // Merge the smart menu nodes which contain the main menu location with the primary and custom menu nodes.
-        $menudata = (object) array_merge($this->get_primary_nav(), $this->get_custom_menu($output), $mainmenu);
-        $moremenu = new \core\navigation\output\more_menu($menudata, 'navbar-nav', false);
+        $menudata = array_merge($this->get_primary_nav(), $this->get_custom_menu($output), $mainmenu);
+        $moremenu = new \core\navigation\output\more_menu((object) $menudata, 'navbar-nav', false);
 
         // Menubar.
         // Items of menus only added in the menubar.
@@ -133,13 +136,19 @@ class primary extends \core\navigation\output\primary {
         $usermenu = $this->get_user_menu($output);
         $this->build_usermenus($usermenu, $locationusermenus);
 
+        // Check if any of the smartmenus are going to be included on the page.
+        // This is used as flag to include the smart menu's JS file in mustache templates later
+        // as well as for controlling the smart menu SCSS.
+        $includesmartmenu = (!empty($mainmenu) || !empty($menubarmenus) || !empty($locationusermenus) || !empty($locationbottom));
+
         return [
             'mobileprimarynav' => $mobileprimarynav,
             'moremenu' => $moremenu->export_for_template($output),
             'menubar' => isset($menubarmoremenu) ? $menubarmoremenu->export_for_template($output) : false,
             'lang' => !isloggedin() || isguestuser() ? $languagemenu->export_for_template($output) : [],
             'user' => $usermenu ?? [],
-            'bottombar' => $bottombardata ?? false
+            'bottombar' => $bottombardata ?? false,
+            'includesmartmenu' => $includesmartmenu ? true : false,
         ];
     }
 
@@ -175,6 +184,16 @@ class primary extends \core\navigation\output\primary {
             if (isset($menu->submenuid)) {
                 $children = $menu->children;
 
+                // Add the second level menus list before the course list to the user menu.
+                // This will have the effect that, when opening the third level submenus, the transition will go to the right.
+                $submenu = [
+                    'id' => $menu->submenuid,
+                    'title' => $menu->title ?: $menu->text,
+                ];
+                $usermenu['submenus'][] = (object) $submenu;
+                // The key of this submenu which helps later to include its children after including the necessary data.
+                $lastkey = array_key_last($usermenu['submenus']);
+
                 // Update the dividers item type.
                 array_walk($children, function(&$value) use (&$usermenu, $menu) {
                     if (isset($value['divider'])) {
@@ -193,6 +212,7 @@ class primary extends \core\navigation\output\primary {
                             'id' => $uniqueid,
                             'returnid' => $menu->submenuid, // Return the third level submenus back to its parent section.
                             'title' => $value['title'],
+                            'text' => strip_tags($value['text']), // Remove the item icon from the submenus title.
                             'items' => $value['children'],
                         ];
 
@@ -203,13 +223,9 @@ class primary extends \core\navigation\output\primary {
                     }
                 });
 
-                $submenu = [
-                    'id' => $menu->submenuid,
-                    'title' => $menu->title,
-                    'items' => $children
-                ];
+                // Update the children elements for the submenu.
+                $usermenu['submenus'][$lastkey]->items = $children;
                 $usermenu['items'][] = $menu;
-                $usermenu['submenus'][] = (object) $submenu;
             }
         }
 
@@ -218,7 +234,7 @@ class primary extends \core\navigation\output\primary {
             'title' => '####',
             'itemtype' => 'divider',
             'divider' => 1,
-            'link' => ''
+            'link' => '',
         ];
         array_push($usermenu['items'], $divider);
 

@@ -31,7 +31,7 @@ require_once($CFG->dirroot.'/theme/boost_union/locallib.php');
 $config = get_config('theme_boost_union');
 
 // Initialize info banners data for templatecontext.
-$infobanners = array();
+$infobanners = [];
 
 // Remember if we need the dismissible AMD module.
 $dismissibleamdneeded = false;
@@ -42,7 +42,7 @@ for ($i = 1; $i <= THEME_BOOST_UNION_SETTING_INFOBANNER_COUNT; $i++) {
     if (theme_boost_union_infobanner_is_shown_on_page($i)) {
         // Gather this info banner's data.
         // Info banner content.
-        $formatoptions = array('noclean' => true, 'newlines' => false);
+        $formatoptions = ['noclean' => true, 'newlines' => false];
         $contentsettingname = 'infobanner'.$i.'content';
         $content = format_text($config->{$contentsettingname}, FORMAT_HTML, $formatoptions);
 
@@ -70,9 +70,6 @@ for ($i = 1; $i <= THEME_BOOST_UNION_SETTING_INFOBANNER_COUNT; $i++) {
         if ($dismissible == true) {
             // Remember if we need the dismissible AMD module.
             $dismissibleamdneeded = true;
-
-            // Allow updating of the user prefefence.
-            user_preference_allow_ajax_update('theme_boost_union_infobanner'.$i.'_dismissed', PARAM_BOOL);
         }
 
         // Compose and remember this info banner's object.

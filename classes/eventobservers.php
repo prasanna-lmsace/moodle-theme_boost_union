@@ -172,8 +172,25 @@ class eventobservers {
         // Require smart menus library.
         require_once($CFG->dirroot . '/theme/boost_union/smartmenus/menulib.php');
 
+        // Purge all the dynamic course items cache.
+        \smartmenu_helper::purge_cache_dynamic_courseitems();
+
+        return true;
+    }
+
+    /**
+     * Event observer for when a category is updated or deleted.
+     *
+     * @param \core\event\base $event The event that triggered the handler.
+     */
+    public static function category_updated(\core\event\base $event) {
+        global $CFG;
+
+        // Require smart menus library.
+        require_once($CFG->dirroot . '/theme/boost_union/smartmenus/menulib.php');
+
         // Clear the cache of menu when the course updated.
-        \smartmenu_helper::purge_cache_updated_course($event->objectid);
+        \smartmenu_helper::purge_cache_dynamic_courseitems();
     }
 
     /**

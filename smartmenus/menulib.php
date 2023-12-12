@@ -98,8 +98,10 @@ class smartmenu_helper {
         // Restriction by cohorts.
         $this->restriction_bycohorts($query);
 
-        // REstriction by lanuages.
-        $this->restriction_bylanguage($query);
+        // Restriction by languages.
+        if (!$this->restriction_bylanguage()) {
+            return false;
+        }
 
         // Restriction by date. Menu configured date is not started or already ended then hide the menu.
         if (!$this->restriction_bydate()) {
@@ -149,7 +151,7 @@ class smartmenu_helper {
         $query->where[] = " u.id IN (SELECT userid FROM {role_assignments} WHERE roleid $insql AND userid=:rluserid $contextsql)";
         $params = [
             'rluserid' => $this->userid,
-            'systemcontext' => context_system::instance()->id
+            'systemcontext' => context_system::instance()->id,
         ];
         $query->params += array_merge($params, $inparam);
 
@@ -188,24 +190,21 @@ class smartmenu_helper {
     }
 
     /**
-     * Generate the queries and params to verify the user has the language which is contained in the current data.
+     * Verify the menu has restricted based on the current language.
      *
-     * @param stdclass $query Array which contains elements for DB conditions, selectors and params.
-     * @return void
+     * @return bool True if the menu is available for this lanauage, otherwise false.
      */
-    public function restriction_bylanguage(&$query) {
+    public function restriction_bylanguage() {
         global $DB;
 
         $languages = $this->data->languages;
         if (empty($languages)) {
             return true;
         }
-        list($insql, $inparam) = $DB->get_in_or_equal($languages, SQL_PARAMS_NAMED, 'la');
+        // Current language selected for this session.
+        $lang = current_language();
 
-        if (!empty($inparam)) {
-            $query->where[] = "u.lang $insql";
-            $query->params += $inparam;
-        }
+        return in_array($lang, $languages); // This item is available for the current language.
     }
 
     /**
@@ -444,7 +443,7 @@ class smartmenu_helper {
         if ($menus = self::find_condition_used_menus($cohortid)) {
             // Remove the menus cache for the user.
             $menus = array_column($menus, 'id');
-            array_walk($menus, ['self', 'remove_user_cachemenu'], $userid);
+            array_walk($menus, [self::class, 'remove_user_cachemenu'], $userid);
         }
 
         if ($items = self::find_condition_used_menuitems($cohortid)) {
@@ -452,8 +451,8 @@ class smartmenu_helper {
             $menus = array_unique(array_column($items, 'menu'));
             $items = array_column($items, 'id');
             // Remove the menus and item cache for the user.
-            array_walk($menus, ['self', 'remove_user_cachemenu'], $userid);
-            array_walk($items, ['self', 'remove_user_cacheitem'], $userid);
+            array_walk($menus, [self::class, 'remove_user_cachemenu'], $userid);
+            array_walk($items, [self::class, 'remove_user_cacheitem'], $userid);
 
         }
     }
@@ -473,7 +472,7 @@ class smartmenu_helper {
         if ($menus = self::find_condition_used_menus($roleid, 'roles')) {
             // Remove the menus cache for the user.
             $menus = array_column($menus, 'id');
-            array_walk($menus, ['self', 'remove_user_cachemenu'], $userid);
+            array_walk($menus, [self::class, 'remove_user_cachemenu'], $userid);
         }
 
         if ($items = self::find_condition_used_menuitems($roleid, 'roles')) {
@@ -481,25 +480,24 @@ class smartmenu_helper {
             $menus = array_unique(array_column($items, 'menu'));
             $items = array_column($items, 'id');
             // Remove the menus and item cache for the user.
-            array_walk($menus, ['self', 'remove_user_cachemenu'], $userid);
-            array_walk($items, ['self', 'remove_user_cacheitem'], $userid);
+            array_walk($menus, [self::class, 'remove_user_cachemenu'], $userid);
+            array_walk($items, [self::class, 'remove_user_cacheitem'], $userid);
         }
     }
 
     /**
-     * Purge the cache of items and menus which is configured to use the affected course category.
+     * Purge the cache of dynamic course items.
      *
-     * @param int $courseid
      * @return void
      */
-    public static function purge_cache_updated_course($courseid) {
-        // Fetch affected course data.
-        $course = get_course($courseid);
-        if ($items = self::find_condition_used_menuitems($course->category, 'category')) {
+    public static function purge_cache_dynamic_courseitems() {
+        global $DB;
+        // Fetch list of menuitems, configured with the event categoryid.
+        if ($items = $DB->get_records('theme_boost_union_menuitems', ['type' => smartmenu_item::TYPEDYNAMIC])) {
             // List of items to purge.
             $items = array_column($items, 'id');
             // Remove the menus items for the user.
-            array_walk($items, ['self', 'purge_item_cache']);
+            array_walk($items, [self::class, 'purge_item_cache']);
         }
     }
 
@@ -621,68 +619,6 @@ class smartmenu_helper {
     }
 
     /**
-     * Generate the buttons, displayed on top of the items table. Helps to create new items, backto menus list, edit menu settings.
-     *
-     * @param  int $menuid Menu id.
-     * @return string
-     */
-    public static function theme_boost_union_menuitems_button(int $menuid) {
-        global $OUTPUT;
-
-        $output = html_writer::start_div('menuitem-buttons d-flex align-items-baseline');
-
-        $output .= html_writer::start_div('left-menu-items mr-auto p-2');
-        // Setup create menu button on page.
-        $caption = get_string('smartmenusbacktomenus', 'theme_boost_union');
-        $editurl = new moodle_url('/theme/boost_union/smartmenus/menus.php');
-        $output .= $OUTPUT->single_button($editurl, $caption, 'get');
-
-        // Setup create menu button on page.
-        $caption = get_string('smartmenussettings', 'theme_boost_union');
-        $editurl = new moodle_url('/theme/boost_union/smartmenus/edit.php', ['id' => $menuid, 'sesskey' => sesskey()]);
-        $output .= $OUTPUT->single_button($editurl, $caption, 'get');
-
-        $output .= html_writer::end_div(); // E.O left-menu-items.
-
-        // Right side menus to create items.
-        $output .= html_writer::start_div('right-menu-items');
-
-        // Add new item.
-        $itemscaption = get_string('smartmenusaddnewitem', 'theme_boost_union');
-        $itemsurl = new moodle_url(
-            '/theme/boost_union/smartmenus/edit_items.php',
-            ['menu' => $menuid, 'sesskey' => sesskey()]
-        );
-        $output .= html_writer::link($itemsurl, $itemscaption);
-
-        $output .= html_writer::end_div(); // E.O Right-menu-items.
-
-        $output .= html_writer::end_div(); // E.O Menuitem buttons.
-
-        return $output;
-    }
-
-    /**
-     * Generate the button which is displayed on top of the menus table. Helps to create menu.
-     *
-     * @return string The HTML contents to display the create menu button.
-     */
-    public static function theme_boost_union_smartmenu_buttons() {
-        global $OUTPUT;
-
-        // Setup create menu button on page.
-        $caption = get_string('smartmenuscreatemenu', 'theme_boost_union');
-        $editurl = new moodle_url('/theme/boost_union/smartmenus/edit.php', ['sesskey' => sesskey()]);
-
-        // IN Moodle 4.2, primary button param depreceted.
-        $primary = defined('single_button::BUTTON_PRIMARY') ? single_button::BUTTON_PRIMARY : true;
-        $button = new single_button($editurl, $caption, 'get', $primary);
-        $button = $OUTPUT->render($button);
-
-        return $button;
-    }
-
-    /**
      * Function returns the rgb format with the combination of passed color hex and opacity.
      * Used in the item background color or card layout.
      *
@@ -709,7 +645,7 @@ class smartmenu_helper {
      */
     public static function get_lanuage_options() {
         $languages = get_string_manager()->get_list_of_translations();
-        $langoptions = array();
+        $langoptions = [];
         foreach ($languages as $key => $lang) {
             $langoptions[$key] = $lang;
         }

@@ -9,7 +9,7 @@ Theme Boost Union is an enhanced child theme of Boost which is intended, on the 
 Requirements
 ------------
 
-This theme requires Moodle 4.0+
+This theme requires Moodle 4.2+
 
 
 Motivation for this theme
@@ -114,6 +114,10 @@ Here, you can upload a custom image that the browser will show as the favicon of
 This setting is already available in the Moodle core theme Boost. For more information how to use it, please have a look at the official Moodle documentation: http://docs.moodle.org/en/Boost_theme
 Please note: This will not interfere with the setting "theme_boost_union | loginbackgroundimage" which means that the pictures uploaded here will be shown on all pages except the login page.
 
+###### Background image position
+
+With this setting, you control the positioning of the background image within the browser window. The first value is the horizontal position, the second value is the vertical position.
+
 ##### Brand colors
 
 ###### Brand color
@@ -155,6 +159,10 @@ With this setting, you can modify the icons for activities and resources which a
 This setting is already available in the Moodle core theme Boost.
 However, in Boost Union you can not only add one but up to 25 files as a background image for the login page. One of these images will be picked randomly and shown when the user visits the login page.
 
+###### Login page background image position
+
+With this setting, you control the positioning of the login page background image within the browser window. The first value is the horizontal position, the second value is the vertical position.
+
 ###### Display text for login background images
 
 With this optional setting you can add text, e.g. a copyright notice to your uploaded login background images.
@@ -176,6 +184,18 @@ With this setting, you can optimize the login form to fit to a greater variety o
 ##### Login form transparency
 
 With this setting, you can make the login form slightly transparent to let the background image shine through even more.
+
+#### Tab "Dashboard / My courses"
+
+##### Course overview block
+
+###### Show course images
+
+With this setting, you can control whether the course image is visible inside the course overview block or not. It is possible to choose a different setting for Card view, Summary view, and List view. 
+
+###### Show course completion progress
+
+With this setting, you can control whether the course completion progress is visible inside the course overview block or not.
 
 #### Tab "Course"
 
@@ -216,10 +236,6 @@ With this setting you can upload additional resources to the theme. The advantag
 ##### Custom fonts
 
 With this setting you can upload custom fonts to the theme. The advantage of uploading fonts to this file area is that those fonts can be delivered without a check if the user is logged in and can be used as locally installed fonts everywhere on the site. As soon as you have uploaded at least one font to this filearea and have stored the settings, a list will appear underneath which will give you CSS code snippets which you can use as a boilerplate to reference particular fonts in your custom SCSS.
-
-##### FontAwesome
-
-Moodle core ships with FontAwesome 4 icons which are fine, but FontAwesome has evolved since then. If you want to use more recent FontAwesome icons, you can do this with this setting. As soon as you choose another version than FontAwesome 4, additional settings will appear where you can upload more recent FontAwesome versions.
 
 #### Tab "H5P"
 
@@ -375,9 +391,21 @@ In this tab there are the following settings:
 
 Whatever you add to this textarea will be displayed at the end of a page, in the footer. Refer to the setting description on the settings page for further instructions.
 
+###### Footer
+
+With these settings, you can control whether to show or to suppress the footer (circle containing the question mark) button at the bottom of the page.
+
 #### Tab "Static pages"
 
 In this tab there are the following settings:
+
+##### About us
+
+With these settings, you can add rich text content which will be shown on an about us page.
+
+##### Offers
+
+With these settings, you can add rich text content which will be shown on an offers page.
 
 ##### Imprint
 
@@ -394,6 +422,18 @@ With these settings, you can add rich text content which will be shown on a help
 ##### Maintenance
 
 With these settings, you can add rich text content which will be shown on a maintenance information page (which is not the same as the built-in Moodle maintenance page).
+
+##### Generic page 1
+
+With these settings, you can add rich text content which will be shown on a generic page 1.
+
+##### Generic page 2
+
+With these settings, you can add rich text content which will be shown on a generic page 2.
+
+##### Generic page 3
+
+With these settings, you can add rich text content which will be shown on a generic page 3.
 
 #### Tab "Information banners"
 
@@ -427,9 +467,23 @@ With this setting a hint will appear in the course header when a user is accessi
 
 With this setting a hint will appear in the course header if the course is visible and an enrolment without enrolment key is currently possible.
 
+#### Tab "Administration"
+
+In this tab there are the following settings:
+
+##### Course management
+
+###### Show view course icon
+
+By default, on the course management page, Moodle requires you to either open the course details or to pass through the course settings before you can click an additional UI element to view the course. By enabling this setting, you can add a 'View course' icon directly to the category listing on the course management page.
+
 ### Settings page "Flavours"
 
 Boost Union's flavours offer a possibility to override particular Moodle look & feel settings in particular contexts. On this page, you can create and manage flavours.
+
+### Settings page "Smart menus"
+
+Smart menus allow site administrators to create customizable menus that can be placed in different locations on the site, such as the site main menu, bottom mobile menu, and user menu. The menus can be configured to display different types of content, including links to other pages or resources, category links, or user profile links. On this page, you can create and manage smart menus.
 
 
 Capabilities
@@ -464,6 +518,19 @@ How this theme works
 This Boost child theme is implemented with minimal code duplication in mind. It inherits / requires as much code as possible from theme_boost and only implements the extended or modified functionalities.
 
 
+Support for companion plugins
+-----------------------------
+
+This theme ships with some additions for companion plugins:
+
+* block_dash / local_dash:
+  * Style improvements for Dash dashboards in combination with Boost Union block regions
+* local_learningtools:
+  * Style improvements for the learning tools button in combination with the Boost Union bottom navigation
+* local_och5p / local_och5pcore:
+  * Renderer additions to add necessary additional CSS and JS files.
+
+
 Plugin repositories
 -------------------
 
@@ -482,7 +549,10 @@ This plugin is carefully developed and thoroughly tested, but bugs and problems 
 Please report bugs and problems on Github:
 https://github.com/moodle-an-hochschulen/moodle-theme_boost_union/issues
 
-We will do our best to solve your problems, but please note that due to limited resources we can't always provide per-case support.
+Support thread:
+https://moodle.org/mod/forum/discuss.php?d=452129
+
+We kindly invite you to use this support thread in case of any questions you might have. We are a team of many (sometimes power) users of Boost Union and will try to answer or collectively according to our measures. If any other users know answers or are quicker, don't hesitate to answer. We will do our best to solve your problems, but please note that due to limited resources we can't always provide per-case support.
 
 
 Feature proposals
@@ -561,11 +631,14 @@ This theme is a collaboration result of multiple organisations.
 
 Moodle an Hochschulen e.V. would like to thank these main contributors (in alphabetical order of the institutions) for their work:
 
+* Academic Moodle Cooperation (AMC): Ideating, Code
 * Baden-Württemberg Cooperative State University (DHBW), Katja Neubehler: Code
 * bdecent GmbH, Stefan Scholz: Code, Ideating, Funding
 * Bern University of Applied Sciences (BFH), Luca Bösch: Code, Peer Review, Ideating
+* Carinthia University of Applied Sciences, Mario Wehr: Code
+* ELAN e.V., Farbod Zamani: Code
 * FernUniversität in Hagen, Daniel Poggenpohl: Code, Ideating
-* Hochschule Hannover - University of Applied Sciences and Arts: Funding, Ideating
+* Hochschule Hannover - University of Applied Sciences and Arts: Code, Funding, Ideating
 * Käferfreie Software, Nina Herrmann: Code
 * lern.link GmbH, Alexander Bias: Code, Peer Review, Ideating, Funding
 * lern.link GmbH, Beata Waloszczyk: Code

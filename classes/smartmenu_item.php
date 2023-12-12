@@ -31,7 +31,7 @@ use html_writer;
 use smartmenu_helper;
 use stdClass;
 use cache;
-use \core_course\external\course_summary_exporter;
+use core_course\external\course_summary_exporter;
 
 require_once($CFG->dirroot.'/theme/boost_union/smartmenus/menulib.php');
 
@@ -219,7 +219,7 @@ class smartmenu_item {
     /**
      * Create a new instance of this class.
      *
-     * @param int|stdclass $item The ID of the item or record data of item.
+     * @param int|stdclass $item The ID of the item to retrieve or record data of item.
      * @param stdclass|null $menu Data of the menu the item belongs to.
      * @return smartmenu_item A new instance of this class.
      */
@@ -231,8 +231,8 @@ class smartmenu_item {
      * Menu item constructor, Retrive the item data, Create smartmenu_helper for this item,
      * Creates the cache instance for item and its menu.
      *
-     * @param int|stdclass $item Record id of the menu.
-     * @param stdclass|null $menu Menu data belongs to this item, Not passed then it fetch the menus data.
+     * @param int|stdclass $item Record or id of the menu.
+     * @param stdclass|null $menu Menu data belongs to this item, it fetch the menus data if empty.
      */
     public function __construct($item, $menu=null) {
 
@@ -248,7 +248,7 @@ class smartmenu_item {
 
         // Verify the item data is object or array, otherwise throws an exeception.
         if (!is_array($item) && !is_object($item)) {
-            throw new \moodle_exception('itemnotfound', 'theme_boost_union');
+            throw new \moodle_exception('error:smartmenusmenuitemnotfound', 'theme_boost_union');
         }
 
         // Menu data, the current item belongs to.
@@ -294,8 +294,7 @@ class smartmenu_item {
             return $this->update_item_valuesformat($record);
 
         } else {
-            // TODO: string for menu not found.
-            throw new \moodle_exception('itemnotfound', 'theme_boost_union');
+            throw new \moodle_exception('error:smartmenusmenuitemnotfound', 'theme_boost_union');
         }
 
         return false;
@@ -367,7 +366,7 @@ class smartmenu_item {
             $sql = 'SELECT * FROM {theme_boost_union_menuitems} WHERE sortorder < :pos AND menu = :menu ORDER BY sortorder ASC';
             $previtems = $DB->get_records_sql($sql, [
                 'pos' => $currentposition,
-                'menu' => $this->item->menu
+                'menu' => $this->item->menu,
             ]);
 
             if (empty($previtems)) {
@@ -379,12 +378,12 @@ class smartmenu_item {
             // Update the menu position to upwards.
             $DB->set_field('theme_boost_union_menuitems', 'sortorder', $previtem->sortorder, [
                 'id' => $this->id,
-                'menu' => $this->item->menu
+                'menu' => $this->item->menu,
             ]);
             // Set the prevmenu position to down.
             $DB->set_field('theme_boost_union_menuitems', 'sortorder', $currentposition, [
                 'id' => $previtem->id,
-                'menu' => $this->item->menu
+                'menu' => $this->item->menu,
             ]);
 
             // Difference between two items is more than 1 then reorder the items.
@@ -412,7 +411,7 @@ class smartmenu_item {
         $sql = 'SELECT * FROM {theme_boost_union_menuitems} WHERE sortorder > :pos AND menu = :menu ORDER BY sortorder ASC';
         $nextitems = $DB->get_records_sql($sql, [
             'pos' => $currentposition,
-            'menu' => $this->item->menu
+            'menu' => $this->item->menu,
         ]);
 
         if (empty($nextitems)) {
@@ -423,12 +422,12 @@ class smartmenu_item {
         // Update the menu position to down.
         $DB->set_field('theme_boost_union_menuitems', 'sortorder', $nextitem->sortorder, [
             'id' => $this->id,
-            'menu' => $this->item->menu
+            'menu' => $this->item->menu,
         ]);
         // Set the prevmenu position to up.
         $DB->set_field('theme_boost_union_menuitems', 'sortorder', $currentposition, [
             'id' => $nextitem->id,
-            'menu' => $this->item->menu
+            'menu' => $this->item->menu,
         ]);
 
         // Difference between two items is more than 1 then reorder the items.
@@ -438,9 +437,6 @@ class smartmenu_item {
 
         // Delete the menu cache, recreate the menu with updated items order.
         $this->delete_cache();
-
-        // Purge the menu items cache.
-        \cache_helper::purge_by_event('theme_boost_union_menuitems_sorted');
 
         return true;
 
@@ -497,7 +493,7 @@ class smartmenu_item {
         $record->id = 0;
         // Create instance.
         if (self::manage_instance($record)) {
-            \core\notification::success(get_string('smartmenusmenuitemduplicated', 'theme_boost_union'));
+            \core\notification::success(get_string('smartmenusmenuitemduplicatesuccess', 'theme_boost_union'));
         }
     }
 
@@ -594,7 +590,8 @@ class smartmenu_item {
             $this->item->title, // Title.
             $staticurl, // URL.
             null, // Default key.
-            $this->item->tooltip, // Tooltip.
+            $this->item->tooltip,
+        // Tooltip.
         );
     }
 
@@ -643,6 +640,9 @@ class smartmenu_item {
 
         $sql = " SELECT $select FROM {course} c $join";
         $sql .= $where ? " WHERE $where " : '';
+
+        // Sort the courses in ascending order by its display field.
+        $sql .= ($this->item->displayfield == self::FIELD_SHORTNAME) ? " ORDER BY c.shortname ASC " : " ORDER BY c.fullname ASC ";
 
         // Fetch the course records based on the sql.
         $records = $DB->get_records_sql($sql, $params);
@@ -896,8 +896,6 @@ class smartmenu_item {
         $query->params += $params;
     }
 
-
-
     /**
      * Defines a build method that generates the HTML markup for a menu item.
      *
@@ -1007,7 +1005,7 @@ class smartmenu_item {
 
         global $OUTPUT;
 
-        $title = $titleorg = format_string($title);
+        $title = format_string($title);
         // Icon not shown in moodle 4.x, added the icon with text.
         if ($this->item->menuicon) {
             $icon = explode(':', $this->item->menuicon);
@@ -1042,14 +1040,14 @@ class smartmenu_item {
             'url' => $url ?: 'javascript:void(0)',
             'key' => $key != null ? $key : 'item-'.$this->item->id,
             'text' => $title,
-            'icontitle' => $title, // Title with icon.
-            'title' => $titleorg,
+            // Do not set the title attribute as this would show a standard tooltip based on the Moodle core custom menu logic.
+            'title' => '',
             'tooltip' => $tooltip ? format_string($tooltip) : '',
             'haschildren' => $haschildren,
             'itemimage' => $itemimage,
             'itemtype' => 'link',
             'link' => 1,
-            'sort' => uniqid() // Support third level menu.
+            'sort' => uniqid(), // Support third level menu.
         ];
 
         if ($haschildren && !empty($children)) {
@@ -1057,10 +1055,10 @@ class smartmenu_item {
         }
 
         if ($this->item->target == self::TARGET_NEW && $url != '') {
-            $data['attributes'] = array([
+            $data['attributes'] = [[
                 'name' => 'target',
-                'value' => '__blank'
-            ]);
+                'value' => '__blank',
+            ], ];
         }
 
         if (preg_match("/^#+$/", format_string($title))) {
@@ -1139,20 +1137,46 @@ class smartmenu_item {
             if (isset($data[$fieldid])) {
                 $data = $data[$fieldid];
                 $data->instance_form_definition($mform);
-                if ("select" == $field->get('type')) {
-                    $elem = $mform->getElement("customfield_".$shortname);
+                $elem = $mform->getElement("customfield_".$shortname);
+                // Remove the rules for custom fields.
+                if (isset($mform->_rules["customfield_".$shortname])) {
+                    unset($mform->_rules["customfield_".$shortname]);
+                }
+                // Remove the custom fields from required sections.
+                if (($key = array_search("customfield_".$shortname, $mform->_required)) !== false) {
+                    unset($mform->_required[$key]);
+                }
+                // By default, ensure that no values are pre-set in the form as defaults.
+                $default = (isset($mform->_types["customfield_".$shortname])
+                    && $mform->_types["customfield_".$shortname]) == 'int' ? 0 : '';
+
+                $mform->setDefault("customfield_".$shortname, $default);
+                // Change the password fields type to text, then admin can view the password field as text field.
+                if ($elem->_type == 'password') {
+                    $elem->_type = 'text';
+                }
+
+                // Make the select fields to select multiple.
+                if ("select" == $field->get('type') || "semester" == $field->get('type')) {
                     $elem->setMultiple(true);
                     $mform->setDefault("customfield_".$shortname, 0);
                 }
+
                 $mform->hideif("customfield_".$shortname, 'type', 'neq', self::TYPEDYNAMIC);
             }
         }
 
-        $PAGE->requires->js_amd_inline('require(["core/form-autocomplete"], function(Auto) {
+        $PAGE->requires->js_amd_inline('require(["core/form-autocomplete", "core/str"], function(Auto, Str) {
             // List of custom fields.
             var dropdowns = document.querySelectorAll("div[data-fieldtype=select] [id^=id_customfield_]");
-            dropdowns.forEach((elem) => {
-                Auto.enhance(elem);
+            // Fetch no-selection string.
+            Str.get_string("noselection", "form").then((noSelection) => {
+                dropdowns.forEach((elem) => {
+                    elem.classList.add("custom-select");
+                    // Change the field type to autcomplete, it fix the suggestion box alignment.
+                    elem.parentNode.setAttribute("data-fieldtype", "autocomplete");
+                    Auto.enhance(elem, "", false, "", false, true, noSelection);
+                });
             });
         })');
     }
@@ -1164,11 +1188,11 @@ class smartmenu_item {
      * @return array|string An array of types if $type is null, or a string with the name of the specific type.
      */
     public static function get_types(int $type=null) {
-        $types = array(
-            self::TYPEHEADING => get_string('heading', 'editor'),
-            self::TYPESTATIC => get_string('smartmenusstatic', 'theme_boost_union'),
-            self::TYPEDYNAMIC => get_string('smartmenusdynamiccourses', 'theme_boost_union'),
-        );
+        $types = [
+                self::TYPESTATIC => get_string('smartmenusmenuitemtypestatic', 'theme_boost_union'),
+                self::TYPEHEADING => get_string('smartmenusmenuitemtypeheading', 'theme_boost_union'),
+                self::TYPEDYNAMIC => get_string('smartmenusmenuitemtypedynamiccourses', 'theme_boost_union'),
+        ];
 
         return ($type !== null && isset($types[$type])) ? $types[$type] : $types;
     }
@@ -1182,9 +1206,9 @@ class smartmenu_item {
      */
     public static function get_display_options(int $option=null) {
         $displayoptions = [
-            self::DISPLAY_SHOWTITLEICON => get_string('smartmenusshowtitleicon', 'theme_boost_union'),
-            self::DISPLAY_HIDETITLE => get_string('smartmenushidetitle', 'theme_boost_union'),
-            self::DISPLAY_HIDETITLEMOBILE => get_string('smartmenushidetitlemobile', 'theme_boost_union')
+                self::DISPLAY_SHOWTITLEICON => get_string('smartmenusmenuitemdisplayoptionsshowtitleicon', 'theme_boost_union'),
+                self::DISPLAY_HIDETITLE => get_string('smartmenushidetitle', 'theme_boost_union'),
+                self::DISPLAY_HIDETITLEMOBILE => get_string('smartmenushidetitlemobile', 'theme_boost_union'),
         ];
 
         return ($option !== null && isset($displayoptions[$option])) ? $displayoptions[$option] : $displayoptions;
@@ -1254,7 +1278,7 @@ class smartmenu_item {
                     'oldorder' => $oldrecord->sortorder,
                     'neworder' => $record->sortorder,
                     'item' => $formdata->id,
-                    'menuid' => $formdata->menu
+                    'menuid' => $formdata->menu,
                 ]);
             }
 
@@ -1264,7 +1288,7 @@ class smartmenu_item {
             $cache->delete_menu($formdata->id);
 
             // Show the edited success notification.
-            \core\notification::success(get_string('smartmenusupdatesuccess', 'theme_boost_union'));
+            \core\notification::success(get_string('smartmenusmenuitemeditsuccess', 'theme_boost_union'));
         } else {
             $record->sortorder = $record->sortorder ?: 1;
             $itemid = $DB->insert_record('theme_boost_union_menuitems', $record);
@@ -1274,8 +1298,8 @@ class smartmenu_item {
                 WHERE sortorder >= :sortorder AND id != :item AND menu=:menuid";
 
             $DB->execute($sql, ['sortorder' => $record->sortorder, 'item' => $itemid, 'menuid' => $record->menu]);
-            // Show the menu inserted success notification.
-            \core\notification::success(get_string('smartmenusinsertsuccess', 'theme_boost_union'));
+            // Show the menu item inserted success notification.
+            \core\notification::success(get_string('smartmenusmenuitemcreatesuccess', 'theme_boost_union'));
 
             // Delete the cached data of its menu. Menu will recreate with this item.
             $menucache->delete_menu($formdata->menu);
@@ -1290,7 +1314,7 @@ class smartmenu_item {
                 'theme_boost_union',
                 'smartmenus_itemimage',
                 $itemid,
-                self::image_fileoptions()
+                self::image_filepickeroptions()
             );
         }
 
@@ -1304,7 +1328,7 @@ class smartmenu_item {
      *
      * @return array An array of file options.
      */
-    public static function image_fileoptions() {
+    public static function image_filepickeroptions() {
 
         return [
             'subdirs' => 0,

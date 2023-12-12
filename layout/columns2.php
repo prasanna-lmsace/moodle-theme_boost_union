@@ -53,7 +53,6 @@ if ($activitynavigation == THEME_BOOST_UNION_SETTING_SELECT_YES) {
 $addblockbutton = $OUTPUT->addblockbutton();
 
 $extraclasses = [];
-$bodyattributes = $OUTPUT->body_attributes($extraclasses);
 $blockshtml = $OUTPUT->blocks('side-pre');
 $hasblocks = (strpos($blockshtml, 'data-block=') !== false || !empty($addblockbutton));
 
@@ -74,12 +73,24 @@ if ($PAGE->has_secondary_navigation()) {
 $primary = new theme_boost_union\output\navigation\primary($PAGE);
 $renderer = $PAGE->get_renderer('core');
 $primarymenu = $primary->export_for_template($renderer);
+
+// Add a special class selector to improve the Smart menus SCSS selectors.
+if (isset($primarymenu['includesmartmenu']) && $primarymenu['includesmartmenu'] == true) {
+    $extraclasses[] = 'theme-boost-union-smartmenu';
+}
+if (isset($primarymenu['bottombar']) && !empty($primarymenu['includesmartmenu'])) {
+    $extraclasses[] = 'theme-boost-union-bottombar';
+}
+
 $buildregionmainsettings = !$PAGE->include_region_main_settings_in_header_actions()  && !$PAGE->has_secondary_navigation();
 // If the settings menu will be included in the header then don't add it here.
 $regionmainsettingsmenu = $buildregionmainsettings ? $OUTPUT->region_main_settings_menu() : false;
 
 $header = $PAGE->activityheader;
 $headercontent = $header->export_for_template($renderer);
+
+$bodyattributes = $OUTPUT->body_attributes($extraclasses); // In the original layout file, this line is place more above,
+                                                           // but we amended $extraclasses and had to move it.
 
 $templatecontext = [
     'sitename' => format_string($SITE->shortname, true, ['context' => context_course::instance(SITEID), "escape" => false]),
@@ -96,7 +107,7 @@ $templatecontext = [
     'hasregionmainsettingsmenu' => !empty($regionmainsettingsmenu),
     'headercontent' => $headercontent,
     'overflow' => $overflow,
-    'addblockbutton' => $addblockbutton
+    'addblockbutton' => $addblockbutton,
 ];
 
 // Include the template content for the course related hints.
@@ -113,6 +124,9 @@ require_once(__DIR__ . '/includes/footnote.php');
 
 // Include the template content for the static pages.
 require_once(__DIR__ . '/includes/staticpages.php');
+
+// Include the template content for the footer button.
+require_once(__DIR__ . '/includes/footer.php');
 
 // Include the template content for the JavaScript disabled hint.
 require_once(__DIR__ . '/includes/javascriptdisabledhint.php');

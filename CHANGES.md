@@ -6,6 +6,91 @@ Changes
 
 ### Unreleased
 
+* 2023-12-10 - Improvement: Allow the admin to change the look of the course overview block, solves #204
+
+### v4.3-r3
+
+* 2023-12-05 - Improvement: Option to suppress footer (circle containing the question mark) button, solves #444.
+* 2023-12-01 - Bugfix: Static pages unnecessarily cleaned configured content, solves #486.
+* 2023-11-23 - Bugfix: Add background color to OAuth2 login button, solves #473.
+
+### v4.3-r2
+
+* 2023-11-11 - Bugfix: Bulk actions widget overlaid course header image, solves #469.
+* 2023-11-09 - Bugfix: Hide back to top button on small screens as soon as the right hand drawer is opened, solves #379.
+* 2023-11-09 - Bugfix: Styles of styled e-mail previews leaked into the rest of the admin UI, solves #413.
+* 2023-11-04 - Bugfix: Pass footnote content without text_to_html div generation, solves #442.
+* 2023-10-09 - Improvement: Add a direct 'view course' icon on the course management pages, solves #129.
+* 2023-10-05 - Improvement: Allow the admin to set the background-position of the background and login background images, solves #111.
+* 2023-11-03 - Bugfix: Add missing cachedef strings to the language pack, solves #441.
+
+### v4.3-r1
+
+* 2023-10-31 - Upgrade: Align the new communications button with the back-to-top button and the bottom menu.
+* 2023-10-28 - Upgrade: Fix the scrollspy which broke on Moodle 4.3, solves #420.
+* 2023-10-28 - Upgrade: Fix a broken Behat test with the additional resources setting.
+* 2023-10-28 - Upgrade: Fix the back-to-top button which broke on Moodle 4.3, solves #419.
+* 2023-10-27 - Upgrade: Fix a broken Behat test with modal confirm dialogues.
+* 2023-10-27 - Upgrade: Get rid of deprecation warning in the additional resources setting, solves #425.
+* 2023-10-27 - Upgrade: Use the new $activity-icon-* SCSS variables for the activity icon color settings.
+* 2023-10-27 - Upgrade: Replace deprecated user_preference_allow_ajax_update() function.
+* 2023-10-25 - Upgrade: Adopt changes in layout/drawers.php from Boost core.
+* 2023-10-25 - Upgrade: Adopt changes in primary-drawer-mobile.mustache from Boost core.
+* 2023-10-25 - Upgrade: Adopt changes in drawers.mustache and footer.mustache from Boost core.
+* 2023-10-20 - Prepare compatibility for Moodle 4.3.
+
+### v4.2-r4
+
+* 2023-10-31 - Bugfix: Align the back-to-top button better with the sticky footer, solves #437.
+* 2023-10-29 - Test: Add missing Behat tests for Scroll-spy implementation, solves #86.
+* 2023-10-14 - Add automated release to moodle.org/plugins
+
+### v4.2-r3
+
+* 2023-10-01 - Bugfix: Omit PHP deprecation warnings on PHP 8.2, solves #411.
+* 2023-10-01 - Test: Run Moodle Plugin CI with PHP 8.2 as well.
+* 2023-10-01 - Bugfix: Smart menus did not support multilanguage filters, solves #376.
+* 2023-09-28 - Release: Make sure that Smart Menu SCSS does not affect installations which do not use smart menus, solves #380.
+* 2023-09-22 - Bugfix: Transition in second level in user menu was wrong, solves #397
+* 2023-09-22 - Improvement: Smartmenus.js is only be added to the page if smart menus are really used, solves #357
+* 2023-09-22 - Bugfix: Smart menu language restriction did not respect switching language with the language switcher, solves #358.
+* 2023-09-26 - Bugfix: The smart menu third level arrow was broken, solves #402.
+* 2023-09-22 - Make codechecker happier
+* 2023-09-24 - Test: Behat scenario 'Show hint for self enrolment without an enrolment key' was broken, solves #398.
+* 2023-09-22 - Improvement: Reuse Moodle core function remove_dir(), solves #369.
+
+### v4.2-r2
+
+* 2023-09-19 - Bugfix: Fix fatal mustache rendering errors, solves #390.
+               This issue was a regression of #385 which adopted Moodle core changes from MDL-78656 into Boost Union.
+               During this adoption into Boost Union, it was overseen to raise the minimum required Moodle core version for Boost Union at the same time.
+               If you intend to use this release of Boost Union, please update Moodle core to the latest Moodle core 4.2.2+ or wait some more days for 4.2.3. Thank you for your understanding.
+
+### v4.2-r1
+
+* 2023-09-17 - Bugfix: Fix double-labeling and FontAwesome issues with the 'Mark external links' feature, solves #323 and #327.
+* 2023-09-17 - Upgrade: Use better icon for offcanvas button with FontAwesome 6, solves #265.
+* 2023-09-17 - Upgrade: Remove 'FontAwesome version' setting as FontAwesome 6 Free has been integrated into Moodle core. Boost Union will use FontAwesome 6 by default from 4.2 on, solves #389.
+* 2023-09-17 - Upgrade: Adopt PHPDoc change from MDL-77164.
+* 2023-09-01 - Prepare compatibility for Moodle 4.2.
+* 2023-09-17 - Improvement: Adopt Moodle core bugfix from MDL-78138 which fixed the category breadcrumbs in Boost core, removing the 'Do not change anything' option from the 'Display the category breadcrumbs in the course header' setting, solves #388
+* 2023-09-17 - Bugfix: Adopt Moodle core bugfix from MDL-78644 to allow .ico files as favicons again, solves #387.
+* 2023-09-17 - Updated Moodle Plugin CI to latest upstream recommendations
+
+### v4.1-r10
+
+* 2023-09-09 - Release: Adopt theme_boost changes from MDL-78656 to moremenu_children.mustache template, align menu item icon and tooltip handling at the same time, solves #385.
+* 2023-08-30 - Improvement: Align actions column on flavours and smart menus settings pages, solves #381.
+* 2023-08-19 - Improvement: Fix more mustache linter warnings, solves #360.
+* 2023-08-02 - Improvement: Add 'aboutus', 'offers', 'page1', 'page2' and 'page3' static pages, solves #351.
+* 2023-08-19 - Bugfix: Fix unparsable example JSON in Mustache template, solves #348.
+* 2023-08-18 - Improvement: Add CSS and Scripts for local_och5p local_och5pcore to the theme renderer.
+* 2023-08-13 - Improvement: Make the fonts in the dark navbar variants always fully white (not only when hovered) to improve the contrast.
+* 2023-08-13 - Feature: Smart menus, solves #137
+
+### v4.1-r9
+
+* 2023-07-24 - Improvement: Only add load OffCanvas module when offcanvas region is enabled, solves #343.
 * 2023-07-11 - Improvement: Place mustache templates which are overridden from theme_boost into subfolder, solves #337.
 * 2023-07-10 - Bugfix: Omit warning when no CSS cached folder present, solves #330.
 * 2023-07-10 - Bugfix: Overwriting module purposes did not affect all places where the activity icon is displayed, solves #318.

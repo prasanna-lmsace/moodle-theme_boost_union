@@ -175,56 +175,56 @@ class smartmenu {
      * Square (1/1) dimensions
      * @var int
      */
-    public const SQUARE = 1;
+    public const CARDFORM_SQUARE = 1;
 
     /**
      * Portrait (2/3) dimensions
      * @var int
      */
-    public const PORTRAIT = 2;
+    public const CARDFORM_PORTRAIT = 2;
 
     /**
      * Landscape (3/2) dimensions
      * @var int
      */
-    public const LANDSCAPE = 3;
+    public const CARDFORM_LANDSCAPE = 3;
 
     /**
      * Full width dimensions
      * @var int
      */
-    public const FULLWIDTH = 4;
+    public const CARDFORM_FULLWIDTH = 4;
 
     /**
      * Tiny size option.
      * @var int
      */
-    public const TINY = 1;
+    public const CARDSIZE_TINY = 1;
 
     /**
      * Small - Card size option .
      * @var int
      */
-    public const SMALL = 2;
+    public const CARDSIZE_SMALL = 2;
 
     /**
      * Medium size option for card.
      * @var int
      */
-    public const MEDIUM = 3;
+    public const CARDSIZE_MEDIUM = 3;
 
     /**
      * Large size option for card.
      * @var int
      */
-    public const LARGE = 4;
+    public const CARDSIZE_LARGE = 4;
 
     /**
      * Constants for controlling the display of the "More" menu.
      * Default position (below main menu)
      * @var int
      */
-    public const MOREMENU_DEFAULT = 0;
+    public const MOREMENU_DONOTCHANGE = 0;
 
     /**
      * Position into the main menu.
@@ -242,13 +242,13 @@ class smartmenu {
      * Flag to indicate the overflow behavior of card, should be wrapped.
      * @var int
      */
-    public const WRAP = 1;
+    public const CARDOVERFLOWBEHAVIOUR_WRAP = 1;
 
     /**
      * Flag to indicate the overflow behavior of card, should not be wrapped.
      * @var int
      */
-    public const NOWRAP = 2;
+    public const CARDOVERFLOWBEHAVIOUR_NOWRAP = 2;
 
     /**
      * Display the menuitems as menu.
@@ -321,7 +321,10 @@ class smartmenu {
             // Delete all its items.
             $DB->delete_records('theme_boost_union_menuitems', ['menu' => $this->id]);
             // Purge the menus cache.
-            cache_helper::purge_by_event('theme_boost_union_menus_deleted');
+            $this->cache->delete_menu($this->id);
+            // Delete the cached menus list.
+            $this->cache->delete(self::CACHE_MENUSLIST);
+
             return true;
         }
         return false;
@@ -347,8 +350,8 @@ class smartmenu {
             $DB->set_field('theme_boost_union_menus', 'sortorder', $prevmenu->sortorder, ['id' => $this->id]);
             // Set the prevmenu position to down.
             $DB->set_field('theme_boost_union_menus', 'sortorder', $currentposition, ['id' => $prevmenu->id]);
-            // Purge the menu cache.
-            cache_helper::purge_by_event('theme_boost_union_menus_resorted');
+            // Purge the menus list, need to recreate in new order.
+            $this->cache->delete(self::CACHE_MENUSLIST);
 
             return true;
         }
@@ -374,8 +377,8 @@ class smartmenu {
             $DB->set_field('theme_boost_union_menus', 'sortorder', $nextmenu->sortorder, ['id' => $this->id]);
             // Set the nextmenu position to up.
             $DB->set_field('theme_boost_union_menus', 'sortorder', $currentposition, ['id' => $nextmenu->id]);
-            // Purge all the cached menus, need to recreate for all users.
-            cache_helper::purge_by_event('theme_boost_union_menus_resorted');
+            // Purge the menus list, need to recreate in new order.
+            $this->cache->delete(self::CACHE_MENUSLIST);
 
             return true;
         }
@@ -412,7 +415,7 @@ class smartmenu {
             }
         }
         // Success message for duplicated menu.
-        \core\notification::success(get_string('smartmenusmenuduplicated', 'theme_boost_union'));
+        \core\notification::success(get_string('smartmenusmenuduplicatesuccess', 'theme_boost_union'));
 
         // New menu added, Recreate the menuslist in cache.
         $this->cache->delete(self::CACHE_MENUSLIST);
@@ -461,7 +464,10 @@ class smartmenu {
     protected function get_cardform() {
 
         $options = [
-            self::SQUARE => 'square', self::PORTRAIT => 'portrait', self::LANDSCAPE => 'landscape', self::FULLWIDTH => 'fullwidth'
+                self::CARDFORM_SQUARE => 'square',
+                self::CARDFORM_PORTRAIT => 'portrait',
+                self::CARDFORM_LANDSCAPE => 'landscape',
+                self::CARDFORM_FULLWIDTH => 'fullwidth',
         ];
 
         return isset($options[$this->menu->cardform]) ? 'card-form-'.$options[$this->menu->cardform] : '';
@@ -475,7 +481,10 @@ class smartmenu {
     protected function get_cardsize() {
 
         $options = [
-            self::TINY => 'tiny', self::SMALL => 'small', self::MEDIUM => 'medium', self::LARGE => 'large'
+                self::CARDSIZE_TINY => 'tiny',
+                self::CARDSIZE_SMALL => 'small',
+                self::CARDSIZE_MEDIUM => 'medium',
+                self::CARDSIZE_LARGE => 'large',
         ];
 
         return isset($options[$this->menu->cardsize]) ? 'card-size-' . $options[$this->menu->cardsize] : '';
@@ -489,10 +498,12 @@ class smartmenu {
     public function get_cardwrap() {
 
         $options = [
-            self::WRAP => 'wrap', self::NOWRAP => 'no-wrap'
+                self::CARDOVERFLOWBEHAVIOUR_WRAP => 'wrap',
+                self::CARDOVERFLOWBEHAVIOUR_NOWRAP => 'no-wrap',
         ];
 
-        return isset($options[$this->menu->overflowbehavior]) ? 'card-overflow-' . $options[$this->menu->overflowbehavior] : '';
+        return isset($options[$this->menu->cardoverflowbehavior]) ? 'card-overflow-' .
+                $options[$this->menu->cardoverflowbehavior] : '';
     }
 
 
@@ -510,7 +521,7 @@ class smartmenu {
             ORDER BY mi.sortorder ASC";
 
         $params = [
-            'id' => $this->menu->id
+            'id' => $this->menu->id,
         ];
         $items = $DB->get_records_sql($sql, $params);
 
@@ -553,7 +564,8 @@ class smartmenu {
 
         // Get the menu and its menu items from cache.
         $menuitems = [];
-        if ($nodes = $this->cache->get($cachekey)) {
+        $nodes = $this->cache->get($cachekey);
+        if (!empty($nodes)) {
             // List of menu items added to this menu.
             $menuitems = $nodes->menuitems ?? [];
 
@@ -578,9 +590,11 @@ class smartmenu {
 
                 $nodes = (object) [
                     'menudata' => $this->menu,
-                    'title' => $this->menu->title,
+                    // Do not set the title attribute as this would show a standard tooltip based on the
+                    // Moodle core custom menu logic.
+                    'title' => '',
                     'url' => null,
-                    'text' => $this->menu->title,
+                    'text' => format_string($this->menu->title),
                     'key' => $this->menu->id,
                     'submenulink' => 1,
                     'itemtype' => 'submenu-link', // Used in user menus, to identify the menu type, "link" for submmenus.
@@ -588,7 +602,7 @@ class smartmenu {
                     'card' => ($this->menu->type == self::TYPE_CARD) ? true : false,
                     'forceintomoremenu' => ($this->menu->moremenubehavior == self::MOREMENU_INTO) ? true : false,
                     'haschildren' => 0,
-                    'sort' => uniqid() // Support third level menu.
+                    'sort' => uniqid(), // Support third level menu.
                 ];
 
                 // Add the description data to nodes. Inline mode menus not supports the menu.
@@ -608,7 +622,7 @@ class smartmenu {
                             'text' => $description,
                             'alt' => $alt,
                             'icon' => (new \pix_icon('help', $alt, 'core', ['class' => 'iconhelp']))->export_for_template($OUTPUT),
-                            'ltr' => !right_to_left()
+                            'ltr' => !right_to_left(),
                         ];
                         $nodes->helpicon = $OUTPUT->render_from_template('core/help_icon', $data);
                     }
@@ -638,7 +652,7 @@ class smartmenu {
                 $builditems = (!empty($item)) ? array_merge($builditems, $item) : $builditems;
             }
 
-            if (isset($nodes)) {
+            if (isset($nodes) && !empty($nodes)) {
                 // Setup the childrens to parent menu node.
                 $nodes->haschildren = (count($builditems) > 0) ? true : false;
                 $nodes->children = $builditems;
@@ -668,13 +682,13 @@ class smartmenu {
 
         // Set the processed menus node and its children item nodes in Cache.
         if (isset($nodes) && isset($storecache)) {
-            $nodescache = clone $nodes;
+            $nodescache = clone (object) $nodes;
             // Remove the children data from cache before store.
             unset($nodescache->children);
             $nodescache->menuitems = $menuitems;
             $this->cache->set($cachekey, $nodescache);
         }
-        // REmove the menu items list from nodes. it doesn't need to build the smartmenus.
+        // Remove the menu items list from nodes. it doesn't need to build the smartmenus.
         if (isset($nodes->menuitems)) {
             // Remove the menu items list from nodes, it doesn't need anymore.
             unset($nodes->menuitems);
@@ -695,15 +709,20 @@ class smartmenu {
         if (empty($menus) || $location == '') {
             return [];
         }
+        // Get the menu location from topmenus list.
+        // Locations from itemdata is not accurate, to fix this need to remove the all of items cache for the updated menu.
+        // Instead of delete item caches, get locations from cached menus list.
+        $topmenus = smartmenu_helper::get_menu_cache()->get(self::CACHE_MENUSLIST);
+
+        $menulocation = [];
         foreach ($menus as $menu) {
 
             $menu = (object) $menu;
 
             if (isset($menu->menudata->location)) {
                 $menulocation = $menu->menudata->location;
-            }
-            if (isset($menu->itemdata->location)) {
-                $menulocation = $menu->itemdata->location;
+            } else if (isset($menu->itemdata->menu) && isset($topmenus[$menu->itemdata->menu])) { // Inline menus.
+                $menulocation = json_decode($topmenus[$menu->itemdata->menu]->location);
             }
 
             if (!isset($menulocation) || empty($menulocation)) {
@@ -712,6 +731,7 @@ class smartmenu {
             // The menu contians the specified location. then store the menu for this location.
             if (in_array($location, $menulocation)) {
                 $result[] = $menu;
+                $menulocation = []; // Reset the menu location for verify next menu.
             }
         }
 
@@ -735,8 +755,7 @@ class smartmenu {
 
             return $record;
         } else {
-            // TODO: string for menu not found.
-            throw new moodle_exception('menunotfound', 'theme_boost_union');
+            throw new moodle_exception('error:smartmenusmenunotfound', 'theme_boost_union');
         }
         return false;
     }
@@ -756,7 +775,7 @@ class smartmenu {
 
         $menu->description = [
             'text'   => $menu->description,
-            'format' => $menu->description_format
+            'format' => $menu->description_format,
         ];
         // Decode the multiple option select elements values to array.
         $menu->location = json_decode($menu->location);
@@ -797,12 +816,12 @@ class smartmenu {
      */
     public static function get_locations() {
         // List of locations where same menu can be used in multiple places.
-        $locations = array(
-            self::LOCATION_MAIN => get_string('smartmenuslocationmain', 'theme_boost_union'),
-            self::LOCATION_MENU => get_string('smartmenuslocationmenu', 'theme_boost_union'),
-            self::LOCATION_USER => get_string('smartmenuslocationuser', 'theme_boost_union'),
-            self::LOCATION_BOTTOM => get_string('smartmenuslocationbottom', 'theme_boost_union')
-        );
+        $locations = [
+            self::LOCATION_MAIN => get_string('smartmenusmenulocationmain', 'theme_boost_union'),
+            self::LOCATION_MENU => get_string('smartmenusmenulocationmenu', 'theme_boost_union'),
+            self::LOCATION_USER => get_string('smartmenusmenulocationuser', 'theme_boost_union'),
+            self::LOCATION_BOTTOM => get_string('smartmenusmenulocationbottom', 'theme_boost_union'),
+        ];
 
         return $locations;
     }
@@ -824,10 +843,10 @@ class smartmenu {
      * @return array An array with all available types, where key is the type id and value is the localized type name.
      */
     public static function get_types() {
-        $types = array(
-            self::TYPE_LIST => get_string('smartmenustypeslist', 'theme_boost_union'),
-            self::TYPE_CARD => get_string('smartmenustypescard', 'theme_boost_union')
-        );
+        $types = [
+            self::TYPE_LIST => get_string('smartmenusmenutypelist', 'theme_boost_union'),
+            self::TYPE_CARD => get_string('smartmenusmenutypecard', 'theme_boost_union'),
+        ];
 
         return $types;
     }
@@ -850,7 +869,7 @@ class smartmenu {
      * Delete the current menu cache after updated the menu.
      *
      * @param stdclass $formdata
-     * @return bool
+     * @return int The menu ID.
      */
     public static function manage_instance($formdata) {
         global $DB;
@@ -877,10 +896,10 @@ class smartmenu {
             // Clear the current menu caches. Update may cause changes in the menus list.
             // Delete the menu cache for all users.
             $cache->delete_menu($menuid);
-            // New menu added, recreate the menuslist.
+            // Menu updated, recreate the menuslist.
             $cache->delete(self::CACHE_MENUSLIST);
             // Show the edited success notification.
-            \core\notification::success(get_string('smartmenusupdatesuccess', 'theme_boost_union'));
+            \core\notification::success(get_string('smartmenusmenueditsuccess', 'theme_boost_union'));
         } else {
             // Setup the menu order.
             $lastmenu = self::get_lastmenu();
@@ -889,7 +908,7 @@ class smartmenu {
             // New menu added, recreate the menuslist.
             $cache->delete(self::CACHE_MENUSLIST);
             // Show the menu inserted success notification.
-            \core\notification::success(get_string('smartmenusinsertsuccess', 'theme_boost_union'));
+            \core\notification::success(get_string('smartmenusmenucreatesuccess', 'theme_boost_union'));
         }
 
         // Allow to update the DB changes to Database.
@@ -919,6 +938,9 @@ class smartmenu {
         global $USER;
 
         $nodes = [];
+
+        // Verify the language changes in user session, if changed than purge the menus and items cache for the user session.
+        self::verify_lang_session_changes();
 
         $cache = cache::make('theme_boost_union', 'smartmenus');
         // Fetch the list of menus from cache.
@@ -958,5 +980,24 @@ class smartmenu {
         \smartmenu_helper::clear_user_cachepreferencemenu();
 
         return $nodes;
+    }
+
+    /**
+     * Verifies and handles changes in the session language.
+     * Clears cached smart menus and items when the user changes the language using the language menu.
+     *
+     * @return void
+     */
+    protected static function verify_lang_session_changes() {
+        global $SESSION, $USER;
+        // Make sure the lang is updated for the session.
+        if ($lang = optional_param('lang', '', PARAM_SAFEDIR)) {
+            // Confirm the cache is not already purged for this language change. To avoid multiple purge.
+            if (!isset($SESSION->prevlang) || $SESSION->prevlang != $lang) {
+                // Set the purge cache preference for this session user. Cache will purged in the build_smartmenu method.
+                \smartmenu_helper::set_user_purgecache($USER->id);
+                $SESSION->prevlang = $lang; // Save this lang for verification.
+            }
+        }
     }
 }
