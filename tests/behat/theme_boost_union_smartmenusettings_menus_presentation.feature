@@ -131,7 +131,6 @@ Feature: Configuring the theme_boost_union plugin on the "Smart menus" page, app
     Then ".card-dropdown.card-overflow-no-wrap .dropdown-menu.show" "css_element" should exist in the ".primary-navigation" "css_element"
     And ".card-dropdown.card-overflow-wrap .dropdown-menu.show" "css_element" should not exist in the ".primary-navigation" "css_element"
     Then DOM element ".primary-navigation .card-dropdown .dropdown-menu.show" should have computed style "flex-wrap" "nowrap"
-
     And I click on ".action-edit" "css_element" in the "Quick Links" "table_row"
     And I expand all fieldsets
     And I set the field "Card overflow behavior" to "Wrap"

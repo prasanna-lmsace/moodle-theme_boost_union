@@ -215,25 +215,25 @@ Feature: Configuring the theme_boost_union plugin on the "Smart menus" page, app
     Then I click on "input[name='iconsearch']" "css_element"
     Then I click on ".fa-info-circle" "css_element" in the ".fontawesome-picker .popover-body " "css_element"
     And I click on "Save changes" "button"
-    And I <titleshouldornot> see smart menu "Quick links" item "Resources" in location "Main, Menu, User"
+    And I <desktopshouldornot> see smart menu "Quick links" item "Resources" in location "Main, Menu, User"
     And ".icon.fa-info-circle" "css_element" should exist in the ".primary-navigation .dropdown-item" "css_element"
     And ".icon.fa-info-circle" "css_element" should exist in the ".boost-union-menubar .dropdown-item" "css_element"
     And ".icon.fa-info-circle" "css_element" should exist in the "#usermenu-carousel .carousel-item.submenu .dropdown-item" "css_element"
-    Then I change window size to "425x750"
+    Then I change window size to "mobile"
     And I <mobiletitleshould> see smart menu "Quick links" item "Resources" in location "Menu, User"
-    And I click on "More" "link" in the ".bottom-navigation" "css_element"
+    And I click on "More" "button" in the ".bottom-navigation" "css_element"
     And I click on "Quick links" "link" in the "#theme_boost-drawers-primary" "css_element"
-    And I <mobiletitleshould> see "Resources"
+    And I <mobiletitleshould> see "Resources" in the "#theme_boost-drawers-primary" "css_element"
     And ".icon.fa-info-circle" "css_element" should exist in the ".primary-navigation .dropdown-item" "css_element"
     And ".icon.fa-info-circle" "css_element" should exist in the ".boost-union-menubar .dropdown-item" "css_element"
     And ".icon.fa-info-circle" "css_element" should exist in the "#usermenu-carousel .carousel-item.submenu .dropdown-item" "css_element"
     Then I change window size to "large"
 
     Examples:
-      | presentationtitle                                      | titleshouldornot | mobiletitleshould |
-      | Show text and icon as title                            | should           | should            |
-      | Hide title text and show only icon (on all devices)    | should not       | should not        |
-      | Hide title text and show only icon (on mobile devices) | should           | should not        |
+      | presentationtitle                                      | desktopshouldornot | mobiletitleshould |
+      | Show text and icon as title                            | should             | should            |
+      | Hide title text and show only icon (on all devices)    | should not         | should not        |
+      | Hide title text and show only icon (on mobile devices) | should             | should not        |
 
   @javascript
   Scenario: Smartmenus: Menu items: Presentation - Display the tooltip on hover over the menu items
