@@ -61,7 +61,16 @@
         {{#nodearray}}
         {{!-- Menu with card style --}}
             {{#card}}
-                {{> theme_boost_union/smartmenus-cardmenu-children}}
+                {{#haschildren}}
+                    <li class="dropdown nav-item {{#card}} card-dropdown {{/card}} {{#menudata.classes}} {{.}} {{/menudata.classes}}" role="none" data-forceintomoremenu="{{#forceintomoremenu}}true{{/forceintomoremenu}}{{^forceintomoremenu}}false{{/forceintomoremenu}}">
+                        {{> theme_boost_union/smartmenus-cardmenu-children}}
+                    </li>
+                {{/haschildren}}
+                {{^haschildren}}
+                    <li data-key="{{key}}" class="nav-item" role="none" data-forceintomoremenu="{{#forceintomoremenu}}true{{/forceintomoremenu}}{{^forceintomoremenu}}false{{/forceintomoremenu}}">
+                        {{> theme_boost_union/smartmenus-cardmenu-children}}
+                    </li>
+                {{/haschildren}}
             {{/card}}
 
             {{^card}}
