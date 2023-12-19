@@ -28,7 +28,8 @@
         "text": "Moodle community",
         "children": "",
         "title": "Moodle community",
-        "url": "https://moodle.org"
+        "url": "https://moodle.org",
+        "menuitem": true
     }
 }}
 {{#haschildren}}
@@ -88,7 +89,7 @@
     {{/istablist}}
     {{^istablist}}
         {{^is_action_link}}
-            <a role="menuitem" class="nav-link {{#isactive}}active{{/isactive}} {{#classes}}{{.}} {{/classes}}"
+            <a {{^menuitem}} role="menuitem" {{/menuitem}} class="nav-link {{#isactive}}active{{/isactive}} {{#classes}}{{.}} {{/classes}}"
                 href="{{{url}}}{{{action}}}"
                 {{#isactive}}aria-current="true"{{/isactive}}
                 {{^isactive}}tabindex="-1"{{/isactive}}
