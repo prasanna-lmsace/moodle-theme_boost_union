@@ -28,6 +28,7 @@ Feature: Configuring the theme_boost_union plugin on the "Smart menus" page, app
       | Menu item mode                   | Inline            |
       | Link target                      | <setting>         |
     And I should see "Available courses" in the "smartmenus_items" "table"
+    # Menu items in main navigation
     Then I should see smart menu "Quick links" item "Test course1" in location "Main"
     And the "target" attribute of "//div[@class='primary-navigation']//a[contains(normalize-space(.), 'Test course1')]" "xpath_element" <should>
     # Menu items in user menu.

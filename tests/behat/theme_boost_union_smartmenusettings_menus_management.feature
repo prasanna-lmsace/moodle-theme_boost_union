@@ -33,7 +33,6 @@ Feature: Configuring the theme_boost_union plugin on the "Smart menus" page, man
     And ".smartmenu-actions" "css_element" should exist in the "smartmenus" "table"
     Then I should see smart menu "Links" in location "Main"
 
-
   @javascript
   Scenario: Smart menus: Menus: Management - Edit an existing smart menu
     When I log in as "admin"

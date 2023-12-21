@@ -190,7 +190,7 @@ Feature: Configuring the theme_boost_union plugin on the "Smart menus" page, app
     And I click on "Create menu" "button"
     And I set the following fields to these values:
       | Title            | <span lang="en" class="multilang">Lorem ipsum</span><span lang="de" class="multilang">Dolor sit amet</span> |
-      | Menu location(s) | Main, Menu, User, Bottom                                                                                                        |
+      | Menu location(s) | Main, Menu, User, Bottom                                                                                    |
     And I click on "Save and return" "button"
     And I follow "Preferences" in the user menu
     And I click on "Preferred language" "link"
@@ -205,7 +205,7 @@ Feature: Configuring the theme_boost_union plugin on the "Smart menus" page, app
     And I press "Save changes"
     And I am on site homepage
     Then I should see smart menu "Dolor sit amet" in location "Main, Menu, User, Bottom"
-    Then I should not see smart menu "Lorem ipsum" in location "Main, Menu, User, Bottom"
+    And I should not see smart menu "Lorem ipsum" in location "Main, Menu, User, Bottom"
 
   @javascript
   Scenario: Smartmenu: Menus: Presentation - Display the menus inside and outside more menu

@@ -46,7 +46,6 @@ Feature: Configuring the theme_boost_union plugin on the "Smart menus" page, app
     And I should see "Bottom" in the "Links" "table_row"
     Then I should see smart menu "Links" in location "Main, Menu, User, Bottom"
 
-
   @javascript
   Scenario: Smartmenu: Menus: Application - Show a smart menu in different locations
     When I log in as "admin"
