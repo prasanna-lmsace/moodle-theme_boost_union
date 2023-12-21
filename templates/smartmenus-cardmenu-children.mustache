@@ -29,11 +29,11 @@
         "children": "",
         "title": "Moodle community",
         "url": "https://moodle.org",
-        "menuitem": true
+        "hidemenuitem": true
     }
 }}
 {{#haschildren}}
-    <a class="dropdown-toggle nav-link {{#isactive}}active{{/isactive}} {{#classes}}{{.}} {{/classes}} {{#menu.cssclass}} {{menu.cssclass}}{{/menu.cssclass}}"  id="drop-down-{{moremenuid}}" {{^menuitem}} role="menuitem" {{/menuitem}} data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="#" aria-controls="drop-down-menu-{{moremenuid}}"
+    <a class="dropdown-toggle nav-link {{#isactive}}active{{/isactive}} {{#classes}}{{.}} {{/classes}} {{#menu.cssclass}} {{menu.cssclass}}{{/menu.cssclass}}"  id="drop-down-{{moremenuid}}" {{^hidemenuitem}} role="menuitem" {{/hidemenuitem}} data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="#" aria-controls="drop-down-menu-{{moremenuid}}"
         {{#isactive}} aria-current="true" {{/isactive}} {{^isactive}} tabindex="-1" {{/isactive}}>
         {{{text}}}
     </a>
@@ -93,7 +93,7 @@
     {{/istablist}}
     {{^istablist}}
         {{^is_action_link}}
-            <a {{^menuitem}} role="menuitem" {{/menuitem}} class="nav-link {{#isactive}}active{{/isactive}} {{#classes}}{{.}} {{/classes}}"
+            <a {{^hidemenuitem}} role="menuitem" {{/hidemenuitem}} class="nav-link {{#isactive}}active{{/isactive}} {{#classes}}{{.}} {{/classes}}"
                 href="{{{url}}}{{{action}}}"
                 {{#isactive}}aria-current="true"{{/isactive}}
                 {{^isactive}}tabindex="-1"{{/isactive}}

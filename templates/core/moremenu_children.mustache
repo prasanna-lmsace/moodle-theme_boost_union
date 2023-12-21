@@ -28,7 +28,7 @@
         "children": "",
         "title": "Moodle community",
         "url": "https://moodle.org",
-        "cimenuitem": true
+        "hidemenuitemrole": true
     }
 }}
 {{!
@@ -129,7 +129,7 @@
     {{/istablist}}
     {{^istablist}}
         {{#is_action_link}}
-            <a {{^cimenuitem}} role="menuitem" {{/cimenuitem}} class="nav-link {{#itemdata.classes}}{{.}} {{/itemdata.classes}} {{#classes}}{{.}} {{/classes}}" {{#actionattributes}}{{name}}="{{value}}" {{/actionattributes}} href="{{{url}}}{{{action}}}"
+            <a {{^hidemenuitemrole}} role="menuitem" {{/hidemenuitemrole}} class="nav-link {{#itemdata.classes}}{{.}} {{/itemdata.classes}} {{#classes}}{{.}} {{/classes}}" {{#actionattributes}}{{name}}="{{value}}" {{/actionattributes}} href="{{{url}}}{{{action}}}"
                 {{#tooltip}}title="{{.}}" data-toggle="tooltip"{{/tooltip}}{{^tooltip}}{{#title}}title="{{.}}"{{/title}}{{/tooltip}}
                 {{#attributes}}{{name}}="{{value}}" {{/attributes}}
                 data-disableactive="true" tabindex="-1"
@@ -141,7 +141,7 @@
             {{/action_link_actions}}
         {{/is_action_link}}
         {{^is_action_link}}
-            <a {{^cimenuitem}} role="menuitem" {{/cimenuitem}} class="nav-link {{#itemdata.classes}}{{.}} {{/itemdata.classes}} {{#isactive}}active{{/isactive}} {{#classes}}{{.}} {{/classes}}"
+            <a {{^hidemenuitemrole}} role="menuitem" {{/hidemenuitemrole}} class="nav-link {{#itemdata.classes}}{{.}} {{/itemdata.classes}} {{#isactive}}active{{/isactive}} {{#classes}}{{.}} {{/classes}}"
                 href="{{{url}}}{{{action}}}"
                 {{#tooltip}}title="{{.}}" data-toggle="tooltip"{{/tooltip}}{{^tooltip}}{{#title}}title="{{.}}"{{/title}}{{/tooltip}}
                 {{#attributes}}{{name}}="{{value}}" {{/attributes}}
