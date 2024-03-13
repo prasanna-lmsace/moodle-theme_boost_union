@@ -11,17 +11,14 @@ Feature: Configuring the theme_boost_union plugin on the "Smart menus" page, app
       | fullname | shortname | category |
       | Test     | C1        | 0        |
     And the following "users" exist:
-      | username      |
-      | student1      |
-      | student2      |
-      | teacher       |
-      | coursemanager |
-      | systemmanager |
+      | username |
+      | student1 |
+      | student2 |
+      | teacher  |
     And the following "course enrolments" exist:
-      | user          | course | role           |
-      | teacher       | C1     | editingteacher |
-      | student1      | C1     | student        |
-      | coursemanager | C1     | manager        |
+      | user     | course | role           |
+      | teacher  | C1     | editingteacher |
+      | student1 | C1     | student        |
     And the following "cohorts" exist:
       | name     | idnumber |
       | Cohort 1 | CH1      |
@@ -46,10 +43,17 @@ Feature: Configuring the theme_boost_union plugin on the "Smart menus" page, app
 
   @javascript
   Scenario Outline: Smartmenu: Menus: Rules - Show smart menu based on the user roles
-    Given the following "system role assigns" exist:
+    Given the following "users" exist:
+      | username      |
+      | coursemanager |
+      | systemmanager |
+    And the following "course enrolments" exist:
+      | user          | course | role    |
+      | coursemanager | C1     | manager |
+    And the following "system role assigns" exist:
       | user          | course               | role    |
       | systemmanager | Acceptance test site | manager |
-    And I navigate to smart menus
+    When I navigate to smart menus
     And I should see "Quick links" in the "smartmenus" "table"
     And I should see smart menu "Quick links" in location "Main, Menu, User, Bottom"
     And I click on ".action-edit" "css_element" in the "Quick links" "table_row"
@@ -180,16 +184,16 @@ Feature: Configuring the theme_boost_union plugin on the "Smart menus" page, app
     And I click on ".action-edit" "css_element" in the "Quick links" "table_row"
     And I expand all fieldsets
     And I set the following fields to these values:
-      | id_start_date_enabled    | <startenabled> |
-      | id_end_date_enabled      | <endenabled>   |
-      | id_start_date_day        | <start_day>    |
-      | id_start_date_month      | <start_month>  |
-      | id_start_date_year       | <start_year>   |
-      | id_end_date_day          | <end_day>      |
-      | id_end_date_month        | <end_month>    |
-      | id_end_date_year         | <end_year>     |
+      | id_start_date_enabled | <startenabled> |
+      | id_end_date_enabled   | <endenabled>   |
+      | id_start_date_day     | <start_day>    |
+      | id_start_date_month   | <start_month>  |
+      | id_start_date_year    | <start_year>   |
+      | id_end_date_day       | <end_day>      |
+      | id_end_date_month     | <end_month>    |
+      | id_end_date_year      | <end_year>     |
     And I click on "Save and return" "button"
-    And I <menushouldorshouldnot> see smart menu "Quick links" in location "Main"
+    And I <menushouldorshouldnot> see smart menu "Quick links" in location "Main, Menu, User, Bottom"
     Then I log out
     And I log in as "student1"
     And I <menushouldorshouldnot> see smart menu "Quick links" in location "Main, Menu, User, Bottom"
@@ -198,14 +202,14 @@ Feature: Configuring the theme_boost_union plugin on the "Smart menus" page, app
     And I <menushouldorshouldnot> see smart menu "Quick links" in location "Main, Menu, User, Bottom"
 
     Examples:
-      | startenabled |endenabled | start_day | start_month | start_year | end_day | end_month | end_year | menushouldorshouldnot |
-      | 1            | 1         | 1         | January     | 2023       | 1       | January   | 2050     | should                |
-      | 1            | 1         | 1         | January     | 2049       | 1       | January   | 2050     | should not            |
-      | 1            | 1         | 1         | January     | 2023       | 1       | December  | 2023     | should not            |
-      | 1            | 0         | 1         | January     | 2023       | 1       | 1         | 2023     | should                |
-      | 1            | 0         | 1         | January     | 2049       | 1       | 1         | 2023     | should not            |
-      | 0            | 1         | 1         | January     | 2023       | 1       | December  | 2050     | should                |
-      | 0            | 1         | 1         | January     | 2023       | 1       | December  | 2023     | should not            |
+      | startenabled | endenabled | start_day | start_month | start_year | end_day | end_month | end_year | menushouldorshouldnot |
+      | 1            | 1          | 1         | January     | 2023       | 1       | January   | 2050     | should                |
+      | 1            | 1          | 1         | January     | 2049       | 1       | January   | 2050     | should not            |
+      | 1            | 1          | 1         | January     | 2023       | 1       | December  | 2023     | should not            |
+      | 1            | 0          | 1         | January     | 2023       | 1       | 1         | 2023     | should                |
+      | 1            | 0          | 1         | January     | 2049       | 1       | 1         | 2023     | should not            |
+      | 0            | 1          | 1         | January     | 2023       | 1       | December  | 2050     | should                |
+      | 0            | 1          | 1         | January     | 2023       | 1       | December  | 2023     | should not            |
 
   @javascript
   Scenario Outline: Smartmenu: Menus: Rules - Show smart menu based on multiple conditions

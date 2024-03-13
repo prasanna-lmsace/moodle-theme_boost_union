@@ -21,90 +21,18 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define(["jquery", "core/moremenu"], function($) {
-    /**
-     * Implement the second level of submenu support.
-     * Find the submenus inside the dropdown, add an event listener for click event which - on the click - shows the submenu list.
-     */
-    const addSubmenu = () => {
-        // Fetch the list of submenus from moremenu.
-        var submenu = document.querySelectorAll('nav.moremenu .dropdown-submenu');
-        if (submenu !== null) {
-            submenu.forEach((item) => {
-                // Add event listener to show the submenu on click.
-                item.addEventListener('click', (e) => {
-                    var target = e.currentTarget;
-                    // Hide the shown menu.
-                    hideSubmenus(target);
-                    target.classList.toggle('show');
-                    // Prevent hiding the parent menu.
-                    e.stopPropagation();
-                });
-            });
+define(["jquery", "core/moremenu", "theme_boost_union/submenu"], function($, MoreMenu, SubMenu) {
+
+    const Selectors = {
+        dropDownMenu: "dropdownmoremenu",
+        forceOut: "force-menu-out",
+        navLink: "nav-link",
+        dropDownItem: "dropdown-item",
+        class: {
+            dropDownMenuList: ".dropdownmoremenu ul.dropdown-menu",
+            forceOut: ".dropdownmoremenu .force-menu-out"
         }
-
-        // Hide the submenus when its parent dropdown is hidden.
-        $(document).on('hidden.bs.dropdown', e => {
-            var target = e.relatedTarget.parentNode;
-            var submenus = target.querySelectorAll('.dropdown-submenu.show');
-            if (submenus !== null) {
-                submenus.forEach((e) => e.classList.remove('show'));
-            }
-        });
-
-        // Provide the third level menu support inside the more menu.
-        // StopPropagation used in the toggledropdown method on Moremenu.js, It prevents the opening of the third level menus.
-        // Used the document delegation method to fetch the click on moremenu and submenu.
-        document.addEventListener('click', (e) => {
-            var dropdown = e.target.closest('.dropdownmoremenu');
-            var subMenu = e.target.closest('.dropdown-submenu');
-            if (dropdown && subMenu !== null) {
-                // Hide the previously opend submenus. before open the new one.
-                dropdown.querySelectorAll('.dropdown-submenu.show').forEach((menu) => {
-                    menu.classList.remove('show');
-                });
-                subMenu.classList.toggle('show');
-            }
-
-            // Hide the opened menus before open the other menus.
-            var dropdownMenu = e.target.parentNode.classList.contains('dropdown');
-            if (dropdown && dropdownMenu) {
-                dropdown.querySelectorAll('.dropdown-menu.show').forEach((menu) => {
-                    // Hide the opened menus in more menu.
-                    if (menu != e.target.closest('.dropdown-menu')) {
-                        menu.classList.remove('show');
-                    }
-                });
-            }
-
-        }, true);
-
-        // Prevent the closing of dropdown during the click on help icon.
-        var helpIcon = document.querySelectorAll('.moremenu .dropdown .menu-helpicon');
-        if (helpIcon !== null) {
-            helpIcon.forEach((icon) => {
-                icon.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                });
-            });
-        }
-    };
-
-    /**
-     * Hide visible submenus before display new submenu.
-     *
-     * @param {Selector} target
-     */
-    const hideSubmenus = (target) => {
-        var visibleMenu = document.querySelectorAll('nav.moremenu .dropdown-submenu.show');
-        if (visibleMenu !== null) {
-            visibleMenu.forEach((el) => {
-                if (el != target) {
-                    el.classList.remove('show');
-                }
-            });
-        }
-    };
+    }
 
     /**
      * Make the no wrapped card menus scroll using swipe or drag.
@@ -160,17 +88,66 @@ define(["jquery", "core/moremenu"], function($) {
      */
     const autoCollapse = () => {
         var primaryNav = document.querySelector('.primary-navigation ul.more-nav');
+        setOutMenuPositions(primaryNav); // Create a data flag to maintain the original position of the menus.
         moveOutMoreMenu(primaryNav);
 
         var menuBar = document.querySelector('nav.menubar ul.more-nav');
+        setOutMenuPositions(menuBar);
         moveOutMoreMenu(menuBar);
+
+        window.onresize =  (e) => {
+            // Verify the event is original by browser resize.
+            if (e.isTrusted) {
+                moveOutMoreMenu(primaryNav);
+                moveOutMoreMenu(menuBar);
+            }
+        };
+    };
+
+    /**
+     * Finds and sets the positions of all menus before moving them,
+     * helping to maintain the positions of the menus after being moved out from the moremenu.
+     *
+     * @param {HTMLElement} navMenu The navbar container.
+     */
+    const setOutMenuPositions = (navMenu) => {
+
+        // Find all menu items excluding the dropdownmoremenu class.
+        var li = Array.from(navMenu.children).filter((e) => !e.classList.contains(Selectors.dropDownMenu));
+
+        // Initialize the position variable.
+        var position = 0;
+
+        // Loop through each menu item and set its original position.
+        li.forEach((menu) => {
+            position = li.indexOf(menu);
+            menu.dataset.orgposition = position; // Store the original position in the menu's dataset.
+        });
+
+        // Maintain the positions of the menus inside the moremenu from the last position of the outside menus.
+        var moreMenu = navMenu.querySelector(Selectors.class.dropDownMenuList);
+        Array.from(moreMenu.children).forEach((menu) => menu.dataset.orgposition = position++);
+    };
+
+    /**
+     * Rearranges the menus placed outside the more menu based on their original positions.
+     *
+     * @param {HTMLElement} navMenu The navbar container.
+     */
+    const reArrangeMenuOrgPositions = (navMenu) => {
+        // Retrieve all menu items and sort them based on their original positions.
+        var li = Array.from(navMenu.children).sort((a, b) => a.dataset.orgposition - b.dataset.orgposition);
+        // Append the sorted menu items back to the navbar container.
+        li.forEach((menu) => navMenu.appendChild(menu));
     };
 
     /**
      * Move the items from more menu, items which is set to force outside more menu.
      * Remove those items from more menu and insert the menu before the last normal item.
      * Find the length and children's length to insert the out menus in that positions.
+     * Move the non forced more menu to moremenu to make the menu alignment.
      * Rerun the more menu it will more the other normal menus into more menu to fix the alignmenu issue.
+     * After the menus are move out, rearrange menus to its original positions.
      *
      * @param {HTMLElement} navMenu The navbar container.
      */
@@ -180,7 +157,16 @@ define(["jquery", "core/moremenu"], function($) {
             return;
         }
 
-        var outMenus = navMenu.querySelectorAll('.dropdownmoremenu .force-menu-out');
+        // Filter the available menus to move inside of more menu.
+        var li = Array.from(navMenu.children).reverse().filter(
+            (e) => !e.classList.contains(Selectors.forceOut) && !e.classList.contains(Selectors.dropDownMenu));
+
+        // Alternate menus are not available for move to moremenu, stop make the menus move to outside.
+        if (li.length < 1) {
+            return;
+        }
+
+        var outMenus = navMenu.querySelectorAll(Selectors.class.forceOut);
         var menuslist = [];
 
         if (outMenus === null) {
@@ -188,26 +174,32 @@ define(["jquery", "core/moremenu"], function($) {
         }
 
         outMenus.forEach((menu) => {
-            menu.querySelector('a').classList.remove('dropdown-item');
-            menu.querySelector('a').classList.add('nav-link');
+            menu.querySelector('a').classList.remove(Selectors.dropDownItem);
+            menu.querySelector('a').classList.add(Selectors.navLink);
 
             menuslist.push(menu);
             menu.parentNode.removeChild(menu);
         });
-        // Find the length and children's length to insert the out menus in that positions.
-        var length = menuslist.length;
-        var navLength = navMenu.children.length - 1; // Remove more menu.
-        var newPosition = navLength - length || 0;
+
         // Insert the stored menus before the more menu.
-        menuslist.forEach((menu) => navMenu.insertBefore(menu, navMenu.children[newPosition]));
+        menuslist.forEach((menu) => {
+            if (navMenu.insertBefore(menu, navMenu.lastElementChild) && li.length > 0) {
+                // Move the non forced more menu to moremenu to make the menu alignment.
+                navMenu.insertBefore(li[0], navMenu.lastElementChild);
+            }
+        });
         window.dispatchEvent(new Event('resize')); // Dispatch the resize event to create more menu.
+
+        // After the menus are move out, rearrange menus to its original positions.
+        reArrangeMenuOrgPositions(navMenu);
     };
 
     return {
         init: () => {
-            addSubmenu();
+            SubMenu.init();
             cardScroll();
             autoCollapse();
+
         }
     };
 });
