@@ -20,6 +20,11 @@
     The smart menus more menu children.
     This is a modified version of core/moremenu_children.
 
+    Modifications compared to the original template:
+        * Added the carousel-target data to the li item.
+        * Main items are wrapped with carousel-item.
+        * Second-level submenus are rendered as separate carousel items.
+
     Example context (json):
     {
         "divider": "",
@@ -39,28 +44,47 @@
             {{#attributes}}{{name}}="{{value}}" {{/attributes}}
             {{#isactive}}aria-current="true"{{/isactive}}
             {{^isactive}}tabindex="-1"{{/isactive}}
+            data-carousel-target-id="carousel-item-{{#sort}}{{sort}}{{/sort}}{{^sort}}main{{/sort}}"
         >
             {{{text}}}
         </a>
         <div class="dropdown-menu boost-union-moremenu" role="menu" id="drop-down-menu-{{moremenuid}}" aria-labelledby="drop-down-{{moremenuid}}">
 
-            <div id="smartmenu-carousel" class="carousel slide" data-touch="false" data-interval="false" data-keyboard="false">
+            <div data-toggle="smartmenu-carousel" class="carousel slide" data-touch="false" data-interval="false" data-keyboard="false">
                 <div class="carousel-inner">
 
                 {{#children}}
-                    {{!-- Smart menus }}
+
+                    {{! Smart menus }}
                     {{#submenuid}}
-                    <div id="carousel-item-main" class="carousel-item active" role="menu" tabindex="-1" aria-label="{{#str}}user{{/str}}">
+                    <div id="carousel-item-{{#sort}}{{sort}}{{/sort}}{{^sort}}main{{/sort}}" class="carousel-item active" role="menu" tabindex="-1" aria-label="{{#str}}user{{/str}}">
+
+                        {{! Display the header of the menu when the menu is moved to the moremenu }}
+                        <div class="moremenu-carousel-item-header">
+                            <div class="header">
+                                <button type="button" class="btn btn-icon carousel-navigation-link text-decoration-none text-body"
+                                data-carousel-target-id="carousel-item-{{#returnid}}{{returnid}}{{/returnid}}{{^returnid}}main{{/returnid}}"
+                                aria-label="{{#str}}usermenugoback{{/str}}">
+                                    <span class="dir-rtl-hide">{{#pix}}i/arrow-left{{/pix}}</span>
+                                    <span class="dir-ltr-hide">{{#pix}}i/arrow-right{{/pix}}</span>
+                                </button>
+                                <span class="pl-2" id="carousel-item-title-{{id}}">{{#title}}{{{title}}}{{/title}}{{^title}}{{text}}{{/title}}</span>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                        </div>
+
                         {{#helpicon}}<div class="menu-helpicon">{{{helpicon}}}</div>{{/helpicon}}
                         {{#abovehelptext}}<div class="menu-description">{{{helptext}}}</div>{{/abovehelptext}}
 
+                        <div class="items h-100 overflow-auto" role="menu" aria-labelledby="carousel-item-title-{{sort}}">
                         {{> core/user_action_menu_items }}
+                        </div>
 
                         {{#belowhelptext}}<div class="menu-description">{{{helptext}}}</div>{{/belowhelptext}}
                     </div>
                     {{/submenuid}}
 
-                    {{!-- Moodle core menus}}
+                    {{! Moodle core menus }}
                     {{^items}}
                         {{^divider}}
                             {{#is_action_link}}

@@ -602,3 +602,24 @@ function theme_boost_union_user_preferences(): array {
     }
     return $preferences;
 }
+
+/**
+ * Returns the html for the starred courses popover menu.
+ *
+ * @return string
+ */
+function theme_boost_union_render_navbar_output() {
+    global $CFG;
+
+    // Require local library.
+    require_once($CFG->dirroot . '/theme/boost_union/locallib.php');
+
+    // Initialize the navbar content.
+    $content = '';
+
+    // Setting: Show starred courses popover in the navbar.
+    $content .= theme_boost_union_get_navbar_starredcoursespopover();
+
+    // Return.
+    return $content;
+}

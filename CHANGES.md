@@ -6,6 +6,22 @@ Changes
 
 ### Unreleased
 
+* 2024-03-13 - Bugfix: Custom course fields of type "Textarea" were not conditionally hidden in the smart menu configuration, resolves #576.
+* 2024-03-01 - Feature: Show starred courses popover in the navbar, resolves #289.
+
+### v4.3-r8
+
+* 2024-02-22 - Feature: Allow the admin to change the link behind the logo in the navbar, resolves #565.
+* 2024-02-22 - Feature: Allow administrators to change the order of login items on the login page without using CSS or touching the mustache template, resolves #504.
+
+### v4.3-r7
+
+* 2024-02-21 - Bugfix: Single activity format contained unnecessary second level of navigation items, resolves #415.
+
+### v4.3-r6
+
+* 2024-02-18 - Make codechecker happier
+* 2024-02-17 - Test: Use custom step to check the menus and menu items existence, resolves #365.
 * 2024-02-12 - Feature: Allow the admin to display activity icons in course content navigation, resolves #16.
 * 2024-02-11 - Child theme support: Improve namespace of class smartmenu_helper, resolves #494.
 * 2024-02-11 - Child theme support: Update note about grandchild themes in README.md

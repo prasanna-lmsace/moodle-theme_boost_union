@@ -213,8 +213,8 @@ Feature: Configuring the theme_boost_union plugin on the "Smart menus" page, app
       | Menu mode          | Submenu              |
       | More menu behavior | Force into more menu |
     And I set "Quick links" smart menu items with the following fields to these values:
-      | Title          | Smartmenu Resource |
-      | Menu item type | Heading            |
+      | Title           | Smartmenu Resource |
+      | Menu item type  | Heading            |
     And I click on "Smart menus" "link" in the "#page-navbar .breadcrumb" "css_element"
     And I should not see smart menu "Quick links" in location "Main, Menu"
     And I click on "More" "link" in the ".primary-navigation" "css_element"
@@ -237,11 +237,11 @@ Feature: Configuring the theme_boost_union plugin on the "Smart menus" page, app
       | Title            | Test quick demo links 05 |
       | Menu location(s) | Main, Menu               |
     And I create smart menu with the following fields to these values:
-      | Title            | Test quick demo links long title 01 |
-      | Menu location(s) | Menu                                |
+      | Title            | Test quick demo links long title 01  |
+      | Menu location(s) | Menu                                 |
     And I create smart menu with the following fields to these values:
-      | Title            | Test quick demo links long title 02 |
-      | Menu location(s) | Menu                                |
+      | Title            | Test quick demo links long title 02  |
+      | Menu location(s) | Menu                                 |
     And I create smart menu with the following fields to these values:
       | Title            | Test quick demo links 06 |
       | Menu location(s) | Main, Menu               |

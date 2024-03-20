@@ -104,13 +104,13 @@ Feature: Configuring the theme_boost_union plugin on the "Smart menus" page, app
     When I log in as "admin"
     And I navigate to smart menu "Quick links" items
     And I set "Quick links" smart menu items with the following fields to these values:
-      | Title          | External links |
-      | Menu item type | Heading        |
+      | Title             | External links   |
+      | Menu item type    | Heading          |
     And I should see "External links" in the "smartmenus_items" "table"
     And I set "Quick links" smart menu items with the following fields to these values:
-      | Title          | Resources          |
-      | Menu item type | Static             |
-      | Menu item URL  | https://moodle.org |
+      | Title             | Resources          |
+      | Menu item type    | Static             |
+      | Menu item URL     | https://moodle.org |
     And I should see "Resources" in the "smartmenus_items" "table"
     And I should see smart menu "Quick links" item "External links" in location "Main, Menu, User, Bottom"
     # Main menu.
