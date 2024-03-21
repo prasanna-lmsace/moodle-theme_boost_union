@@ -154,14 +154,10 @@ class primary extends \core\navigation\output\primary {
         // as well as for controlling the smart menu SCSS.
         $includesmartmenu = (!empty($mainmenu) || !empty($menubarmenus) || !empty($locationusermenus) || !empty($locationbottom));
 
-        // Menubar template data.
-        $menubardata = isset($menubarmoremenu)
-            ? $menubarmoremenu->export_for_template($output) + ['moremenucarousel' => true] : false;
-
         return [
             'mobileprimarynav' => $mobileprimarynav,
-            'moremenu' => $moremenu->export_for_template($output) + ['moremenucarousel' => true],
-            'menubar' => $menubardata,
+            'moremenu' => $moremenu->export_for_template($output),
+            'menubar' => isset($menubarmoremenu) ? $menubarmoremenu->export_for_template($output) : false,
             'lang' => !isloggedin() || isguestuser() ? $languagemenu->export_for_template($output) : [],
             'user' => $usermenu ?? [],
             'bottombar' => $bottombardata ?? false,
@@ -269,7 +265,6 @@ class primary extends \core\navigation\output\primary {
                 $submenu = [
                     'id' => $menu->submenuid,
                     'title' => $menu->title ?: $menu->text,
-                    'returnid' => $menu->returnid ?? '',
                 ];
                 $usermenu['submenus'][] = (object) $submenu;
                 // The key of this submenu which helps later to include its children after including the necessary data.
@@ -365,7 +360,6 @@ class primary extends \core\navigation\output\primary {
             // Updates the ID of first-level submenus as the value of 'sort', where 'sort' contains unique IDs.
             array_walk($children, function(&$val) use ($parentmenu) {
                 $val['submenuid'] = $val['sort'];
-                $val['returnid'] = $parentmenu->sort;
             });
 
             // Update the format of children menus into submenus, similar to usermenu.

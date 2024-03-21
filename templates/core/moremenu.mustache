@@ -50,7 +50,6 @@
 
     Modifications compared to the original template:
     * Use separate templates for children menu types (list style and card style menu).
-    * Added the moremenu carousel within the dropdownmoremenu for primary and menubar navigations
 }}
 <nav class="moremenu navigation">
     <ul id="moremenu-{{moremenuid}}-{{navbarstyle}}" role="{{#istablist}}tablist{{/istablist}}{{^istablist}}menubar{{/istablist}}" class="nav more-nav {{navbarstyle}}">
@@ -74,24 +73,8 @@
                 <a class="dropdown-toggle nav-link {{#isactive}}active{{/isactive}}" href="#" id="moremenu-dropdown-{{moremenuid}}" role="{{#istablist}}tab{{/istablist}}{{^istablist}}menuitem{{/istablist}}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" tabindex="-1">
                     {{#str}}moremenu, core{{/str}}
                 </a>
-
                 <ul class="dropdown-menu dropdown-menu-left" data-region="moredropdown" aria-labelledby="moremenu-dropdown-{{moremenuid}}" role="menu">
                 </ul>
-
-                {{! Make the submenus of moremenu as carousel }}
-                {{#moremenucarousel}}
-                <div class="theme-boost-union-smartmenu-carousel moremenu-carousel" role="menu" id="drop-down-menu-{{moremenuid}}" aria-labelledby="drop-down-{{moremenuid}}">
-                    <div class="dropdown-menu" aria-labelledby="moremenu-dropdown-{{moremenuid}}" data-region="moredropdown"  role="menu">
-                        <div data-toggle="smartmenu-carousel" class="carousel slide" data-touch="false" data-interval="false" data-keyboard="false">
-                            <div class="carousel-inner">
-                                <div id="carousel-item-main" class="carousel-item active" role="menu" tabindex="-1" aria-label="{{#str}}user{{/str}}">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                {{/moremenucarousel}}
-
             </li>
         {{/drawer}}
         {{!- Bottombar, change the more menu into drawer --}}

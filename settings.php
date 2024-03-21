@@ -28,6 +28,7 @@ use theme_boost_union\admin_setting_configstoredfilealwayscallback;
 defined('MOODLE_INTERNAL') || die();
 
 if ($hassiteconfig || has_capability('theme/boost_union:configure', context_system::instance())) {
+    global $PAGE;
 
     // How this file works:
     // This theme's settings are divided into multiple settings pages.
@@ -1244,6 +1245,13 @@ if ($hassiteconfig || has_capability('theme/boost_union:configure', context_syst
         $name = 'theme_boost_union/usermenuheading';
         $title = get_string('usermenuheading', 'theme_boost_union', null, true);
         $setting = new admin_setting_heading($name, $title, null);
+        $tab->add($setting);
+
+        // Setting: Show full name in the user menu.
+        $name = 'theme_boost_union/showfullnameinusermenu';
+        $title = get_string('showfullnameinusermenussetting', 'theme_boost_union', null, true);
+        $description = get_string('showfullnameinusermenussetting_desc', 'theme_boost_union', null, true);
+        $setting = new admin_setting_configselect($name, $title, $description, THEME_BOOST_UNION_SETTING_SELECT_NO, $yesnooption);
         $tab->add($setting);
 
         // Setting: Add preferred language link to language menu.
@@ -2565,4 +2573,7 @@ if ($hassiteconfig || has_capability('theme/boost_union:configure', context_syst
                 'theme/boost_union:configure');
         $ADMIN->add('theme_boost_union', $flavourspage);
     }
+
+    // Add JS to remember the active admin tab to the page.
+    $PAGE->requires->js_call_amd('theme_boost_union/admintabs', 'init');
 }

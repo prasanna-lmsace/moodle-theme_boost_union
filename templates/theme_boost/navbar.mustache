@@ -65,11 +65,10 @@
     * Display the logo on mobile viewport. (removed d-none, changed d-md-flex to d-flex)
     * Added menu bar section.
     * Added the possibility to use an alternative logo link URL.
-    * Added the "theme-boost-union-moremenu-carousel" class to the menubar and primary navigation class list to enable the use of submenus as a carousel.
 }}
 
 {{#menubar}}
-<nav class="menubar fixed-top boost-union-menubar navbar navbar-expand {{#bottombar.drawer}} smartmenu-bottom-navigation {{/bottombar.drawer}} theme-boost-union-moremenu-carousel">
+<nav class="menubar fixed-top boost-union-menubar navbar navbar-expand {{#bottombar.drawer}} smartmenu-bottom-navigation {{/bottombar.drawer}}">
     {{> core/moremenu}}
 </nav>
 {{/menubar}}
@@ -92,7 +91,7 @@
         {{/ output.should_display_navbar_logo }}
     </a>
     {{#primarymoremenu}}
-        <div class="primary-navigation theme-boost-union-moremenu-carousel">
+        <div class="primary-navigation">
             {{> core/moremenu}}
         </div>
     {{/primarymoremenu}}

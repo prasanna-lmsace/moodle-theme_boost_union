@@ -44,7 +44,6 @@
             {{#attributes}}{{name}}="{{value}}" {{/attributes}}
             {{#isactive}}aria-current="true"{{/isactive}}
             {{^isactive}}tabindex="-1"{{/isactive}}
-            data-carousel-target-id="carousel-item-{{#sort}}{{sort}}{{/sort}}{{^sort}}main{{/sort}}"
         >
             {{{text}}}
         </a>
@@ -57,30 +56,11 @@
 
                     {{! Smart menus }}
                     {{#submenuid}}
-                    <div id="carousel-item-{{#sort}}{{sort}}{{/sort}}{{^sort}}main{{/sort}}" class="carousel-item active" role="menu" tabindex="-1" aria-label="{{#str}}user{{/str}}">
-
-                        {{! Display the header of the menu when the menu is moved to the moremenu }}
-                        <div class="moremenu-carousel-item-header">
-                            <div class="header">
-                                <button type="button" class="btn btn-icon carousel-navigation-link text-decoration-none text-body"
-                                data-carousel-target-id="carousel-item-{{#returnid}}{{returnid}}{{/returnid}}{{^returnid}}main{{/returnid}}"
-                                aria-label="{{#str}}usermenugoback{{/str}}">
-                                    <span class="dir-rtl-hide">{{#pix}}i/arrow-left{{/pix}}</span>
-                                    <span class="dir-ltr-hide">{{#pix}}i/arrow-right{{/pix}}</span>
-                                </button>
-                                <span class="pl-2" id="carousel-item-title-{{id}}">{{#title}}{{{title}}}{{/title}}{{^title}}{{text}}{{/title}}</span>
-                            </div>
-                            <div class="dropdown-divider"></div>
-                        </div>
-
+                    <div id="carousel-item-main" class="carousel-item active" role="menu" tabindex="-1">
                         {{#helpicon}}<div class="menu-helpicon">{{{helpicon}}}</div>{{/helpicon}}
-                        {{#abovehelptext}}<div class="menu-description">{{{helptext}}}</div>{{/abovehelptext}}
-
-                        <div class="items h-100 overflow-auto" role="menu" aria-labelledby="carousel-item-title-{{sort}}">
+                        {{#abovehelptext}}{{#helptext}}<div class="menu-description">{{{helptext}}}</div>{{/helptext}}{{/abovehelptext}}
                         {{> core/user_action_menu_items }}
-                        </div>
-
-                        {{#belowhelptext}}<div class="menu-description">{{{helptext}}}</div>{{/belowhelptext}}
+                        {{#belowhelptext}}{{#helptext}}<div class="menu-description">{{{helptext}}}</div>{{/helptext}}{{/belowhelptext}}
                     </div>
                     {{/submenuid}}
 
@@ -125,7 +105,7 @@
                                     <span class="dir-rtl-hide">{{#pix}}i/arrow-left{{/pix}}</span>
                                     <span class="dir-ltr-hide">{{#pix}}i/arrow-right{{/pix}}</span>
                                 </button>
-                                <span class="pl-2" id="carousel-item-title-{{id}}">{{#title}}{{{title}}}{{/title}}{{^title}}{{text}}{{/title}}</span>
+                                <span class="pl-2" id="carousel-item-title-{{id}}">{{#title}}{{{title}}}{{/title}}{{^title}}{{{text}}}{{/title}}</span>
                             </div>
                             <div class="dropdown-divider"></div>
                             <div class="items h-100 overflow-auto" role="menu" aria-labelledby="carousel-item-title-{{id}}">
