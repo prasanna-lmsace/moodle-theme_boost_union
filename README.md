@@ -215,7 +215,7 @@ With these settings, you control the order of the login methods in the login for
 
 ###### Show course images
 
-With this setting, you can control whether the course image is visible inside the course overview block or not. It is possible to choose a different setting for Card view, Summary view, and List view.
+With this setting, you can control whether the course image is visible inside the course overview block or not. It is possible to choose a different setting for Card view, Summary view, and List view. 
 
 ###### Show course completion progress
 
