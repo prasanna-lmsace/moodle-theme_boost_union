@@ -687,6 +687,13 @@ class smartmenu {
             $nodescache->menuitems = $menuitems;
             $this->cache->set($cachekey, $nodescache);
         }
+
+        // Current menu doesn't contain any nodes then hide the menu from users.
+        // Verify after stored the cache to prevent build the menuitems again.
+        // Helps to verify the cached menus too.
+        if (!isset($builditems) || empty($builditems)) {
+            return false;
+        }
         // Remove the menu items list from nodes. it doesn't need to build the smartmenus.
         if (isset($nodes->menuitems)) {
             // Remove the menu items list from nodes, it doesn't need anymore.
@@ -943,7 +950,7 @@ class smartmenu {
 
         $cache = cache::make('theme_boost_union', 'smartmenus');
         // Fetch the list of menus from cache.
-        $topmenus = $cache->get(self::CACHE_MENUSLIST);
+        $topmenus = []; // $cache->get(self::CACHE_MENUSLIST);
         // Get top level menus, store the menus to cache.
         if (empty($topmenus)) {
             $topmenus = self::get_menus();

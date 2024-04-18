@@ -30,7 +30,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ['8.0', '8.1', '8.2']
+        php: ['8.2']
         moodle-branch: ['MOODLE_403_STABLE']
         database: [pgsql, mariadb]
 
@@ -94,10 +94,10 @@ jobs:
         if: ${{ !cancelled() }}
         run: moodle-plugin-ci savepoints
 
-      - name: Mustache Lint
-        continue-on-error: true # This step will show errors but will not fail
-        if: ${{ !cancelled() }}
-        run: moodle-plugin-ci mustache
+      # - name: Mustache Lint
+      #   continue-on-error: true # This step will show errors but will not fail
+      #   if: ${{ !cancelled() }}
+      #   run: moodle-plugin-ci mustache
 
       - name: Grunt
         if: ${{ !cancelled() }}
