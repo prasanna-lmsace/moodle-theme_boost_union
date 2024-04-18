@@ -349,3 +349,23 @@ Feature: Configuring the theme_boost_union plugin on the "Smart menus" page, app
     And ".dropdown-divider" "css_element" should exist in the ".bottom-navigation" "css_element"
     # Divider in menubar.
     And ".dropdown-divider" "css_element" should exist in the "nav.menubar" "css_element"
+
+  @javascript
+  Scenario Outline: Smartmenus: Menu items: Hide the empty menus
+    Given I log in as "admin"
+    And I create smart menu with the following fields to these values:
+      | Title            | Quick links              |
+      | Menu location(s) | Main, Menu, User, Bottom |
+      | Menu mode        | <menumode>               |
+    And I should see "Quick links" in the "smartmenus" "table"
+    And I should not see smart menu "<menutitle>" in location "Main, Menu, User, Bottom"
+    And I set "Quick links" smart menu items with the following fields to these values:
+      | Title          | Smartmenu Resource |
+      | Menu item type | Static             |
+      | URL            | http://moodle.org  |
+    And I should see smart menu "<menutitle>" in location "Main, Menu, User, Bottom"
+
+    Examples:
+      | menumode | menutitle          |
+      | Submenu  | Quick links        |
+      | Inline   | Smartmenu Resource |

@@ -130,3 +130,4 @@ Feature: Configuring the theme_boost_union plugin on the "Smart menus" page, man
     Then "Enrolled courses" "table_row" should appear after "Completed courses" "table_row"
     And I click on ".sort-smartmenus-up-action" "css_element" in the "Enrolled courses" "table_row"
     And "Enrolled courses" "table_row" should appear before "Completed courses" "table_row"
+

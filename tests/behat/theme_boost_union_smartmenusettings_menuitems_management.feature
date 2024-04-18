@@ -131,6 +131,7 @@ Feature: Configuring the theme_boost_union plugin on the "Smart menus" page, man
       | Title          | Info    |
       | Menu item type | Heading |
     And I click on "Save changes" "button"
+
     And I should see "Quick links" in the "#region-main h4" "css_element"
     And the following should exist in the "smartmenus_items" table:
       | Title |
@@ -138,6 +139,11 @@ Feature: Configuring the theme_boost_union plugin on the "Smart menus" page, man
     And ".action-hide" "css_element" should exist in the "Info" "table_row"
     And ".action-show" "css_element" should not exist in the "Info" "table_row"
     Then I should see smart menu "Quick links" item "Info" in location "Main, Menu, User, Bottom"
+    And I click on "Add menu item" "button"
+    And I set the following fields to these values:
+      | Title          | Demo item |
+      | Menu item type | Heading   |
+    And I click on "Save changes" "button"
     And I click on ".action-hide" "css_element" in the "Info" "table_row"
     Then I should not see smart menu "Quick links" item "Info" in location "Main, Menu, User, Bottom"
     And ".action-hide" "css_element" should not exist in the "Info" "table_row"

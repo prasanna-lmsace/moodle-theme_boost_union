@@ -260,3 +260,23 @@ Feature: Configuring the theme_boost_union plugin on the "Smart menus" page, app
     Then I should not see "Test quick demo links 06" in the ".primary-navigation .dropdownmoremenu" "css_element"
     And I click on "More" "link" in the ".boost-union-menubar" "css_element"
     Then I should not see "Test quick demo links 06" in the ".boost-union-menubar .dropdownmoremenu" "css_element"
+
+  # @javascript
+  # Scenario Outline: Smartmenus: Menus: Hide the empty menus
+  #   Given I log in as "admin"
+  #   And I create smart menu with the following fields to these values:
+  #     | Title              | Quick links          |
+  #     | Menu location(s)   | Main, Menu, User, Bottom |
+  #     | Menu mode          | <menumode>              |
+  #   And I should see "Quick links" in the "smartmenus" "table"
+  #   And I should not see smart menu "<menutitle>" in location "Main, Menu, User, Bottom"
+  #   And I set "Quick links" smart menu items with the following fields to these values:
+  #     | Title          | Smartmenu Resource |
+  #     | Menu item type | Static             |
+  #     | URL            | http://moodle.org  |
+  #   And I should see smart menu "<menutitle>" in location "Main, Menu, User, Bottom"
+
+  #   Examples:
+  #     | menumode | menutitle          |
+  #     | Submenu  | Quick links        |
+  #     | Inline   | Smartmenu Resource |
