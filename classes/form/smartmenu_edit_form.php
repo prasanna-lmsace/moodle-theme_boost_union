@@ -321,7 +321,7 @@ class smartmenu_edit_form extends \moodleform {
             }
         }
 
-        //  Validate the smart menu location is filled.
+        // Validate the smart menu location is filled.
         if (empty($data['location'])) {
             $errors['location'] = get_string('required');
         }

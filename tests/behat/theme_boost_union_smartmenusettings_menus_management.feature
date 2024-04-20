@@ -59,6 +59,7 @@ Feature: Configuring the theme_boost_union plugin on the "Smart menus" page, man
     And I click on "Create menu" "button"
     And I set the following fields to these values:
       | Title | Links |
+      | Menu location(s) | Main |
     And I click on "Save and return" "button"
     And I should see "Links" in the "smartmenus" "table"
     And ".action-delete" "css_element" should exist in the "smartmenus" "table"
