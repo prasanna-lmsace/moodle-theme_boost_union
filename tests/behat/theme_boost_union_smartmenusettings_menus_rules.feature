@@ -61,7 +61,7 @@ Feature: Configuring the theme_boost_union plugin on the "Smart menus" page, app
     And I set the field "By role" to "<byrole>"
     And I set the field "Context" to "<context>"
     And I click on "Save and return" "button"
-    And I should not see smart menu "Quick links" in location "Main, Menu, User, Bottom"
+    And I <adminshouldorshouldnot> see smart menu "Quick links" in location "Main, Menu, User, Bottom"
     And I log out
     And I log in as "coursemanager"
     Then I <managershouldorshouldnot> see smart menu "Quick links" in location "Main, Menu, User, Bottom"
@@ -74,13 +74,19 @@ Feature: Configuring the theme_boost_union plugin on the "Smart menus" page, app
     And I log out
     And I log in as "systemmanager"
     Then I should see smart menu "Quick links" in location "Main, Menu, User, Bottom"
+    And I log out
+    And I log in as "guest"
+    Then I should not see smart menu "Quick links" in location "Main, Menu, Bottom"
+    And I log out
+    And I should not see smart menu "Quick links" in location "Main, Menu, Bottom"
 
     Examples:
-      | byrole                    | context | student1shouldorshouldnot | teachershouldorshouldnot | managershouldorshouldnot |
-      | Manager                   | Any     | should not                | should not               | should                   |
-      | Manager, Student          | Any     | should                    | should not               | should                   |
-      | Manager, Student, Teacher | Any     | should                    | should                   | should                   |
-      | Manager, Student, Teacher | System  | should not                | should not               | should not               |
+      | byrole                    | context | student1shouldorshouldnot | teachershouldorshouldnot | managershouldorshouldnot | adminshouldorshouldnot |
+      | Manager                   | Any     | should not                | should not               | should                   | should not             |
+      | Manager, Student          | Any     | should                    | should not               | should                   | should not             |
+      | Manager, Student, Teacher | Any     | should                    | should                   | should                   | should not             |
+      | Manager, Student, Teacher | System  | should not                | should not               | should not               | should not             |
+      | Authenticated user        | Any     | should                    | should                   | should                   | should                 |
 
   @javascript
   Scenario Outline: Smartmenu: Menus: Rules - Show smart menu based on the user assignment in single cohorts
