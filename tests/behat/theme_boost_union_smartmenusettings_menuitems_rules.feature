@@ -36,10 +36,10 @@ Feature: Configuring the theme_boost_union plugin on the "Smart menus" page, app
       | Title          | Resources          |
       | Menu item type | Static             |
       | URL            | https://moodle.org |
-    And the following "language packs" exist:
-      | language |
-      | de       |
-      | fr       |
+    # And the following "language packs" exist:
+    #   | language |
+    #   | de       |
+    #   | fr       |
 
   @javascript
   Scenario Outline: Smartmenu: Menu items: Rules - Show smart menu item based on the user roles
@@ -76,17 +76,18 @@ Feature: Configuring the theme_boost_union plugin on the "Smart menus" page, app
     And I log in as "systemmanager"
     Then I should see smart menu "Quick links" item "Resources" in location "Main, Menu, User, Bottom"
     And I log in as "guest"
-    Then I should not see smart menu "Quick links" item "Resources" in location "Main, Menu, Bottom"
+    Then I <guestshouldorshouldnot> see smart menu "Quick links" item "Resources" in location "Main, Menu, Bottom"
     And I log out
     And I should not see smart menu "Quick links" item "Resources" in location "Main, Menu, Bottom"
 
     Examples:
-      | byrole                    | context | student1shouldorshouldnot | teachershouldorshouldnot | managershouldorshouldnot | adminshouldorshouldnot |
-      | Manager                   | Any     | should not                | should not               | should                   | should not             |
-      | Manager, Student          | Any     | should                    | should not               | should                   | should not             |
-      | Manager, Student, Teacher | Any     | should                    | should                   | should                   | should not             |
-      | Manager, Student, Teacher | System  | should not                | should not               | should not               | should not             |
-      | Authenticated user        | Any     | should                    | should                   | should                   | should                 |
+      | byrole                    | context | student1shouldorshouldnot | teachershouldorshouldnot | managershouldorshouldnot | guestshouldorshouldnot | adminshouldorshouldnot |
+      | Manager                   | Any     | should not                | should not               | should                   | should not             | should not             |
+      | Manager, Student          | Any     | should                    | should not               | should                   | should not             | should not             |
+      | Manager, Student, Teacher | Any     | should                    | should                   | should                   | should not             | should not             |
+      | Manager, Student, Teacher | System  | should not                | should not               | should not               | should not             | should not             |
+      | Authenticated user        | Any     | should                    | should                   | should                   | should not             | should                 |
+      | Guest                     | Any     | should not                | should not               | should not               | should                 | should not             |
 
   @javascript
   Scenario Outline: Smartmenu: Menu items: Rules - Show smart menu item based on the user assignment in single cohorts

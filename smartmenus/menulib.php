@@ -151,6 +151,15 @@ class smartmenu_helper {
             return true;
         }
 
+        // Verify the guest user have any menus or items to view.
+        if (isguestuser()) {
+            $guestroles = get_archetype_roles('guest');
+            $guestroleid = array_column($guestroles, 'id');
+            if (array_intersect($guestroleid, $roles)) {
+                return true;
+            }
+        }
+
         list($insql, $inparam) = $DB->get_in_or_equal($roles, SQL_PARAMS_NAMED, 'rl');
 
         $contextsql = ($this->data->rolecontext == smartmenu::SYSTEMCONTEXT)
