@@ -36,10 +36,10 @@ Feature: Configuring the theme_boost_union plugin on the "Smart menus" page, app
       | Title          | Resources          |
       | Menu item type | Static             |
       | URL            | https://moodle.org |
-    # And the following "language packs" exist:
-    #   | language |
-    #   | de       |
-    #   | fr       |
+    And the following "language packs" exist:
+      | language |
+      | de       |
+      | fr       |
 
   @javascript
   Scenario Outline: Smartmenu: Menu items: Rules - Show smart menu item based on the user roles
