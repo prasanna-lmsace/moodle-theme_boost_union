@@ -121,8 +121,9 @@ class primary extends \core\navigation\output\primary {
 
         // Bottom bar.
         // Include the menu navigation menus to the mobile menu when the bottom bar doesn't have any menus.
+        $mergecustombottommenus = array_merge($this->get_custom_menu($output), $locationbottom);
         $mobileprimarynav = (!empty($locationbottom))
-            ? $this->merge_primary_and_custom($this->get_primary_nav(), array_merge($this->get_custom_menu($output), $locationbottom), true)
+            ? $this->merge_primary_and_custom($this->get_primary_nav(), $mergecustombottommenus, true)
             : $this->merge_primary_and_custom($this->get_primary_nav(), $mainsmartmenumergedcustom, true);
 
         if (!empty($mobileprimarynav)) {
@@ -330,7 +331,8 @@ class primary extends \core\navigation\output\primary {
         foreach (array_keys($node->children ?? []) as $c) {
 
             // Update the type of child nodes (smart menu).
-            // To prevent issues with already configured menus, the type of children is not updated during the smart menu build process.
+            // To prevent issues with already configured menus,
+            // The type of children is not updated during the smart menu build process.
             $child = (object) $node->children[$c];
 
             if ($this->flag_active_nodes($child, $expandedmenu)) {
