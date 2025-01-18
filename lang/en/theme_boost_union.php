@@ -30,12 +30,21 @@ defined('MOODLE_INTERNAL') || die();
 
 // General.
 $string['pluginname'] = 'Boost Union';
-$string['choosereadme'] = '<p>Theme Boost Union is an enhanced child theme of Boost which is intended, on the one hand, to make Boost simply more configurable and, on the other hand, to provide helpful additional features for the daily Moodle operation of admins, teachers and students.</p><p>Boost Union is maintained by<br />Moodle an Hochschulen e.V.,</p><p>in cooperation with<br />lern.link GmbH</p><p>together with<br />bdecent GmbH</p>';
+$string['choosereadme'] = 'Theme Boost Union is an enhanced child theme of Boost which is intended, on the one hand, to make Boost simply more configurable and, on the other hand, to provide helpful additional features for the daily Moodle operation of admins, teachers and students. Boost Union is maintained by Moodle an Hochschulen e.V., in cooperation with ssystems GmbH, together with bdecent GmbH and lern.link GmbH';
 $string['configtitle'] = 'Boost Union';
 $string['githubissueslink'] = '<a href="https://github.com/moodle-an-hochschulen/moodle-theme_boost_union/issues">Github issues</a>';
 
+// General select options.
+$string['never'] = 'Never';
+$string['always'] = 'Always';
+$string['nochange'] = 'No change';
+$string['forguestsonly'] = 'Only for guests and non-logged-in users';
+
 // Settings: General strings.
 $string['dontchange'] = 'Do not change anything';
+
+// Settings: General warnings.
+$string['warningslashargumentsdisabled'] = 'Warning: The <a href="{$a->url}">slasharguments setting</a> is disabled in your Moodle configuration currently. However, this setting is required for the correct operation of the following Boost Union setting. Please enable slasharguments, otherwise the following Boost Union setting will not have any effect.';
 
 // Settings: Overview page.
 $string['settingsoverview'] = 'Settings overview';
@@ -44,6 +53,7 @@ $string['settingsoverview_look_desc'] = 'Settings for branding your Moodle site 
 $string['settingsoverview_feel_desc'] = 'Settings for the overall behaviour of your Moodle site are located here: Navigation items, navigation helpers, blocks and links.';
 $string['settingsoverview_content_desc'] = 'Settings for the global content of your Moodle site are located here: Footer, static pages, info banners, advertisement tiles and sliders.';
 $string['settingsoverview_functionality_desc'] = 'Settings for additional useful global or course-related functionality on your Moodle site are located here.';
+$string['settingsoverview_accessibility_desc'] = 'Settings for accessibility-related functionality on your Moodle site are located here.';
 $string['settingsoverview_flavours_desc'] = 'With flavours, you can diversify the look of your Moodle site between cohorts and / or course categories.';
 $string['settingsoverview_smartmenus_desc'] = 'With smart menus, you can extend the navigation items of your Moodle site in the main menu and the user menus well as introduce a bottom menu or a top menu.';
 $string['settingsoverview_all'] = 'All settings on one page';
@@ -67,7 +77,7 @@ $string['scssheading'] = 'Raw SCSS';
 $string['extscssheading'] = 'External SCSS';
 $string['extscssheading_desc'] = 'In addition to the raw SCSS settings above, Boost Union can load SCSS from an external source. It is included before the SCSS code which is defined above which means that you can manage a centralized external SCSS codebase and can still amend it with local SCSS additions.';
 $string['extscssheading_instr'] = 'Instructions:';
-$string['extscssheading_drop'] = 'If Boost Union cannot fetch the external SCSS file for any reason or if the fetched external SCSS code is invalid, it will simply ignore the external SCSS file to avoid hickups with SCSS compiling and broken frontends.';
+$string['extscssheading_drop'] = 'If Boost Union cannot fetch the external SCSS file for any reason, it will simply ignore the external SCSS file to avoid hickups with SCSS compiling and broken frontends.';
 $string['extscssheading_structure'] = 'The external SCSS must be provided as plaintext file, without any headers or footers, containing just the SCSS code.';
 $string['extscssheading_prepost'] = 'Just like the raw SCSS settings above, the external SCSS is split into two pieces: Pre and Post SCSS. Pre SCSS can be used for initializing SCSS variables, Post SCSS is used for your actual SCSS code.';
 $string['extscssheading_sources'] = 'You can configure Boost Union to fetch the external SCSS file either from a public download URL (which will be accessed and fetched with an unauthenticated cURL request) or from a private Github repository (which will be accessed and fetched with a Github API token).';
@@ -92,18 +102,21 @@ $string['extscssgithubtoken_docs'] = 'Go to <a href="https://github.com/settings
 // ... ... Setting: External SCSS Github API user.
 $string['extscssgithubuser'] = 'External SCSS Github API user';
 $string['extscssgithubuser_desc'] = 'The Github API user or organization which owns the private Github repository.';
-$string['extscssgithubuser_example'] = 'Example: If you can see the file in your Github account on https://github.com/moodle-an-hochschulen/moodle-theme_boost_union-extscsstest/blob/master/extscss.scss, the user will be <em>moodle-an-hochschulen</em>.';
+$string['extscssgithubuser_example'] = 'Example: If you can see the file in your Github account on https://github.com/moodle-an-hochschulen/moodle-theme_boost_union-extscsstest/blob/main/extscss.scss, the user will be <em>moodle-an-hochschulen</em>.';
 // ... ... Setting: External SCSS Github API repository.
 $string['extscssgithubrepo'] = 'External SCSS Github API repository';
 $string['extscssgithubrepo_desc'] = 'The private Github repository where the SCSS files are located.';
-$string['extscssgithubrepo_example'] = 'Example: If you can see the file in your Github account on https://github.com/moodle-an-hochschulen/moodle-theme_boost_union-extscsstest/blob/master/extscss.scss, the repository will be <em>moodle-theme_boost_union-extscsstest</em>.';
+$string['extscssgithubrepo_example'] = 'Example: If you can see the file in your Github account on https://github.com/moodle-an-hochschulen/moodle-theme_boost_union-extscsstest/blob/main/extscss.scss, the repository will be <em>moodle-theme_boost_union-extscsstest</em>.';
 // ... ... Setting: External Pre SCSS Github file path.
 $string['extscssgithubprefilepath'] = 'External Pre SCSS Github file path';
 $string['extscssgithubprefilepath_desc'] = 'The path within the private Github repository where the Pre SCSS file is located.';
-$string['extscssgithubfilepath_example'] = 'Example: If you can see the file in your Github account on https://github.com/moodle-an-hochschulen/moodle-theme_boost_union-extscsstest/blob/master/extscss.scss, the file path will be <em>/extscss.scss</em>.';
+$string['extscssgithubfilepath_example'] = 'Example: If you can see the file in your Github account on https://github.com/moodle-an-hochschulen/moodle-theme_boost_union-extscsstest/blob/main/extscss.scss, the file path will be <em>/extscss.scss</em>.';
 // ... ... Setting: External Post SCSS Github file path.
 $string['extscssgithubpostfilepath'] = 'External Post SCSS Github file path';
 $string['extscssgithubpostfilepath_desc'] = 'The path within the private Github repository where the Post SCSS file is located.';
+// ... ... Setting: External SCSS validation.
+$string['extscssvalidationsetting'] = 'External SCSS validation';
+$string['extscssvalidationsetting_desc'] = 'If this setting is enabled, the external SCSS is validated if it can be compiled before it is added to the SCSS stack. External SCSS code which can\'t be compiled is silently ignored and not used. However, this validation is only run on the external SCSS code only, it is not run on the combined SCSS stack which would be the result of the integration of the external SCSS. This means that, as soon as you use SCSS variables from Moodle core or Bootstrap in your external SCSS, you have to disable the validation and verify yourself that the SCSS code is valid to avoid broken frontends.';
 
 // Settings: Page tab.
 $string['pagetab'] = 'Page';
@@ -194,9 +207,19 @@ $string['activityiconcolorcommunicationsetting_desc'] = 'The activity icon color
 // ... ... Setting: Activity icon color for 'Content'.
 $string['activityiconcolorcontentsetting'] = 'Activity icon color for "Content"';
 $string['activityiconcolorcontentsetting_desc'] = 'The activity icon color for "Content"';
+// ... ... Setting: Activity icon color for 'Interactive content'.
+$string['activityiconcolorinteractivecontentsetting'] = 'Activity icon color for "Interactive content"';
+$string['activityiconcolorinteractivecontentsetting_desc'] = 'The activity icon color for "Interactive content"';
 // ... ... Setting: Activity icon color for 'Interface'.
 $string['activityiconcolorinterfacesetting'] = 'Activity icon color for "Interface"';
 $string['activityiconcolorinterfacesetting_desc'] = 'The activity icon color for "Interface"';
+// ... ... Setting: Activity icon color fidelity'.
+$string['activityiconcolorfidelitysetting'] = 'Activity icon color fidelity';
+$string['activityiconcolorfidelitysetting_desc'] = 'With the settings above, you set a hex color which will be used to tint the particular activity icon. However, technically, the activity icon is tinted with a CSS filter. Boost Union uses a sophisticated algorithm to determine a CSS filter which matches the given hex color visually, but this algorithm is based on a randomized search and might produce suboptimal results when it is run just once. With this setting, you can allow Boost Union to run the algorithm multiple times and pick the filter which deviates least from the hex color at the end. Please note that this setting has an impact on the cache purging times (the more iterations you allow, the longer Moodle will take to purge the theme cache), but it will not have an impact on page load times.';
+$string['activityiconcolorfidelity_oneshot'] = 'One shot (1 iteration)';
+$string['activityiconcolorfidelity_sometries'] = 'Some tries (up to 10 iterations)';
+$string['activityiconcolorfidelity_detailled'] = 'Detailled research (up to 100 iterations)';
+$string['activityiconcolorfidelity_insane'] = 'Insane quest (up to 500 iterations)';
 // ... Section: Activity icon purposes.
 $string['activitypurposeheading'] = 'Activity icon purposes';
 $string['activitypurposeheading_desc'] = 'With these settings, you can override the activity icon background color which is defined by the activity\'s purpose (and which is a hardcoded plugin feature in each activity).';
@@ -206,6 +229,7 @@ $string['activitypurposeassessment'] = 'Assessment';
 $string['activitypurposecollaboration'] = 'Collaboration';
 $string['activitypurposecommunication'] = 'Communication';
 $string['activitypurposecontent'] = 'Content';
+$string['activitypurposeinteractivecontent'] = 'Interactive content';
 $string['activitypurposeinterface'] = 'Interface';
 $string['activitypurposeother'] = 'Other';
 // ... Section: Activity icons.
@@ -263,6 +287,7 @@ $string['loginformtransparencysetting'] = 'Login form transparency';
 $string['loginformtransparencysetting_desc'] = 'With this setting, you can make the login form slightly transparent to let the background image shine through even more.';
 // ... Section: Login providers.
 $string['loginprovidersheading'] = 'Login providers';
+$string['loginprovidersheading_desc'] = 'Please note: Boost Union has its own login providers settings and does not use the \'{$a->settingname}\' setting from <a href="{$a->url}">Moodle core\'s authentication setting</a>.';
 // ... ... Setting: Local login form.
 $string['loginlocalloginenablesetting'] = 'Local login';
 $string['loginlocalloginenablesetting_desc'] = 'With this setting, you control if the local login form is shown on the login page or not. By default, the local login form is shown and users an login into the site as normal. If you disable this setting, the local login form is hidden. This allows you to just provide login buttons for external identity providers like OAuth2 or OIDC.';
@@ -296,6 +321,29 @@ $string['courseoverviewshowcourseimagessetting_desc'] = 'With this setting, you 
 // ... ... Setting: Show course completion progress.
 $string['courseoverviewshowprogresssetting'] = 'Show course completion progress';
 $string['courseoverviewshowprogresssetting_desc'] = 'With this setting, you can control whether the course completion progress is visible inside the course overview block or not.';
+
+// Settings: Blocks tab.
+// The string for this tab is the same as on the 'Feel' page.
+// ... Section: Timeline block.
+$string['timelineheading'] = 'Timeline block';
+// Setting: Tint activity icons in the timeline block.
+$string['timelinetintenabled'] = 'Tint timeline activity icons';
+$string['timelinetintenabled_desc'] = 'With this setting, you can tint the activity icons in the timeline block based on the activity purposes. By default, Moodle core displays them just as black icons.';
+// ... Section: Upcoming events block.
+$string['upcomingeventsheading'] = 'Upcoming events block';
+// Setting: Tint activity icons in the upcoming events block.
+$string['upcomingeventstintenabled'] = 'Tint upcoming events activity icons';
+$string['upcomingeventstintenabled_desc'] = 'With this setting, you can tint the activity icons in the upcoming events block based on the activity purposes. By default, Moodle core displays them just as black icons.';
+// ... Section: Recently accessed items block.
+$string['recentlyaccesseditemsheading'] = 'Recently accessed items block';
+// Setting: Tint activity icons in the recently accessed items block.
+$string['recentlyaccesseditemstintenabled'] = 'Tint recently accessed items activity icons';
+$string['recentlyaccesseditemstintenabled_desc'] = 'With this setting, you can tint the activity icons in the recently accessed items block based on the activity purposes. By default, Moodle core displays them just as black icons.';
+// ... Section: Activities block.
+$string['activitiesheading'] = 'Activities block';
+// Setting: Tint activity icons in the activities block.
+$string['activitiestintenabled'] = 'Tint activities activity icons';
+$string['activitiestintenabled_desc'] = 'With this setting, you can tint the activity icons in the activities block based on the activity purposes. By default, Moodle core displays them just as black icons.';
 
 // Settings: Course tab.
 $string['coursetab'] = 'Course';
@@ -565,7 +613,7 @@ $string['pagelayoutstab'] = 'Page layouts';
 $string['policyheading'] = 'Policies';
 // ... ... Setting: Navigation on policy overview page.
 $string['policyoverviewnavigationsetting'] = 'Show navigation on policy overview page';
-$string['policyoverviewnavigationsetting_desc'] = 'By default, the policy overview page (provided by tool_policy) does not show a navigation menu or footer. With this setting, you can show the primary navigation and footer on that page.';
+$string['policyoverviewnavigationsetting_desc'] = 'By default, the <a href="{$a->url}">policy overview page (provided by tool_policy)</a> does not show a navigation menu or footer. With this setting, you can show the primary navigation and footer on that page.';
 
 // Settings: Links tab.
 $string['linkstab'] = 'Links';
@@ -638,18 +686,18 @@ $string['footersuppresslogininfosetting_desc'] = 'With this setting, you can ent
 // ... ... Setting: Suppress 'Reset user tour on this page' link.
 $string['footersuppressusertoursetting'] = 'Suppress \'Reset user tour on this page\' link';
 $string['footersuppressusertoursetting_desc'] = 'With this setting, you can entirely suppress the \'Reset user tour on this page\' link in the footer. This link would otherwise provide the possibility to reset a user tour on a particular page.';
-// ... ... Setting: Suppress 'Give feedback about this software' link.
-$string['footersuppressfeedbacksetting'] = 'Suppress \'Give feedback about this software\' link';
-$string['footersuppressfeedbacksetting_desc'] = 'With this setting, you can entirely suppress the \'Give feedback about this software\' link in the footer. This link would otherwise appear if the <a href="{$a->url}">feedback about this software</a> setting is enabled.';
 // ... ... Setting: Suppress theme switcher links.
 $string['footersuppressthemeswitchsetting'] = 'Suppress theme switcher links';
 $string['footersuppressthemeswitchsetting_desc'] = 'With this setting, you can entirely suppress the theme switcher links in the footer. The underlying system for device-specific themes was removed in Moodle 4.3, but the output routines are still there, so better be save than sorry.';
 // ... ... Setting: Suppress 'Powered by Moodle' link.
 $string['footersuppresspoweredsetting'] = 'Suppress \'Powered by Moodle\' link';
 $string['footersuppresspoweredsetting_desc'] = 'With this setting, you can entirely suppress the \'Powered by Moodle\' link in the footer. This link would otherwise show an information that this site is running Moodle and provide a link to Moodle HQ.';
+// ... ... Setting: Suppress footer output by core components.
+$string['footersuppressstandardfootercore'] = 'Suppress footer output by core component \'{$a}\'';
+$string['footersuppressstandardfootercore_desc'] = 'With this setting, you can entirely suppress the footer output by the core component \'{$a}\'. Core components can add additional content to the footer by implementing a particular hook or function. This core component has implemented this hook / function and might add content to the footer in certain circumstances.';
 // ... ... Setting: Suppress footer output by plugins.
 $string['footersuppressstandardfooter'] = 'Suppress footer output by plugin \'{$a}\'';
-$string['footersuppressstandardfooter_desc'] = 'With this setting, you can entirely suppress the footer output by plugin \'{$a}\'. Plugins (even if they are shipped with Moodle core, but are still technically plugins) can add additional content to the footer by implementing a particular function. This plugin has implemented this function and might add content to the footer in certain circumstances.';
+$string['footersuppressstandardfooter_desc'] = 'With this setting, you can entirely suppress the footer output by plugin \'{$a}\'. Plugins (even if they are shipped with Moodle core, but are still technically plugins) can add additional content to the footer by implementing a particular hook or function. This plugin has implemented this hook / function and might add content to the footer in certain circumstances.<br />Please note: Due to the way how the suppressing feature is implemented, the setting might not take effect before the second page load after saving the setting.';
 
 // Settings: Static pages tab.
 $string['staticpagestab'] = 'Static pages';
@@ -824,6 +872,7 @@ $string['page3linkpositionfooter'] = 'Add a link to the generic page 3 to the fo
 $string['page3linkpositionboth'] = 'Add a link to the generic page 3 to the footnote and to the footer (questionmark) icon';
 $string['page3linkpositionsetting'] = 'Generic page 3 link position';
 $string['page3linkpositionsetting_desc'] = 'In this setting, you can configure if a link to the generic page 3 should be added automatically to the Moodle page. If you do not want to show a link automatically, you can add a link to {$a->url} from anywhere in Moodle manually.';
+
 // Settings: Info banners tab.
 $string['infobannertab'] = 'Info banner';
 // ... Section: Info banners.
@@ -1012,6 +1061,9 @@ $string['showhintcourseselfenrolfromuntil'] = 'The <strong>{$a->name}</strong> e
 $string['showhintcourseselfenrolsinceuntil'] = 'The <strong>{$a->name}</strong> enrolment instance allows unrestricted self enrolment until {$a->until}.';
 $string['showhintcourseselfenrolinstancecallforaction'] = 'If you don\'t want any Moodle user to have access to this course freely, please restrict the self enrolment settings.';
 
+// Settings: Accessibility page.
+$string['configtitleaccessibility'] = 'Accessibility';
+
 // Settings: Administration tab.
 $string['administrationtab'] = 'Administration';
 // ... Section: Course management.
@@ -1020,8 +1072,107 @@ $string['coursemanagementheading'] = 'Course management';
 $string['showviewcourseiconincoursemgntsetting'] = 'Show view course icon';
 $string['showviewcourseiconincoursemgntsesetting_desc'] = 'By default, on the <a href="{$a}">course management page</a>, Moodle requires you to either open the course details or to pass through the course settings before you can click an additional UI element to view the course. By enabling this setting, you can add a \'View course\' icon directly to the category listing on the course management page.';
 
+// Settings: Declaration tab.
+$string['accessibilitydeclarationtab'] = 'Declaration';
+// ... Section: Declaration of accessibility page.
+$string['accessibilitydeclarationheading'] = 'Declaration of accessibility';
+// ... ... Setting: Enable declaration of accessibility page.
+$string['enableaccessibilitydeclarationsetting'] = 'Enable declaration of accessibility page';
+$string['enableaccessibilitydeclarationsetting_desc'] = 'With this setting, you can enable a declaration of accessibility page. It will behave just like the <a href="{$a->url}">other static pages</a> in Boost Union.';
+$string['accessibilitydeclarationdisabled'] = 'The declaration of accessibility information page is disabled for this site. There is nothing to see here.';
+// ... ... Setting: Declaration of accessibility page content.
+$string['accessibilitydeclarationcontentsetting'] = 'Declaration of accessibility page content';
+$string['accessibilitydeclarationcontentsetting_desc'] = 'In this setting, you can add rich text content which will be shown on a declaration of accessibility page.';
+// ... ... Setting: Declaration of accessibility page title.
+$string['accessibilitydeclarationpagetitledefault'] = 'Declaration of accessibility';
+$string['accessibilitydeclarationpagetitlesetting'] = 'Declaration of accessibility page title';
+$string['accessibilitydeclarationpagetitlesetting_desc'] = 'In this setting, you can define the title of the declaration of accessibility page. This text will be used as link text to the declaration of accessibility page as well if you configure \'Declaration of accessibility page link position\' accordingly.';
+// ... ... Setting: Declaration of accessibility page link position.
+$string['accessibilitydeclarationlinkpositionnone'] = 'Do not automatically show a link to the declaration of accessibility page';
+$string['accessibilitydeclarationlinkpositionfootnote'] = 'Add a link to the declaration of accessibility page to the footnote';
+$string['accessibilitydeclarationlinkpositionfooter'] = 'Add a link to the declaration of accessibility page to the footer (questionmark) icon';
+$string['accessibilitydeclarationlinkpositionboth'] = 'Add a link to the declaration of accessibility page to the footnote and to the footer (questionmark) icon';
+$string['accessibilitydeclarationlinkpositionsetting'] = 'Declaration of accessibility page link position';
+$string['accessibilitydeclarationlinkpositionsetting_desc'] = 'In this setting, you can configure if a link to the declaration of accessibility page should be added automatically to the Moodle page. If you do not want to show a link automatically, you can add a link to {$a->url} from anywhere in Moodle manually.';
+// Settings: Support page tab.
+$string['accessibilitysupporttab'] = 'Support page';
+// ... Section: Accessibility support page.
+$string['accessibilitysupportheading'] = 'Accessibility support page';
+// ... ... Setting: Enable accessibility support page.
+$string['enableaccessibilitysupportsetting'] = 'Enable accessibility support page';
+$string['enableaccessibilitysupportsetting_desc'] = 'With this setting, you can enable a accessibility support page. It will behave similar to <a href="{$a->url}">Moodle core\'s site support page</a>.';
+$string['accessibilitysupportdisabled'] = 'The accessibility support page is disabled for this site. There is nothing to see here.';
+$string['accessibilitysupportdefaultsubject'] = 'Accessibility feedback';
+$string['accessibilitysupportusermailsubject'] = 'Accessibility support request';
+$string['accessibilitysupportmessagesent'] = 'Your accessibility support request was sent.';
+$string['accessibilitysupportmessagenotsent'] = 'Unfortunately your accessibility support request could not be sent.';
+$string['accessibilitysupportmessagetryagain'] = 'Please try again later.';
+$string['accessibilitysupportmessagetryalternative'] = 'Please try again later or sent an email directly to <a href="mailto:{$a}">{$a}</a>.';
+// ... ... Setting: Accessibility support page content.
+$string['accessibilitysupportcontentsetting'] = 'Accessibility support page content';
+$string['accessibilitysupportcontentsetting_desc'] = 'In this setting, you can add rich text content which will be shown on the accessibility support page, together with a form to send accessibility feedback or to report an accessibility barrier.';
+$string['accessibilitysupportcontentdefault'] = '<p>If you have any accessibility feedback or want to report a barrier, please use the form below.</p><p>Do you work with assistive technology such as screen readers, magnifiers, voice control or speech recognition software? If yes, please specify which ones. To help us to process your request, you can allow the form to automatically send the following information along with your message: The URL on which you were when you opened this support form (this is called \'referrer\') and some information about your browser.</p>';
+// ... ... Setting: Accessibility support page title.
+$string['accessibilitysupportpagetitledefault'] = 'Accessibility support';
+$string['accessibilitysupportpagetitlesetting'] = 'Accessibility support page title';
+$string['accessibilitysupportpagetitlesetting_desc'] = 'In this setting, you can define the title of the accessibility support page. This text will be used as link text to the accessibility support information page as well if you configure \'Accessibility support page link position\' accordingly.';
+// ... ... Setting: Accessibility support page link position.
+$string['accessibilitysupportlinkpositionnone'] = 'Do not automatically show a link to the accessibility support page';
+$string['accessibilitysupportlinkpositionfootnote'] = 'Add a link to the accessibility support page to the footnote';
+$string['accessibilitysupportlinkpositionfooter'] = 'Add a link to the accessibility support page to the footer (questionmark) icon';
+$string['accessibilitysupportlinkpositionboth'] = 'Add a link to the accessibility support page to the footnote and to the footer (questionmark) icon';
+$string['accessibilitysupportlinkpositionsetting'] = 'Accessibility support page link position';
+$string['accessibilitysupportlinkpositionsetting_desc'] = 'In this setting, you can configure if a link to the accessibility support page should be added automatically to the Moodle page. If you do not want to show a link automatically, you can add a link to {$a->url} from anywhere in Moodle manually.';
+// ... ... Setting: Allow accessibility support page without login.
+$string['allowaccessibilitysupportwithoutlogin'] = 'Allow accessibility support page without login';
+$string['allowaccessibilitysupportwithoutlogin_desc'] = 'If this setting is enabled, the accessibility support page will be shown to users who are not logged in. If this setting is disabled, only logged in users will be allowed to access the accessibility support page.';
+// ... ... Setting: Enable accessibility button.
+$string['enableaccessibilitysupportfooterbuttonsetting'] = 'Enable accessibility support footer button';
+$string['enableaccessibilitysupportfooterbuttonsetting_desc'] = 'With this setting, you can add a link to the accessibility support page as a floating accessibility icon above the footer (questionmark) icon.';
+// ... ... Setting: Allow anonymous support page submissions
+$string['allowanonymoussubmitssetting'] = 'Allow anonymous support page submissions';
+$string['allowanonymoussubmitssetting_desc'] = 'With this setting, you can allow the user to send the accessibility feedback anonymously through the accessibility support page. Users can then decide if they want to send feedback anonymously (without sending their username and email address) or not.';
+$string['accessibilitysupportanonymouscheckbox'] = 'I prefer to send my accessibility support request anonymously';
+$string['accessibilitysupportanonymoususer'] = 'Anonymous user';
+$string['accessibilitysupportanonymousemail'] = 'anonymous@email.invalid';
+$string['accessibilitysupportsentforanonymoususer'] = 'The user requested to send this accessibility feedback anonymously.';
+// ... ... Setting: Allow sending technical information along.
+$string['allowsendtechinfoalongsetting'] = 'Allow sending technical information along';
+$string['allowsendtechinfoalongsetting_desc'] = 'With this setting, you can allow the user to send technical information along on the accessibility support page. Users can then decide if they want to send technical information or not.';
+$string['accessibilitysupporttechinfocheckbox'] = 'I agree to send the following technical information along with my message';
+$string['accessibilitysupporttechinfo'] = 'Technical information';
+$string['accessibilitysupporttechinfolabel'] = 'Technical information to send along';
+$string['accessibilitysupporttechinforeferrer'] = "Referrer page";
+$string['accessibilitysupporttechinfosysinfo'] = 'System information';
+// ... ... Setting: Accessibility support user mail.
+$string['accessibilitysupportusermail'] = 'Accessibility support user mail';
+$string['accessibilitysupportusermail_desc'] = 'Here you define the email address to which the accessibility support requests should be sent. If you leave this field empty, the requests will be sent to the <a href="{$a->url}">configured site support contact</a>.';
+$string['accessibilitysupportuserfirstname'] = 'Accessibility';
+$string['accessibilitysupportuserlastname'] = 'support';
+// ... ... Setting: Accessibility support page screenreader title
+$string['accessibilitysupportpagesrlinktitledefault'] = 'Get accessibility support';
+$string['accessibilitysupportpagesrlinktitlesetting'] = 'Accessibility support page screenreader link title';
+$string['accessibilitysupportpagesrlinktitlesetting_desc'] = 'In this setting, you can define the screenreader link title for the accessibility support page. This text will be used as link text which is only shown to screenreaders.';
+// ... ... Setting: Add re-captcha to accessibility support page
+$string['accessibilitysupportrecaptcha'] = 'Add re-captcha to accessibility support page';
+$string['accessibilitysupportrecaptcha_desc'] = 'With this setting, you control if a re-captcha is added to the accessibility support page. This is to prevent spam and abuse of the accessibility support form, just like it is done within <a href="{$a->support}">Moodle core\'s support form</a>. However, adding re-captchas add an additional accessibility barrier for users who use screenreaders or other assistive technologies which might be counter-productive in this case. Thus, please choose wisely if you want to enable this setting. Please also note that, even if enabled, the re-captcha is not shown until you set the necessary <a href="{$a->settings}">API keys in the authentication settings</a>.';
+
 // Settings: Flavours page.
 $string['configtitleflavours'] = 'Flavours';
+$string['flavoursactivityiconcoloradministration'] = 'Activity icon color for "Administration"';
+$string['flavoursactivityiconcoloradministration_help'] = 'With this setting, the flavour will override the activity icon "Administration" color which is configured in Boost Union\'s look settings.';
+$string['flavoursactivityiconcolorassessment'] = 'Activity icon color for "Assessment"';
+$string['flavoursactivityiconcolorassessment_help'] = 'With this setting, the flavour will override the activity icon "Assessment" color which is configured in Boost Union\'s look settings.';
+$string['flavoursactivityiconcolorcollaboration'] = 'Activity icon color for "Collaboration"';
+$string['flavoursactivityiconcolorcollaboration_help'] = 'With this setting, the flavour will override the activity icon "Collaboration" color which is configured in Boost Union\'s look settings.';
+$string['flavoursactivityiconcolorcommunication'] = 'Activity icon color for "Communication"';
+$string['flavoursactivityiconcolorcommunication_help'] = 'With this setting, the flavour will override the activity icon "Communication" color which is configured in Boost Union\'s look settings.';
+$string['flavoursactivityiconcolorcontent'] = 'Activity icon color for "Content"';
+$string['flavoursactivityiconcolorcontent_help'] = 'With this setting, the flavour will override the activity icon "Content" color which is configured in Boost Union\'s look settings.';
+$string['flavoursactivityiconcolorinteractivecontent'] = 'Activity icon color for "Interactive content"';
+$string['flavoursactivityiconcolorinteractivecontent_help'] = 'With this setting, the flavour will override the activity icon "Interactive content" color which is configured in Boost Union\'s look settings.';
+$string['flavoursactivityiconcolorinterface'] = 'Activity icon color for "Interface"';
+$string['flavoursactivityiconcolorinterface_help'] = 'With this setting, the flavour will override the activity icon "Interface" color which is configured in Boost Union\'s look settings.';
 $string['flavoursappliesto'] = 'Applies to';
 $string['flavoursapplytocategories'] = 'Apply to course categories';
 $string['flavoursapplytocategories_help'] = 'Here, you define if this flavour should be applied to course categories.';
@@ -1033,10 +1184,24 @@ $string['flavoursapplytocohorts_ids'] = 'Cohorts';
 $string['flavoursapplytocohorts_ids_help'] = 'Here, you define one or more particular cohorts which this flavour should be applied to. As soon as the user is a member of one of the configured cohorts, the flavour is applied.<br /><br />Please note that, if you define more than one cohorts, there is no need for the user to be a member of all of them at the same time.<br /><br />Please also note that at the current state of implementation category cohorts are treated just as if they were system cohorts.';
 $string['flavoursbackgroundimage'] = 'Background image';
 $string['flavoursbackgroundimage_help'] = 'With this setting, the flavour will override the background image which is configured in Boost Union\'s look settings.';
+$string['flavoursbackgroundimageposition'] = 'Background image position';
+$string['flavoursbackgroundimageposition_help'] = 'With this setting, the flavour will override the background image position which is configured in Boost Union\'s look settings.';
 $string['flavoursbacktooverview'] = 'Back to flavour overview';
+$string['flavoursbootstrapcolordanger'] = 'Bootstrap color for "Danger"';
+$string['flavoursbootstrapcolordanger_help'] = 'With this setting, the flavour will override the Bootstrap "danger" color which is configured in Boost Union\'s look settings.';
+$string['flavoursbootstrapcolorinfo'] = 'Bootstrap color for "Info"';
+$string['flavoursbootstrapcolorinfo_help'] = 'With this setting, the flavour will override the Bootstrap info "color" which is configured in Boost Union\'s look settings.';
+$string['flavoursbootstrapcolorsuccess'] = 'Bootstrap color for "Success"';
+$string['flavoursbootstrapcolorsuccess_help'] = 'With this setting, the flavour will override the Bootstrap "success" color which is configured in Boost Union\'s look settings.';
+$string['flavoursbootstrapcolorwarning'] = 'Bootstrap color for "Warning"';
+$string['flavoursbootstrapcolorwarning_help'] = 'With this setting, the flavour will override the Bootstrap "warning" color which is configured in Boost Union\'s look settings.';
+$string['flavoursbrandcolor'] = 'Brand color';
+$string['flavoursbrandcolor_help'] = 'With this setting, the flavour will override the brand color which is configured in Boost Union\'s look settings.';
 $string['flavourscreateflavour'] = 'Create flavour';
-$string['flavourscustomcss'] = 'Custom CSS';
-$string['flavourscustomcss_help'] = 'With this setting, you can write custom CSS for the flavour. It will be appended to the stack of CSS code which is shipped to the browser as soon as the flavour applies. Please note that in the current state of implementation, this setting only allows the usage of custom CSS, not SCSS.';
+$string['flavourscustomscss'] = 'Raw SCSS';
+$string['flavourscustomscss_help'] = 'With this setting, you can write custom SCSS for the flavour. It will be appended to the stack of CSS code which is shipped to the browser as soon as the flavour applies.';
+$string['flavourscustomscsspre'] = 'Raw initial SCSS';
+$string['flavourscustomscsspre_help'] = 'With this setting, you can write custom initial SCSS for the flavour. It will be used when building the CSS code which is shipped to the browser as soon as the flavour applies.';
 $string['flavoursdelete'] = 'Delete';
 $string['flavoursdeleteflavour'] = 'Delete flavour';
 $string['flavoursdeleteconfirmation'] = 'Do you really want to delete the flavour <em>{$a}</em>?';
@@ -1054,6 +1219,8 @@ $string['flavourslogo'] = 'Logo';
 $string['flavourslogo_help'] = 'With this setting, the flavour will override the logo which is configured in Boost Union\'s look settings.';
 $string['flavourslogocompact'] = 'Compact logo';
 $string['flavourslogocompact_help'] = 'With this setting, the flavour will override the logo which is configured in Boost Union\'s look settings.';
+$string['flavoursnavbarcolor'] = 'Navbar color';
+$string['flavoursnavbarcolor_help'] = 'With this setting, the flavour will override the navbar color which is configured in Boost Union\'s look settings.';
 $string['flavoursnotificationcreated'] = 'The flavour was created successfully';
 $string['flavoursnotificationdeleted'] = 'The flavour was deleted successfully';
 $string['flavoursnotificationedited'] = 'The flavour was edited successfully';
@@ -1082,6 +1249,11 @@ $string['smartmenusbylanguage'] = 'By language';
 $string['smartmenusbylanguage_help'] = 'Restrict the visibility based on the user\'s language';
 $string['smartmenusbyrole'] = 'By role';
 $string['smartmenusbyrole_help'] = 'Restrict the visibility based on the user\'s roles.';
+$string['smartmenusbyadmin'] = 'Show to';
+$string['smartmenusbyadmin_help'] = 'Restrict the visibility based on the fact if the user is a site admin or not.';
+$string['smartmenusbyadmin_all'] = 'All users';
+$string['smartmenusbyadmin_admins'] = 'Site admins only';
+$string['smartmenusbyadmin_nonadmins'] = 'Non-admins only';
 $string['smartmenusdynamiccoursescompletionstatus'] = 'Completion status';
 $string['smartmenusdynamiccoursescompletionstatus_help'] = 'The dynamic courses menu item list will contain all courses of the user which match the selected completion status. For example, if you select \'In progress\' as the completion status, the dynamic courses menu item list will only contain courses that the current user is currently working on.';
 $string['smartmenusdynamiccoursescompletionstatuscompleted'] = 'Completed';
@@ -1239,6 +1411,7 @@ $string['smartmenusrestrictbycohortsheader'] = 'Restrict visibility by cohorts';
 $string['smartmenusrestrictbydateheader'] = 'Restrict visibility by date';
 $string['smartmenusrestrictbylanguageheader'] = 'Restrict visibility by language';
 $string['smartmenusrestrictbyrolesheader'] = 'Restrict visibility by roles';
+$string['smartmenusrestrictbyadminheader'] = 'Restrict visibility by site admin status';
 $string['smartmenusrolecontext'] = 'Context';
 $string['smartmenusrolecontext_help'] = 'Select the context for which the user\'s role should be checked (Any context or system context only)';
 $string['smartmenussavechangesandconfigure'] = 'Save and configure items';
@@ -1283,6 +1456,7 @@ $string['cachedef_flavours'] = 'Flavours which apply to a given page\'s category
 $string['cachedef_smartmenus'] = 'Smart menus';
 $string['cachedef_smartmenu_items'] = 'Smart menu items';
 $string['cachedef_touchiconsios'] = 'Touch icon files for iOS';
+$string['cachedef_hookoverrides'] = 'Hook overrides';
 
 // Scheduled tasks.
 $string['task_purgecache'] = 'Purge theme cache';

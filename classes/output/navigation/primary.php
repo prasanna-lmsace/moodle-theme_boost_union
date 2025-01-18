@@ -26,7 +26,6 @@ namespace theme_boost_union\output\navigation;
 
 use renderable;
 use renderer_base;
-use templatable;
 use custom_menu;
 use theme_boost_union\smartmenu;
 
@@ -117,7 +116,10 @@ class primary extends \core\navigation\output\primary {
 
         // Primary menu.
         // Merge the smart menu nodes which contain the main menu location with the primary and custom menu nodes.
-        $mainmenudata = array_merge($this->get_primary_nav(), $this->get_custom_menu($output), $locationmainmenuconverted);
+        // $mainmenudata = array_merge($this->get_primary_nav(), $this->get_custom_menu($output), $locationmainmenuconverted);
+        $locationmainmenucustommerged = array_merge($this->get_custom_menu($output), $locationmainmenuconverted);
+        $mainmenudata = (object) $this->merge_primary_and_custom($this->get_primary_nav(), $locationmainmenucustommerged);
+
         $moremenu = new \core\navigation\output\more_menu((object) $mainmenudata, 'navbar-nav', false);
 
         // Menubar.
@@ -130,13 +132,21 @@ class primary extends \core\navigation\output\primary {
 
         // Bottom bar.
         // Include the menu navigation menus to the mobile menu when the bottom bar doesn't have any menus.
+        // Mobile navigation menu, uses the expand/collapse method for submenus, for the reason the unconverted menus are used.
         $mobileprimarynav = (!empty($locationbottommenu))
-            ? array_merge($this->get_primary_nav(), $this->get_custom_menu($output), $locationbottommenu)
-            : array_merge($this->get_primary_nav(), $this->get_custom_menu($output), $locationmainmenu);
+            ? $this->merge_primary_and_custom(
+                $this->get_primary_nav(), array_merge($this->get_custom_menu($output), $locationbottommenu), true)
+            : $this->merge_primary_and_custom(
+                $this->get_primary_nav(), array_merge($this->get_custom_menu($output), $locationmainmenu), true);
 
-        if (!empty($locationbottommenu)) {
-            $mobilemenudata = array_merge($this->get_primary_nav(), $this->get_custom_menu($output), $locationbottommenuconverted);
-            $bottombar = new \core\navigation\output\more_menu((object) $mobilemenudata, 'navbar-nav-bottom-bar', false);
+        if (!empty($mobileprimarynav)) {
+            // Use the converted bottom menus for the bottom bar. Bottom bar uses the carousel method for submenus.
+            $bottommenusconvertedmerge = array_merge($this->get_custom_menu($output), $locationbottommenuconverted);
+            $bottomprimarynav = (!empty($locationbottommenu))
+                ? $this->merge_primary_and_custom($this->get_primary_nav(), $bottommenusconvertedmerge, true)
+                : $this->merge_primary_and_custom($this->get_primary_nav(), $locationmainmenucustommerged, true);
+
+            $bottombar = new \core\navigation\output\more_menu((object) $bottomprimarynav, 'navbar-nav-bottom-bar', false);
             $bottombardata = $bottombar->export_for_template($output);
             $bottombardata['drawer'] = (!empty($locationbottommenu)) ? true : false;
         }
@@ -213,7 +223,7 @@ class primary extends \core\navigation\output\primary {
                             'text' => get_string('setpreferredlanglink', 'theme_boost_union'),
                             'link' => true,
                             'isactive' => false,
-                            'url' => new \moodle_url('/user/language.php'),
+                            'url' => new \core\url('/user/language.php'),
                         ];
                         $sm->items[] = $spfnode;
 
@@ -380,5 +390,87 @@ class primary extends \core\navigation\output\primary {
         }
 
         return $primarymenu;
+    }
+
+    /**
+     * Recursive checks if any of the children is active. If that's the case this node (the parent) is active as
+     * well. If the node has no children, check if the node itself is active. Use pass by reference for the node
+     * object because we actively change/set the "isactive" flag inside the method and this needs to be kept at the
+     * callers side.
+     * Set $expandedmenu to true, if the mobile menu is done, in this case the active flag gets the node that is
+     * actually active, while the parent hierarchy of the active node gets the flag isopen.
+     *
+     * Modifications compared to the original function:
+     * * Updated the children node type to object
+     *
+     * @param object $node
+     * @param bool $expandedmenu
+     * @return bool
+     */
+    protected function flag_active_nodes(object $node, bool $expandedmenu = false): bool {
+        global $FULLME;
+        $active = false;
+        foreach (array_keys($node->children ?? []) as $c) {
+
+            // Update the type of child nodes (smart menu).
+            // To prevent issues with already configured menus,
+            // The type of children is not updated during the smart menu build process.
+            $child = (object) $node->children[$c];
+
+            if ($this->flag_active_nodes($child, $expandedmenu)) {
+                $active = true;
+            }
+        }
+        // One of the children is active, so this node (the parent) is active as well.
+        if ($active) {
+            if ($expandedmenu) {
+                $node->isopen = true;
+            } else {
+                $node->isactive = true;
+            }
+            return true;
+        }
+
+        // By default, the menu item node to check is not active.
+        $node->isactive = false;
+
+        // Check if the node url matches the called url. The node url may omit the trailing index.php, therefore check
+        // this as well.
+        if (empty($node->url)) {
+            // Current menu node has no url set, so it can't be active.
+            return false;
+        }
+        $nodeurl = parse_url($node->url);
+        $current = parse_url($FULLME ?? '');
+
+        $pathmatches = false;
+
+        // Exact match of the path of node and current url.
+        $nodepath = $nodeurl['path'] ?? '/';
+        $currentpath = $current['path'] ?? '/';
+        if ($nodepath === $currentpath) {
+            $pathmatches = true;
+        }
+        // The current url may be trailed by a index.php, otherwise it's the same as the node path.
+        if (!$pathmatches && $nodepath . 'index.php' === $currentpath) {
+            $pathmatches = true;
+        }
+        // No path did match, so the node can't be active.
+        if (!$pathmatches) {
+            return false;
+        }
+        // We are here because the path matches, so now look at the query string.
+        $nodequery = $nodeurl['query'] ?? '';
+        $currentquery = $current['query'] ?? '';
+        // If the node has no query string defined, then the patch match is sufficient.
+        if (empty($nodeurl['query'])) {
+            $node->isactive = true;
+            return true;
+        }
+        // If the node contains a query string then also the current url must match this query.
+        if ($nodequery === $currentquery) {
+            $node->isactive = true;
+        }
+        return $node->isactive;
     }
 }

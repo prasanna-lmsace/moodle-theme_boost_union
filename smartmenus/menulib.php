@@ -97,6 +97,11 @@ class smartmenu_helper {
         // Restriction by roles.
         $this->restriction_byroles($query);
 
+        // Restricted by site admin status.
+        if (!$this->restriction_byadmin()) {
+            return false;
+        }
+
         // Restriction by cohorts.
         $this->restriction_bycohorts($query);
 
@@ -178,6 +183,25 @@ class smartmenu_helper {
             'systemcontext' => context_system::instance()->id,
         ];
         $query->params += array_merge($params, $inparam);
+    }
+
+    /**
+     * Verify if the menu is restricted to site admins.
+     *
+     * @return bool True if the menu is available for this user, otherwise false.
+     */
+    public function restriction_byadmin() {
+        // If the item is restricted to site admins only.
+        if ($this->data->byadmin == smartmenu::BYADMIN_ADMINS) {
+            return is_siteadmin($this->userid);
+
+            // Otherwise, if the item is restricted to non-site admins only.
+        } else if ($this->data->byadmin == smartmenu::BYADMIN_NONADMINS) {
+            return !is_siteadmin($this->userid);
+        }
+
+        // Allow the item to be viewed by the user.
+        return true;
     }
 
     /**
@@ -405,7 +429,7 @@ class smartmenu_helper {
                     $value = json_decode($menu->$method);
                     if (($key = array_search($id, $value)) !== false) {
                         unset($value[$key]);
-                        $updated = json_encode($value);
+                        $updated = json_encode(array_values($value));
                         $DB->set_field('theme_boost_union_menus', $method, $updated, ['id' => $menu->id]);
 
                         // Purge the cache of this menu.
@@ -437,7 +461,7 @@ class smartmenu_helper {
                     $value = json_decode($item->$method);
                     if (($key = array_search($id, $value)) !== false) {
                         unset($value[$key]);
-                        $updated = json_encode($value);
+                        $updated = json_encode(array_values($value));
                         $DB->set_field('theme_boost_union_menuitems', $method, $updated, ['id' => $item->id]);
                         // Purge the cache of this item and its menu.
                         self::purge_menu_cache($item->menu);
@@ -569,7 +593,7 @@ class smartmenu_helper {
      * and the last check date is earlier than or equal to the end date,
      * then the cached menu data is cleared from the cache and the last check date is updated to the current date.
      *
-     * @param \cache_store $cache The cache object.
+     * @param \core_cache\store $cache The cache object.
      * @param object $data The menu data object.
      * @param string $key The cache key.
      *

@@ -10,33 +10,20 @@ Feature: Configuring the theme_boost_union plugin for the "SCSS" tab on the "Loo
       | Course 1 | C1        |
 
   @javascript
-  Scenario: Setting: Raw initial SCSS - Add custom SCSS to the theme
+  Scenario: Setting: Raw (initial) SCSS - Add custom SCSS to the theme
     When I log in as "admin"
     And Behat debugging is disabled
     And I navigate to "Appearance > Boost Union > Look" in site administration
     And I click on "SCSS" "link" in the "#adminsettings .nav-tabs" "css_element"
-    # We add a small CSS snippet to the page which hides the heading in the page header.
-    # This is just to make it easy to detect the effect of this custom SCSS code.
+    # We add a SCSS variable and a small SCSS snippet to the page which hides the heading in the page header.
+    # This is just to make it easy to detect the effect of this custom SCSS code and to verify that SCSS is compiled correctly.
     And I set the field "Raw initial SCSS" to multiline:
     """
-    #page-header h1 { display: none; }
+    $myvariable: none;
     """
-    And I press "Save changes"
-    And Behat debugging is enabled
-    And I am on "Course 1" course homepage
-    Then I should not see "Course 1" in the "#page-header .page-header-headings" "css_element"
-
-  @javascript
-  Scenario: Setting: Raw SCSS - Add custom SCSS to the theme
-    When I log in as "admin"
-    And Behat debugging is disabled
-    And I navigate to "Appearance > Boost Union > Look" in site administration
-    And I click on "SCSS" "link" in the "#adminsettings .nav-tabs" "css_element"
-    # We add a small CSS snippet to the page which hides the heading in the page header.
-    # This is just to make it easy to detect the effect of this custom SCSS code.
     And I set the field "Raw SCSS" to multiline:
     """
-    #page-header h1 { display: none; }
+    #page-header h1 { display: $myvariable; }
     """
     And I press "Save changes"
     And Behat debugging is enabled
@@ -63,8 +50,8 @@ Feature: Configuring the theme_boost_union plugin for the "SCSS" tab on the "Loo
 
     Examples:
       | urlfield                        | url                                                                                                                 |
-      | External Pre SCSS download URL  | https://raw.githubusercontent.com/moodle-an-hochschulen/moodle-theme_boost_union/master/tests/fixtures/extscss.scss |
-      | External Post SCSS download URL | https://raw.githubusercontent.com/moodle-an-hochschulen/moodle-theme_boost_union/master/tests/fixtures/extscss.scss |
+      | External Pre SCSS download URL  | https://raw.githubusercontent.com/moodle-an-hochschulen/moodle-theme_boost_union/main/tests/fixtures/extscss.scss |
+      | External Post SCSS download URL | https://raw.githubusercontent.com/moodle-an-hochschulen/moodle-theme_boost_union/main/tests/fixtures/extscss.scss |
 
   @javascript
   Scenario Outline: Setting: External SCSS - Add external SCSS from Github API to the theme
@@ -95,7 +82,7 @@ Feature: Configuring the theme_boost_union plugin for the "SCSS" tab on the "Loo
       | External Post SCSS Github file path | /extscss.scss | 11AAIKUFQ0r5mGRLvI53V1_spQkU | 7kSEWBd25CNtUJE7UBA6dPdya3zM | C5O4Xo453LqQgKoXVAsmuKuC1q |
 
   @javascript
-  Scenario Outline: Setting: External SCSS - Add a broken SCSS download URL / invalid external SCSS code to the theme
+  Scenario Outline: Setting: External SCSS - Add a broken SCSS download URL to the theme
     Given the following config values are set as admin:
       | config        | value | plugin            |
       | extscsssource | 1     | theme_boost_union |
@@ -111,16 +98,70 @@ Feature: Configuring the theme_boost_union plugin for the "SCSS" tab on the "Loo
     And I press "Save changes"
     And I navigate to "Appearance > Boost Union > Look" in site administration
     And I click on "SCSS" "link" in the "#adminsettings .nav-tabs" "css_element"
-    # And then we add a broken SCSS URL / invalid external SCSS code to the theme.
+    # And then we add a broken SCSS URL to the theme.
     And I set the field "External Post SCSS download URL" to "<url>"
     And I press "Save changes"
     And Behat debugging is enabled
     And I am on "Course 1" course homepage
-    # Regardless of the fact that broken / invalid SCSS code has been fetched from the external source, the SCSS
+    # Regardless of the fact that the broken URL was configured as external source, the SCSS
+    # should be compiled correctly.
+    Then I should not see "Course 1" in the "#page-header .page-header-headings" "css_element"
+
+    Examples:
+      | url                                                                                                                 |
+      | https://raw.githubusercontent.com/moodle-an-hochschulen/moodle-theme_boost_union/broken/tests/fixtures/extscss.scss |
+
+  @javascript
+  Scenario Outline: Setting: External SCSS - Add an invalid external SCSS code to the theme and validate it
+    Given the following config values are set as admin:
+      | config            | value | plugin            |
+      | extscsssource     | 1     | theme_boost_union |
+      | extscssvalidation | yes   | theme_boost_union |
+    When I log in as "admin"
+    And Behat debugging is disabled
+    And I navigate to "Appearance > Boost Union > Look" in site administration
+    And I click on "SCSS" "link" in the "#adminsettings .nav-tabs" "css_element"
+    # We first add a valid CSS snippet to the page which is just there to detect later that SCSS has been compiled correctly.
+    And I set the field "Raw SCSS" to multiline:
+    """
+    #page-header h1 { display: none; }
+    """
+    And I press "Save changes"
+    And I navigate to "Appearance > Boost Union > Look" in site administration
+    And I click on "SCSS" "link" in the "#adminsettings .nav-tabs" "css_element"
+    And I set the field "External Post SCSS download URL" to "<url>"
+    And I press "Save changes"
+    And Behat debugging is enabled
+    And I am on "Course 1" course homepage
+    # Regardless of the fact that invalid SCSS code has been fetched from the external source, the SCSS
     # should be compiled correctly.
     Then I should not see "Course 1" in the "#page-header .page-header-headings" "css_element"
 
     Examples:
       | url                                                                                                                         |
       | https://raw.githubusercontent.com/moodle-an-hochschulen/moodle-theme_boost_union/broken/tests/fixtures/extscss.scss         |
-      | https://raw.githubusercontent.com/moodle-an-hochschulen/moodle-theme_boost_union/master/tests/fixtures/extscss-invalid.scss |
+      | https://raw.githubusercontent.com/moodle-an-hochschulen/moodle-theme_boost_union/main/tests/fixtures/extscss-invalid.scss |
+
+  @javascript
+  Scenario Outline: Setting: External SCSS - Add an external SCSS code with Bootstrap variables to the theme and validate it
+    Given the following config values are set as admin:
+      | config            | value      | plugin            |
+      | extscsssource     | 1          | theme_boost_union |
+      | extscssvalidation | <validate> | theme_boost_union |
+    When I log in as "admin"
+    And Behat debugging is disabled
+    And I navigate to "Appearance > Boost Union > Look" in site administration
+    And I click on "SCSS" "link" in the "#adminsettings .nav-tabs" "css_element"
+    # And then we add external SCSS code with Bootstrap variables to the theme.
+    And I set the field "External Post SCSS download URL" to "<url>"
+    And I press "Save changes"
+    And Behat debugging is enabled
+    And I am on "Course 1" course homepage
+    # Regardless of the fact that broken / invalid SCSS code has been fetched from the external source, the SCSS
+    # should be compiled correctly.
+    Then I <shouldornot> see "Course 1" in the "#page-header .page-header-headings" "css_element"
+
+    Examples:
+      | validate | shouldornot | url                                                                                                                                |
+      | yes      | should      | https://raw.githubusercontent.com/moodle-an-hochschulen/moodle-theme_boost_union/main/tests/fixtures/extscss-with-variables.scss |
+      | no       | should not  | https://raw.githubusercontent.com/moodle-an-hochschulen/moodle-theme_boost_union/main/tests/fixtures/extscss-with-variables.scss |

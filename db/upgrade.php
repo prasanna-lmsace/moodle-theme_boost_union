@@ -70,7 +70,7 @@ function xmldb_theme_boost_union_upgrade($oldversion) {
     if ($oldversion < 2022080922) {
 
         // Start composing the notification to inform the admin.
-        $message = html_writer::tag('p', get_string('upgradenotice_2022080922', 'theme_boost_union'));
+        $message = \core\output\html_writer::tag('p', get_string('upgradenotice_2022080922', 'theme_boost_union'));
 
         // Handle the logo and compact logo (which have got now new settings in Boost Union).
         foreach (['logo', 'logocompact'] as $setting) {
@@ -114,13 +114,13 @@ function xmldb_theme_boost_union_upgrade($oldversion) {
             // If the logo has been copied.
             if ($logocopied == true) {
                 // Add the corresponding note to the notification.
-                $message .= html_writer::tag('p', get_string('upgradenotice_2022080922_copied', 'theme_boost_union',
+                $message .= \core\output\html_writer::tag('p', get_string('upgradenotice_2022080922_copied', 'theme_boost_union',
                         get_string('upgradenotice_2022080922_'.$setting, 'theme_boost_union')));
 
                 // Otherwise, if no logo was copied.
             } else {
                 // Add the corresponding note to the notification.
-                $message .= html_writer::tag('p', get_string('upgradenotice_2022080922_notcopied', 'theme_boost_union',
+                $message .= \core\output\html_writer::tag('p', get_string('upgradenotice_2022080922_notcopied', 'theme_boost_union',
                         get_string('upgradenotice_2022080922_'.$setting, 'theme_boost_union')));
             }
         }
@@ -322,6 +322,169 @@ function xmldb_theme_boost_union_upgrade($oldversion) {
 
         // Boost_union savepoint reached.
         upgrade_plugin_savepoint(true, 2023102027, 'theme', 'boost_union');
+    }
+
+    if ($oldversion < 2024100702) {
+
+        // Define field byadmin to be added to theme_boost_union_menus.
+        $table = new xmldb_table('theme_boost_union_menus');
+        $field = new xmldb_field('byadmin', XMLDB_TYPE_INTEGER, '9', null, XMLDB_NOTNULL, null, '0', 'visible');
+
+        // Conditionally launch add field byadmin.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field byadmin to be added to theme_boost_union_menuitems.
+        $table = new xmldb_table('theme_boost_union_menuitems');
+        $field = new xmldb_field('byadmin', XMLDB_TYPE_INTEGER, '9', null, XMLDB_NOTNULL, null, '0', 'timemodified');
+
+        // Conditionally launch add field byadmin.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Boost_union savepoint reached.
+        upgrade_plugin_savepoint(true, 2024100702, 'theme', 'boost_union');
+    }
+
+    if ($oldversion < 2024100706) {
+
+        // Define table theme_boost_union_flavours to be altered.
+        $table = new xmldb_table('theme_boost_union_flavours');
+
+        // Define field look_rawscsspre to be added to theme_boost_union_flavours.
+        $field = new xmldb_field('look_rawscsspre', XMLDB_TYPE_TEXT, null, null, null, null, null);
+
+        // Conditionally launch add field look_rawscsspre.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field look_brandcolor to be added to theme_boost_union_flavours.
+        $field = new xmldb_field('look_brandcolor', XMLDB_TYPE_CHAR, '32', null, null, null, null);
+
+        // Conditionally launch add field look_brandcolor.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field look_bootstrapcolorsuccess to be added to theme_boost_union_flavours.
+        $field = new xmldb_field('look_bootstrapcolorsuccess', XMLDB_TYPE_CHAR, '32', null, null, null, null);
+
+        // Conditionally launch add field look_bootstrapcolorsuccess.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field look_bootstrapcolorinfo to be added to theme_boost_union_flavours.
+        $field = new xmldb_field('look_bootstrapcolorinfo', XMLDB_TYPE_CHAR, '32', null, null, null, null);
+
+        // Conditionally launch add field look_bootstrapcolorinfo.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field look_bootstrapcolorwarning to be added to theme_boost_union_flavours.
+        $field = new xmldb_field('look_bootstrapcolorwarning', XMLDB_TYPE_CHAR, '32', null, null, null, null);
+
+        // Conditionally launch add field look_bootstrapcolorwarning.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field look_bootstrapcolordanger to be added to theme_boost_union_flavours.
+        $field = new xmldb_field('look_bootstrapcolordanger', XMLDB_TYPE_CHAR, '32', null, null, null, null);
+
+        // Conditionally launch add field look_bootstrapcolordanger.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Boost_union savepoint reached.
+        upgrade_plugin_savepoint(true, 2024100706, 'theme', 'boost_union');
+    }
+
+    if ($oldversion < 2024100707) {
+
+        // Define table theme_boost_union_flavours to be altered.
+        $table = new xmldb_table('theme_boost_union_flavours');
+
+        // Define field look_backgroundimagepos to be added to theme_boost_union_flavours.
+        $field = new xmldb_field('look_backgroundimagepos', XMLDB_TYPE_CHAR, '32', null, null, null, null,
+                'look_backgroundimage');
+
+        // Conditionally launch add field look_backgroundimagepos.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field look_aicoladministration to be added to theme_boost_union_flavours.
+        $field = new xmldb_field('look_aicoladministration', XMLDB_TYPE_CHAR, '32', null, null, null, null);
+
+        // Conditionally launch add field look_aicoladministration.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field look_aicolassessment to be added to theme_boost_union_flavours.
+        $field = new xmldb_field('look_aicolassessment', XMLDB_TYPE_CHAR, '32', null, null, null, null);
+
+        // Conditionally launch add field look_aicolassessment.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field look_aicolcollaboration to be added to theme_boost_union_flavours.
+        $field = new xmldb_field('look_aicolcollaboration', XMLDB_TYPE_CHAR, '32', null, null, null, null);
+
+        // Conditionally launch add field look_aicolcollaboration.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field look_aicolcommunication to be added to theme_boost_union_flavours.
+        $field = new xmldb_field('look_aicolcommunication', XMLDB_TYPE_CHAR, '32', null, null, null, null);
+
+        // Conditionally launch add field look_aicolcommunication.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field look_aicolcontent to be added to theme_boost_union_flavours.
+        $field = new xmldb_field('look_aicolcontent', XMLDB_TYPE_CHAR, '32', null, null, null, null);
+
+        // Conditionally launch add field look_aicolcontent.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field look_aicolinteractivecontent to be added to theme_boost_union_flavours.
+        $field = new xmldb_field('look_aicolinteractivecontent', XMLDB_TYPE_CHAR, '32', null, null, null, null);
+
+        // Conditionally launch add field look_aicolinteractivecontent.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field look_aicolinterface to be added to theme_boost_union_flavours.
+        $field = new xmldb_field('look_aicolinterface', XMLDB_TYPE_CHAR, '32', null, null, null, null);
+
+        // Conditionally launch add field look_aicolinterface.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field look_navbarcolor to be added to theme_boost_union_flavours.
+        $field = new xmldb_field('look_navbarcolor', XMLDB_TYPE_CHAR, '32', null, null, null, null);
+
+        // Conditionally launch add field look_navbarcolor.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Boost_union savepoint reached.
+        upgrade_plugin_savepoint(true, 2024100707, 'theme', 'boost_union');
     }
 
     return true;

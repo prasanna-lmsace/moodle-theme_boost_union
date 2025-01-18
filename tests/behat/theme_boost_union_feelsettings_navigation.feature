@@ -1,4 +1,4 @@
-@theme @theme_boost_union @theme_boost_union_feelsettings @theme_boost_union_feelsettings_navigation
+@theme @theme_boost_union @theme_boost_union_feelsettings @theme_boost_union_feelsettings_navigation @theme_boost_union_footer
 Feature: Configuring the theme_boost_union plugin for the "Navigation" tab on the "Feel" page
   In order to use the features
   As admin
@@ -109,8 +109,8 @@ Feature: Configuring the theme_boost_union plugin for the "Navigation" tab on th
     And the theme cache is purged and the theme is reloaded
     When I log in as "student1"
     And I follow "My courses"
-    And I click on ".coursemenubtn" "css_element" in the "//div[@class='card dashboard-card' and contains(.,'Course 1')]" "xpath_element"
-    And I click on "Star this course" "link" in the "//div[@class='card dashboard-card' and contains(.,'Course 1')]" "xpath_element"
+    And I click on ".coursemenubtn" "css_element" in the "//div[contains(@class, 'card course-card') and contains(.,'Course 1')]" "xpath_element"
+    And I click on "Star this course" "link" in the "//div[contains(@class, 'card course-card') and contains(.,'Course 1')]" "xpath_element"
     And I reload the page
     Then "nav.navbar #usernavigation .popover-region-favourites" "css_element" <shouldornot> be visible
 
@@ -137,10 +137,10 @@ Feature: Configuring the theme_boost_union plugin for the "Navigation" tab on th
     And the theme cache is purged and the theme is reloaded
     When I log in as "student1"
     And I follow "My courses"
-    And I click on ".coursemenubtn" "css_element" in the "//div[@class='card dashboard-card' and contains(.,'Course 2')]" "xpath_element"
-    And I click on "Star this course" "link" in the "//div[@class='card dashboard-card' and contains(.,'Course 2')]" "xpath_element"
-    And I click on ".coursemenubtn" "css_element" in the "//div[@class='card dashboard-card' and contains(.,'Course 3')]" "xpath_element"
-    And I click on "Star this course" "link" in the "//div[@class='card dashboard-card' and contains(.,'Course 3')]" "xpath_element"
+    And I click on ".coursemenubtn" "css_element" in the "//div[contains(@class, 'card course-card') and contains(.,'Course 2')]" "xpath_element"
+    And I click on "Star this course" "link" in the "//div[contains(@class, 'card course-card') and contains(.,'Course 2')]" "xpath_element"
+    And I click on ".coursemenubtn" "css_element" in the "//div[contains(@class, 'card course-card') and contains(.,'Course 3')]" "xpath_element"
+    And I click on "Star this course" "link" in the "//div[contains(@class, 'card course-card') and contains(.,'Course 3')]" "xpath_element"
     And I log out
     And I log in as "admin"
     And I am on "Course 3" course homepage
@@ -162,20 +162,18 @@ Feature: Configuring the theme_boost_union plugin for the "Navigation" tab on th
       | Category ED    | 1        | CED      | CE       |
       | Category EDC   | 2        | CEDC     | CED      |
       | Category EDCB  | 3        | CEDCB    | CEDC     |
-      | Category EDCBA | 4        | CEDCBA   | CEDCB    |
     And the following "courses" exist:
       | fullname  | shortname | category |
       | Course C1 | CC1       | CE       |
       | Course C2 | CC2       | CED      |
       | Course C3 | CC3       | CEDC     |
       | Course C4 | CC4       | CEDCB    |
-      | Course C5 | CC5       | CEDCBA   |
     And the following "course enrolments" exist:
       | user     | course | role           |
+      | teacher1 | CC1    | editingteacher |
       | teacher1 | CC2    | editingteacher |
       | teacher1 | CC3    | editingteacher |
       | teacher1 | CC4    | editingteacher |
-      | teacher1 | CC5    | editingteacher |
     And the following config values are set as admin:
       | config              | value     | plugin            |
       | categorybreadcrumbs | <setting> | theme_boost_union |
@@ -194,12 +192,6 @@ Feature: Configuring the theme_boost_union plugin for the "Navigation" tab on th
     And "Category ED" "link" <shouldornot> exist in the ".breadcrumb" "css_element"
     And "Category EDC" "link" <shouldornot> exist in the ".breadcrumb" "css_element"
     And "Category EDCB" "link" <shouldornot> exist in the ".breadcrumb" "css_element"
-    And I am on "Course C5" course homepage
-    And "Category E" "link" <shouldornot> exist in the ".breadcrumb" "css_element"
-    And "Category ED" "link" <shouldornot> exist in the ".breadcrumb" "css_element"
-    And "Category EDC" "link" <shouldornot> exist in the ".breadcrumb" "css_element"
-    And "Category EDCB" "link" <shouldornot> exist in the ".breadcrumb" "css_element"
-    And "Category EDCBA" "link" <shouldornot> exist in the ".breadcrumb" "css_element"
 
     Examples:
       | setting | shouldornot |
@@ -213,28 +205,20 @@ Feature: Configuring the theme_boost_union plugin for the "Navigation" tab on th
       | Category ED    | 1        | CED      | CE       |
     And the following "courses" exist:
       | fullname  | shortname | category |
-      | Course C1 | CC1       | CE       |
-      | Course C2 | CC2       | CED      |
+      | Course C1 | CC1       | CED      |
     And the following "course enrolments" exist:
       | user     | course | role           |
-      | teacher1 | CC2    | editingteacher |
+      | teacher1 | CC1    | editingteacher |
     And the following config values are set as admin:
       | config              | value     | plugin            |
       | categorybreadcrumbs | yes       | theme_boost_union |
-    And "Course C1" has been set to one page per section
-    And "Course C2" has been set to one page per section
     When I log in as "teacher1"
-    And I am on section "1" page of "Course C1" course
+    And I am on the "Course C1 > New section" "course > section" page
     Then "Category E" "link" should exist in the ".breadcrumb" "css_element"
-    And "Enrolment options" "text" should exist in the ".breadcrumb" "css_element"
-    And "Enrolment options" "text" should appear after "Category E" "link" in the ".breadcrumb" "css_element"
-    And "Topic 1" "link" should not exist in the ".breadcrumb" "css_element"
-    And I am on section "1" page of "Course C2" course
-    And "Category E" "link" should exist in the ".breadcrumb" "css_element"
     And "Category ED" "link" should exist in the ".breadcrumb" "css_element"
-    And "Topic 1" "link" should exist in the ".breadcrumb" "css_element"
+    And "New section" "link" should exist in the ".breadcrumb" "css_element"
     And "Category ED" "link" should appear after "Category E" "link" in the ".breadcrumb" "css_element"
-    And "Topic 1" "link" should appear after "Category ED" "link" in the ".breadcrumb" "css_element"
+    And "New section" "link" should appear after "Category ED" "link" in the ".breadcrumb" "css_element"
 
   @javascript
   Scenario: Setting: back to top button - Enable "Back to top button"

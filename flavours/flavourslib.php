@@ -54,7 +54,7 @@ function theme_boost_union_get_flavour_which_applies() {
         // Otherwise.
     } else {
         // If we are on the preview page.
-        $previewurl = new moodle_url('/theme/boost_union/flavours/preview.php');
+        $previewurl = new core\url('/theme/boost_union/flavours/preview.php');
         if ($previewurl->compare($PAGE->url, URL_MATCH_BASE) == true) {
             // Get the flavour from the URL.
             $previewflavourid = required_param('id', PARAM_INT);
@@ -72,7 +72,7 @@ function theme_boost_union_get_flavour_which_applies() {
         // If the flag to purge the flavours cache is set for this user.
         if (get_user_preferences('theme_boost_union_flavours_purgesessioncache', false) == true) {
             // Purge the flavours cache for this user.
-            cache_helper::purge_by_definition('theme_boost_union', 'flavours');
+            \core_cache\helper::purge_by_definition('theme_boost_union', 'flavours');
         }
 
         // Create cache for flavours.
@@ -312,4 +312,36 @@ function theme_boost_union_flavour_exists_for_cohort($cohortid) {
 
     // We didn't find any matching cohort, return false.
     return false;
+}
+
+/**
+ * Helper function to get a config item from the given flavour ID.
+ *
+ * This function should only be used during the SCSS generation process (where the generated SCSS will be cached afterwards).
+ * It should not be used during the page output directly as it will fetch the flavour config item directly from the database.
+ *
+ * @param string $flavourid The flavour id.
+ * @param string $configkey The config key.
+ * @return string|null The config item if it exists, otherwise null.
+ */
+function theme_boost_union_get_flavour_config_item_for_flavourid(string $flavourid, string $configkey) {
+    global $DB;
+
+    // Initialize static variable for the flavour record as this function might be called multiple times during a page output.
+    static $flavourrecord;
+
+    // If the flavour has not been been fetched yet.
+    if ($flavourrecord == null) {
+        // Get the given flavour record with the given flavour ID from the database.
+        $flavourrecord = $DB->get_record('theme_boost_union_flavours', ['id' => $flavourid]);
+    }
+
+    // If the flavour record has a config item with the given key.
+    if (isset($flavourrecord->{$configkey})) {
+        // Return it.
+        return $flavourrecord->{$configkey};
+    }
+
+    // Fallback: Return null.
+    return null;
 }

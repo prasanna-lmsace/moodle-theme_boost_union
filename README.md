@@ -1,7 +1,7 @@
 moodle-theme_boost_union
 ========================
 
-[![Moodle Plugin CI](https://github.com/moodle-an-hochschulen/moodle-theme_boost_union/workflows/Moodle%20Plugin%20CI/badge.svg?branch=master)](https://github.com/moodle-an-hochschulen/moodle-theme_boost_union/actions?query=workflow%3A%22Moodle+Plugin+CI%22+branch%3Amaster)
+[![Moodle Plugin CI](https://github.com/moodle-an-hochschulen/moodle-theme_boost_union/workflows/Moodle%20Plugin%20CI/badge.svg?branch=main)](https://github.com/moodle-an-hochschulen/moodle-theme_boost_union/actions?query=workflow%3A%22Moodle+Plugin+CI%22+branch%3Amain)
 
 Theme Boost Union is an enhanced child theme of Boost which is intended, on the one hand, to make Boost simply more configurable and, on the other hand, to provide helpful additional features for the daily Moodle operation of admins, teachers and students.
 
@@ -9,7 +9,7 @@ Theme Boost Union is an enhanced child theme of Boost which is intended, on the 
 Requirements
 ------------
 
-This theme requires Moodle 4.3+
+This theme requires Moodle 4.5+
 
 
 Motivation for this theme
@@ -224,6 +224,32 @@ With this setting, you can control whether the course image is visible inside th
 ###### Show course completion progress
 
 With this setting, you can control whether the course completion progress is visible inside the course overview block or not.
+
+#### Tab "Blocks"
+
+##### Timeline block
+
+###### Tint timeline activity icons
+
+With this setting, you can tint the activity icons in the timeline block based on the activity purposes. By default, Moodle core displays them just as black icons.
+
+##### Upcoming events block
+
+###### Tint upcoming events activity icons
+
+With this setting, you can tint the activity icons in the upcoming events block based on the activity purposes. By default, Moodle core displays them just as black icons.
+
+##### Recently accessed items block
+
+###### Tint recently accessed items activity icons
+
+With this setting, you can tint the activity icons in the recently accessed items block based on the activity purposes. By default, Moodle core displays them just as black icons.
+
+##### Activities block
+
+###### Tint activities activity icons
+
+With this setting, you can tint the activity icons in the activities block based on the activity purposes. By default, Moodle core displays them just as black icons.
 
 #### Tab "Course"
 
@@ -533,6 +559,18 @@ With these settings, you can add rich text content which will be shown on a gene
 
 With these settings, you can add rich text content which will be shown on a generic page 3.
 
+#### Tab "Accessibility"
+
+In this tab there are the following settings:
+
+#### Declaration of accessibility
+
+With these settings, you can add rich text content which will be shown on a declaration of accessibility page.
+
+#### Accessibility support page
+
+With these settings, you can enable the accessibility support page which provides a contact form for accessibility issues.
+
 #### Tab "Information banners"
 
 In this tab, you can enable and configure multiple information banners to be shown on selected pages.
@@ -649,16 +687,29 @@ In addition to our mission to provide admin settings for each and every feature 
 Exceptions to our main design principle
 ---------------------------------------
 
-As you have read in the introduction, the main design principle of Boost Union is not to change anything in the GUI until a particular feature is enabled in the theme settings. However, due to the way how Moodle core and Boost in Moodle core is built, this main design principle sometimes could not be fully satisfied:
+As you have read in the introduction, the main design principle of Boost Union is not to change anything in the GUI until Boost Union is set as active theme and a particular feature is enabled in the theme settings. However, due to the way how Moodle core and Boost in Moodle core is built, this main design principle sometimes could not be fully satisfied:
 
 * Footer popover:
   As soon as you click the footer button (questionmark icon) in the bottom right corner of the screen, a popover with several links appears. However, the content of this link list is far from being well-structured and looks more like a garage sale. When implementing the settings to individually suppress each of these popover links, we had to make some code re-arrangements which result in the fact that the popover links are slightly more well-structured even if you do not enable any setting in Boost Union.
+* Suppress footer outputs by plugin / core component:
+  Due to the way how the settings `theme_boost_union | footersuppressstandardfooter_*` had to be built, it was not possible to quickly and reliably detect if Boost Union (or a Boost Union child theme) is the active theme. Thus, these settings are also applied if another theme than Boost Union is active. Please make sure to disable these settings if Boost Union is installed but should not be used.
 
 
 Companion plugin local_navbarplus
 ---------------------------------
 
 With the footersuppressusertour setting, you can disable the possibility to reset a user tour in the footer popover. If you have enabled this setting, you might want to have a look at our plugin local_navbarplus as a companion plugin which allows you, among other things, to add a "Reset user tour" link to the navigation bar instead. local_navbarplus is published on https://moodle.org/plugins/local_navbarplus and on https://github.com/moodle-an-hochschulen/moodle-local_navbarplus.
+
+
+Interference with forced settings in config.php
+-----------------------------------------------
+
+Due to the way how some Boost Union features had to be built, you have to be aware of the following interferences if you force settings in config.php:
+
+* $CFG->hooks_callback_overrides:
+  With this setting, you can override hook definitions in config.php - see https://moodledev.io/docs/4.4/apis/core/hooks#hooks-overview-page.
+  However, if you use the `theme_boost_union | footersuppressstandardfooter_*` settings, this forced setting will be set as well during each page load.
+  Using the Boost Union settings and overriding hooks manually in config.php at the same time should work, but is not officially supported and tested by Boost Union.
 
 
 Support for other companion plugins
@@ -687,6 +738,63 @@ https://github.com/moodle-an-hochschulen/moodle-theme_boost_union_child
 While Boost Union Child will surely help you to realize all your local Boost Union dreams, please do yourself and the whole community a favour and verify that your planned features are indeed not interesting as a pull request or feature request for the whole Boost Union community and could be contributed to Boost Union directly instead.
 
 
+SCSS stack order
+----------------
+
+Within Boost Union, you have multiple possibilities to add your own SCSS code to the Moodle page. And many of the Boost Union settings add SCSS code as well to realize the particular setting's goal. However, as you know, in SCSS the order of the instructions is key.
+
+The following list should give you an insight in which order all the SCSS code is added to the CSS stack which is shipped to the browser in the end.
+To fully understand this list, you have to be aware of two terms in Moodle theming:
+
+* _Pre SCSS_ or _Raw Initial SCSS_:\
+  This SCSS code is used only to initialize SCSS variables and not to write real SCSS code directly.
+* _Post SCSS_ or _Raw SCSS_:\
+  This SCSS code is the real SCSS code which is compiled to CSS for the browser and which might consume the SCSS variables which have been set in the Pre SCSS.
+
+Having said that, here's the order how all the SCSS code is added to the SCSS stack:
+
+1. All plugins' `styles.css` files:\
+   Each Moodle plugin can ship with a `styles.css` file which contains CSS code (not SCSS code!) for the plugin. These files are added at the very beginning in the order of the plugin names and types.
+
+2. `theme_boost` > `get_pre_scss()`:
+   * Adds the Boost Union Pre SCSS from the theme settings\
+     (which is set on `/admin/settings.php?section=theme_boost_union_look#theme_boost_union_look_scss`).\
+     Note: In fact, this function adds the _active theme's_ Pre SCSS which becomes important if you use a Boost Union Child theme.
+
+3. `theme_boost_union` > `get_pre_scss()`:
+   * Adds the Boost Union Pre SCSS from disk\
+     (which is located on `/theme/boost_union/scss/boost_union/pre.scss` and which is empty currently)
+   * Sets several SCSS variables based on Boost Union or Boost Union flavour settings
+   * Adds the Boost Union external Pre SCSS\
+     (which is set on `/admin/settings.php?section=theme_boost_union_look#theme_boost_union_look_scss`)
+   * Adds the Boost Union flavour Pre SCSS\
+     (which is set within the active flavour on `/theme/boost_union/flavours/overview.php`)
+
+4. `theme_boost_union` > `get_main_scss()`:
+   * Calls the `theme_boost` > `get_main_scss()` function
+     * Adds the Boost Core Preset\
+       (which is set on `/admin/settings.php?section=themesettingboost` and defaults to the `/theme/boost/scss/preset/default.scss` file).
+       With this preset, the FontAwesome library, the Bootstrap library and all the Moodle core stylings are added which means that this preset is the place where all the Moodle core style is added.
+   * Adds the Boost Union Post SCSS from disk\
+     (which is located on `/theme/boost_union/scss/boost_union/post.scss`)
+     This file holds all the Boost Union specific SCSS code which can be added to the stack without being dependent on specific configurations like configured colors or sizes.
+   * Add the Boost Union external SCSS\
+     (which is set on `/admin/settings.php?section=theme_boost_union_look#theme_boost_union_look_scss`)
+
+5. `theme_boost` > `get_extra_scss()`:
+   * Adds the Boost Union Post SCSS from the theme settings\
+     (which is set on `/admin/settings.php?section=theme_boost_union_look#theme_boost_union_look_scss`).\
+     Note: In fact, this function adds the _active theme's_ Post SCSS which becomes important if you use a Boost Union Child theme.
+   * Adds the page background image and login page background image
+
+6. `theme_boost_union` > `get_extra_scss()`:
+   * Overrides / enhances the background images which have been set before
+   * Adds the Boost Union flavour Post SCSS\
+     (which is set within the active flavour on `/theme/boost_union/flavours/overview.php`)
+   * Adds the Boost Union features' SCSS.
+     This is the Boost Union specific SCSS code which has to be added to the stack based on specific configurations, for example for changing the activity icon purposes or for changing the login form order.
+
+
 Plugin repositories
 -------------------
 
@@ -706,7 +814,7 @@ Please report bugs and problems on Github:
 https://github.com/moodle-an-hochschulen/moodle-theme_boost_union/issues
 
 Support thread:
-https://moodle.org/mod/forum/discuss.php?d=452129
+https://s.gwdg.de/bxqZti
 
 We kindly invite you to use this support thread in case of any questions you might have. We are a team of many (sometimes power) users of Boost Union and will try to answer or collectively according to our measures. If any other users know answers or are quicker, don't hesitate to answer. We will do our best to solve your problems, but please note that due to limited resources we can't always provide per-case support.
 
@@ -759,10 +867,13 @@ The plugin is maintained by\
 Moodle an Hochschulen e.V.
 
 in cooperation with\
-lern.link GmbH
+ssystems GmbH
 
 together with\
 bdecent GmbH
+
+and\
+lern.link GmbH
 
 
 Copyright
@@ -792,6 +903,7 @@ Moodle an Hochschulen e.V. would like to thank these main contributors (in alpha
 * bdecent GmbH, Stefan Scholz: Code, Ideating, Funding
 * Bern University of Applied Sciences (BFH), Luca Bösch: Code, Peer Review, Ideating
 * Carinthia University of Applied Sciences, Mario Wehr: Code
+* Catalyst IT Europe, Mark Johnson: Code
 * Catalyst IT Europe, Simon Thornett: Code
 * ELAN e.V., Farbod Zamani: Code
 * FernUniversität in Hagen, Daniel Poggenpohl: Code, Ideating
@@ -800,6 +912,7 @@ Moodle an Hochschulen e.V. would like to thank these main contributors (in alpha
 * lern.link GmbH, Alexander Bias: Code, Peer Review, Ideating, Funding
 * lern.link GmbH, Lukas MuLu Müller: Code
 * lern.link GmbH, Beata Waloszczyk: Code
+* Lutheran University of Applied Sciences Nuremberg: Funding
 * Moodle.NRW / Ruhr University Bochum, Annika Lambert: Code
 * Moodle.NRW / Ruhr University Bochum, Matthias Buttgereit: Code, Ideating
 * Moodle.NRW / Ruhr University Bochum, Tim Trappen: Code, Ideating
@@ -809,9 +922,11 @@ Moodle an Hochschulen e.V. would like to thank these main contributors (in alpha
 * RWTH Aachen, Amrita Deb Dutta: Code
 * RWTH Aachen, Josha Bartsch: Code
 * Solent University, Mark Sharp: Code
+* ssystems GmbH, Alexander Bias: Code, Peer Review, Ideating, Funding
 * Technische Universität Berlin, Lars Bonczek: Code
+* University of Bayreuth, Nikolai Jahreis: Code
 * University of Graz, André Menrath: Code
 * University of Lübeck, Christian Wolters: Code, Peer Review, Ideating
-* Zurich University of Applied Sciences (ZHAW): Funding, Ideating
+* Zurich University of Applied Sciences (ZHAW): Code, Funding, Ideating
 
 Additionally, we thank all other contributors who contributed ideas, feedback and code snippets within the Github issues and pull requests as well as all contributors who contributed additional translations in AMOS, the Moodle translation tool.

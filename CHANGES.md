@@ -4,8 +4,118 @@ moodle-theme_boost_union
 Changes
 -------
 
-### Unreleased
+### v4.5-r5
 
+* 2024-12-31 - Child theme support: Fully replicate Boost Union's extra SCSS if a Boost Union Child theme is the current theme, resolves #718, resolves theme_boost_union_child/#5.
+* 2024-12-31 - Bugfix / Child theme support: The theme_boost_union_get_pre_scss() and theme_boost_union_get_extra_scss() function used $theme->settings although they should not do that anymore, resolves #791
+* 2024-12-31 - Tests: Increase the test coverage for the background image setting, helps to resolve theme_boost_union_child/#5
+* 2024-12-31 - Bugfix: In flavours, not setting the brand color / bootstrap colors in a flavour did not result in the global brand color / bootstrap colors being served properly, resolves #790.
+* 2024-12-30 - Improvement: Add more flavour settings (Activity icon colors, navbar color, background image position), resolves #789.
+* 2024-12-25 - Documentation: Explain the SCSS stack order in the README.
+* 2024-12-25 - Bugfix: Fix the order in which all the pre SCSS assets are added to the SCSS stack, resolves #788.
+* 2024-12-22 - Feature: Allow overwriting of brand colors and the usage of SCSS (instead of pure CSS) in flavours, resolves #155.
+               Child theme support: If you are running a Boost Union Child theme, please make sure to adapt your child theme to our latest boilerplate.
+* 2024-12-15 - Feature: Add declaration of accessibility page and accessibility support page, resolves #567.
+
+### v4.5-r4
+
+* 2024-12-06 - Tests: Add several Behat optimisations to bring down the test suite run time, resolves #765.
+* 2024-12-06 - Upstream change: Adopt changes from MDL-83759 ('System notification navbar popover is misplaced in Moodle 4.4 and 4.5')
+* 2024-12-06 - Upstream change: Adopt changes from MDL-75610 ('Quiz activity name no longer being displayed in quiz landing page when using Safe Exam Browser'), resolves #766.
+
+### v4.5-r3
+
+* 2024-11-19 - Bugfix: The starred courses popover showed a JavaScript error in the browser JS console, resolves #759.
+* 2024-11-19 - Bugfix: The starred courses popover in the navbar must only be shown if Boost Union or Boost Union child is active, resolves #759.
+* 2024-11-18 - Improvement: Add the possibility to restrict smart menus and smart menu items to site admins and non-site admins only, resolves #421.
+* 2024-11-18 - Bugfix: Footer displacement on pages with minimal content, resolves #655.
+* 2024-11-18 - Upstream change: Adopt changes from MDL-77732 ('Custom menu items do not receive active behaviour'), resolves #436 #620 #384 #715.
+* 2024-11-13 - Upstream change: Adopt changes from MDL-78999 ('Site logo does not appear in mobile view'), resolves #753.
+* 2024-11-11 - Release: Add ssystems GmbH to the list of maintainers in README.md.
+
+### v4.5-r2
+
+* 2024-10-31 - Bugfix: Fix possible site failure when a cohort or role used as restriction of a smart menu item is deleted, resolves #737.
+* 2024-10-24 - Release: Change support thread URL in README to a tiny URL.
+* 2024-10-24 - Tests: Try to fix Behat error 'Warning: Undefined array key 1' on Moodle 4.5, resolves #734.
+
+### v4.5-r1
+
+* 2024-10-15 - Upgrade: Update FontAwesome icon mappings for handling external links.
+* 2024-10-15 - Upgrade: Add note to the 'Login providers' settings that Boost Union will continue to use its own settings, even after MDL-80967 was integrated in Moodle 4.5
+* 2024-10-15 - Upgrade: Enhance the 'activity type icons in course index' feature to support subsections in 4.5 + align the icon stylings to 4.5
+* 2024-10-14 - Upgrade: Fix broken Behat scenario 'Smartmenu: Menus: Presentation - Display smart menu description in different places'
+* 2024-10-14 - Upgrade: Fix broken Behat scenario 'Smartmenus: Menu items: Presentation - Display the menu items title with icon'
+* 2024-10-14 - Upgrade: Fix broken Behat scenario 'Setting: Custom icons files - Upload custom icons files'
+* 2024-10-14 - Upgrade: Fix broken Behat scenario 'Flavours: Caching - After deleting a cohort, the flavour which applies now should take direct effect'
+* 2024-10-14 - Upgrade: Fix broken Behat scenario 'Setting: Footer - Suppress icons in front of the footer links'
+* 2024-10-14 - Upgrade: Adopt changes from MDL-82183 and use several new class names, at least in our own / non-adopted code.
+* 2024-10-14 - Upgrade: Adopt changes from MDL-81960 and use new \core\url class, at least in our own / non-adopted code.
+* 2024-10-14 - Upgrade: Adopt changes from MDL-81920 and use new \core\lang_string class.
+* 2024-10-14 - Upgrade: Adopt changes from MDL-81031 and use new \core\user class.
+* 2024-10-14 - Upgrade: Adopt changes from MDL-66903 and use new \core\component class.
+* 2024-10-14 - Upgrade: Adopt changes from MDL-82158 and use new cache classes.
+* 2024-10-13 - Upgrade: Adopt changes from MDL-75671 into custom Boost Union code.
+* 2024-10-13 - Upgrade: Remove legacy implementation of before_standard_html_head, resolves #606.
+* 2024-10-13 - Upgrade: Adopt changes from MDL-82183 where lib/outputrenderers.php was split up.
+* 2024-10-13 - Upgrade: Adopt changes from MDL-75671 in navbar.mustache
+* 2024-10-13 - Upgrade: Adopt changes from MDL-81725 in cm.mustache
+* 2024-10-13 - Upgrade: Adopt changes from MDL-75671 in cm.mustache
+* 2024-10-13 - Upgrade: Adopt changes from MDL-75671 in event-list-item.mustache
+* 2024-10-13 - Upgrade: Adopt changes from MDL-75671 in view-cards.mustache
+* 2024-10-10 - Upgrade: Adopt changes from MDL-81818 to remove old bootstrap classes
+* 2024-10-10 - Upgrade: Adopt changes from MDL-74251 to remove old icon classes
+* 2024-10-10 - Upgrade: Adopt changes from MDL-75671 in user_menu.mustache
+* 2024-10-10 - Upgrade: Adopt changes from MDL-75671 in user_action_menu_submenu_items.mustache
+* 2024-10-10 - Upgrade: Adopt changes from MDL-75671 in primary-drawer-mobile.mustache
+* 2024-10-10 - Upgrade: Adopt changes from MDL-75671 in drawers.mustache
+* 2024-10-10 - Upgrade: Adopt changes from MDL-75671 in upcoming_mini.mustache
+* 2024-10-10 - Upgrade: Adopt changes from MDL-74251 and MDL-75671 in loginform.mustache
+* 2024-10-10 - Upgrade: Adopt change from MDL-75671 in full_header.mustache
+* 2024-10-10 - Upgrade: Use the before_session_start() callback instead of the after_config() callback on Moodle 4.5, resolves #721.
+* 2024-10-10 - Upgrade: Adopt change from MDL-75671 in course_listitem_actions().
+* 2024-10-10 - Upgrade: Fix removed /cache/classes/loaders.php which prevented the theme from being used on Moodle 4.5, resolves #708.
+* 2024-10-07 - Prepare compatibility for Moodle 4.5.
+
+### v4.4-r3
+
+* 2024-10-21 - Improvement: Add link to policyoverviewnavigation setting, resolves #732.
+* 2024-10-14 - Test: Change tests/fixtures/*.jpg to tests/fixtures/*.png to prevent resizing issues with JPG images
+
+### v4.4-r2
+
+* 2024-10-09 - Bugfix: Course category breadcrumbs were broken on the course enrolment page due to MDL-80974 and were removed, resolves #727.
+* 2024-10-08 - Upstream change: Adopt change from MDL-82298 into smartmenus-[card|more]menu-children.mustache
+* 2024-08-24 - Upgrade: Update Bootstrap classes for Moodle 4.4.
+* 2024-08-11 - Updated Moodle Plugin CI to latest upstream recommendations
+* 2024-07-24 - Test: Fix broken Behat scenario 'Suppress 'Chat to course participants' link', resolves #696
+* 2024-07-23 - Bugfix: Fix unparsable example JSON in Mustache template
+
+### v4.4-r1
+
+* 2024-07-15 - Development: Rename master branch to main, please update your clones.
+* 2024-07-13 - Upgrade: Make the \theme_boost_union\task\purge_cache task non-blocking as this has been deprecated in Moodle core.
+* 2024-07-13 - Bugfix: Adopt fix for MDL-82397 before its integration into Moodle core, relates to #691.
+* 2024-07-12 - Upgrade: Adapt the course index icon feature visually to the new icon sizes.
+* 2024-07-12 - Upgrade: Adopt changes for coloring the activity icons when modifying the activity purpose.
+* 2024-07-12 - Upgrade: Adopt new activity purpose "Interactive content" when coloring activity icons, resolves #611.
+* 2024-07-07 - Upgrade: Adopt changes for coloring the activity icons, moving from background-colors to CSS filters, resolves #631.
+* 2024-07-04 - Upgrade: Fix Behat tests which broke due to the introduction of section pages in Moodle core.
+* 2024-07-04 - Upgrade: Adopt changes in boostnavbar.php from Boost core.
+* 2024-07-04 - Upgrade: Fix Behat tests which broke due to changes in the section naming in Moodle core.
+* 2024-07-04 - Upgrade: Adapt a Behat test as planned regarding the new theme selector in Moodle core.
+* 2024-07-04 - Upgrade: Fix Behat tests which broke due to changes on the MyCourses page in Moodle core.
+* 2024-06-25 - Upgrade: Adopt and handle core changes for the footersuppressstandardfooter_* settings, moving from callback functions to hooks.
+* 2024-06-19 - Upgrade: Adopt changes in event-list-item.mustache from block_timeline in core.
+* 2024-06-19 - Upgrade: Adopt changes in view-cards.mustache from block_recentlyaccesseditems in core.
+* 2024-06-19 - Upgrade: Adopt changes in loginform.mustache from Boost core.
+* 2024-06-19 - Upgrade: Adopt changes in navbar.mustache from Boost core.
+* 2024-06-01 - Prepare compatibility for Moodle 4.4.
+
+### v4.3-r15
+
+* 2024-07-11 - Bugfix: Allow external SCSS to use SCSS variables by disabling the SCSS validation, resolves #683.
+* 2024-06-23 - Upstream change: Adopt change in view-chards.mustache from MDL-70829.
 * 2024-06-18 - Release: Let codechecker ignore some sniffs in the language pack.
 * 2024-06-13 - Cleanup: Change @codingStandardsIgnore tags to phpcs:disable, resolves #676.
 * 2024-06-12 - Cleanup: Fix CSS warnings in external SCSS tests, resolves #674.

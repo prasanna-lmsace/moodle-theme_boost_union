@@ -28,7 +28,7 @@ Feature: Configuring the theme_boost_union plugin for the "Course" tab on the "L
     When I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I click on "Settings" "link"
-    And I upload "theme/boost_union/tests/fixtures/login_bg1.jpg" file to "Course image" filemanager
+    And I upload "theme/boost_union/tests/fixtures/login_bg1.png" file to "Course image" filemanager
     And I press "Save and display"
     And I am on site homepage
     And I log out
@@ -37,7 +37,7 @@ Feature: Configuring the theme_boost_union plugin for the "Course" tab on the "L
     And I log in as "<role>"
     And I am on "Course 1" course homepage
     Then "//div[@id='courseheaderimage']" "xpath_element" should exist
-    And "//div[@id='courseheaderimage' and contains(@style, '/course/overviewfiles/login_bg1.jpg')]" "xpath_element" should exist
+    And "//div[@id='courseheaderimage' and contains(@style, '/course/overviewfiles/login_bg1.png')]" "xpath_element" should exist
 
     Examples:
       | role      |
@@ -66,7 +66,7 @@ Feature: Configuring the theme_boost_union plugin for the "Course" tab on the "L
     When I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I click on "Settings" "link"
-    And I upload "theme/boost_union/tests/fixtures/login_bg1.jpg" file to "Course image" filemanager
+    And I upload "theme/boost_union/tests/fixtures/login_bg1.png" file to "Course image" filemanager
     And I press "Save and display"
     And I am on site homepage
     And I log out
@@ -90,7 +90,7 @@ Feature: Configuring the theme_boost_union plugin for the "Course" tab on the "L
     And Behat debugging is disabled
     And I navigate to "Appearance > Boost Union > Look" in site administration
     And I click on "Course" "link" in the "#adminsettings .nav-tabs" "css_element"
-    And I upload "theme/boost_union/tests/fixtures/login_bg2.jpg" file to "Fallback course header image" filemanager
+    And I upload "theme/boost_union/tests/fixtures/login_bg2.png" file to "Fallback course header image" filemanager
     And I press "Save changes"
     And Behat debugging is enabled
     And I am on site homepage
@@ -100,7 +100,7 @@ Feature: Configuring the theme_boost_union plugin for the "Course" tab on the "L
     And I log in as "<role>"
     And I am on "Course 1" course homepage
     Then "//div[@id='courseheaderimage']" "xpath_element" should exist
-    And "//div[@id='courseheaderimage' and contains(@style, '1/theme_boost_union/courseheaderimagefallback/0/login_bg2.jpg')]" "xpath_element" should exist
+    And "//div[@id='courseheaderimage' and contains(@style, '1/theme_boost_union/courseheaderimagefallback/0/login_bg2.png')]" "xpath_element" should exist
 
     Examples:
       | role      |
@@ -116,7 +116,7 @@ Feature: Configuring the theme_boost_union plugin for the "Course" tab on the "L
     And Behat debugging is disabled
     And I navigate to "Appearance > Boost Union > Look" in site administration
     And I click on "Course" "link" in the "#adminsettings .nav-tabs" "css_element"
-    And I upload "theme/boost_union/tests/fixtures/login_bg2.jpg" file to "Fallback course header image" filemanager
+    And I upload "theme/boost_union/tests/fixtures/login_bg2.png" file to "Fallback course header image" filemanager
     And I press "Save changes"
     And Behat debugging is enabled
     And I am on site homepage
@@ -126,9 +126,9 @@ Feature: Configuring the theme_boost_union plugin for the "Course" tab on the "L
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
     And "//div[@id='courseheaderimage']" "xpath_element" should exist
-    And "//div[@id='courseheaderimage' and contains(@style, '1/theme_boost_union/courseheaderimagefallback/0/login_bg2.jpg')]" "xpath_element" should exist
+    And "//div[@id='courseheaderimage' and contains(@style, '1/theme_boost_union/courseheaderimagefallback/0/login_bg2.png')]" "xpath_element" should exist
     And I click on "Settings" "link"
-    And I upload "theme/boost_union/tests/fixtures/login_bg1.jpg" file to "Course image" filemanager
+    And I upload "theme/boost_union/tests/fixtures/login_bg1.png" file to "Course image" filemanager
     And I press "Save and display"
     And I am on site homepage
     And I log out
@@ -137,8 +137,8 @@ Feature: Configuring the theme_boost_union plugin for the "Course" tab on the "L
     And I log in as "<role>"
     And I am on "Course 1" course homepage
     Then "//div[@id='courseheaderimage']" "xpath_element" should exist
-    And "//div[@id='courseheaderimage' and contains(@style, '1/theme_boost_union/courseheaderimagefallback/0/login_bg2.jpg')]" "xpath_element" should not exist
-    And "//div[@id='courseheaderimage' and contains(@style, '/course/overviewfiles/login_bg1.jpg')]" "xpath_element" should exist
+    And "//div[@id='courseheaderimage' and contains(@style, '1/theme_boost_union/courseheaderimagefallback/0/login_bg2.png')]" "xpath_element" should not exist
+    And "//div[@id='courseheaderimage' and contains(@style, '/course/overviewfiles/login_bg1.png')]" "xpath_element" should exist
 
     Examples:
       | role      |
@@ -153,11 +153,11 @@ Feature: Configuring the theme_boost_union plugin for the "Course" tab on the "L
     When I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I click on "Settings" "link"
-    And I upload "theme/boost_union/tests/fixtures/login_bg1.jpg" file to "Course image" filemanager
+    And I upload "theme/boost_union/tests/fixtures/login_bg1.png" file to "Course image" filemanager
     And I press "Save and display"
     And I am on "Course 2" course homepage
     And I click on "Settings" "link"
-    And I upload "theme/boost_union/tests/fixtures/login_bg2.jpg" file to "Course image" filemanager
+    And I upload "theme/boost_union/tests/fixtures/login_bg2.png" file to "Course image" filemanager
     And I press "Save and display"
     And I am on site homepage
     And I log out
@@ -166,12 +166,12 @@ Feature: Configuring the theme_boost_union plugin for the "Course" tab on the "L
     And I log in as "<role>"
     And I am on "Course 1" course homepage
     Then "//div[@id='courseheaderimage']" "xpath_element" should exist
-    And "//div[@id='courseheaderimage' and contains(@style, '/course/overviewfiles/login_bg1.jpg')]" "xpath_element" should exist
-    And "//div[@id='courseheaderimage' and contains(@style, '/course/overviewfiles/login_bg2.jpg')]" "xpath_element" should not exist
+    And "//div[@id='courseheaderimage' and contains(@style, '/course/overviewfiles/login_bg1.png')]" "xpath_element" should exist
+    And "//div[@id='courseheaderimage' and contains(@style, '/course/overviewfiles/login_bg2.png')]" "xpath_element" should not exist
     And I am on "Course 2" course homepage
     And "//div[@id='courseheaderimage']" "xpath_element" should exist
-    And "//div[@id='courseheaderimage' and contains(@style, '/course/overviewfiles/login_bg1.jpg')]" "xpath_element" should not exist
-    And "//div[@id='courseheaderimage' and contains(@style, '/course/overviewfiles/login_bg2.jpg')]" "xpath_element" should exist
+    And "//div[@id='courseheaderimage' and contains(@style, '/course/overviewfiles/login_bg1.png')]" "xpath_element" should not exist
+    And "//div[@id='courseheaderimage' and contains(@style, '/course/overviewfiles/login_bg2.png')]" "xpath_element" should exist
 
     Examples:
       | role      |
@@ -187,7 +187,7 @@ Feature: Configuring the theme_boost_union plugin for the "Course" tab on the "L
     When I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I click on "Settings" "link"
-    And I upload "theme/boost_union/tests/fixtures/login_bg1.jpg" file to "Course image" filemanager
+    And I upload "theme/boost_union/tests/fixtures/login_bg1.png" file to "Course image" filemanager
     And I press "Save and display"
     And I am on "Course 1" course homepage
     Then "//div[@id='courseheaderimage']" "xpath_element" should exist
@@ -208,7 +208,7 @@ Feature: Configuring the theme_boost_union plugin for the "Course" tab on the "L
     When I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I click on "Settings" "link"
-    And I upload "theme/boost_union/tests/fixtures/login_bg1.jpg" file to "Course image" filemanager
+    And I upload "theme/boost_union/tests/fixtures/login_bg1.png" file to "Course image" filemanager
     And I press "Save and display"
     And I am on "Course 1" course homepage
     Then "//div[@id='courseheaderimage']" "xpath_element" should exist
@@ -229,7 +229,7 @@ Feature: Configuring the theme_boost_union plugin for the "Course" tab on the "L
     When I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I click on "Settings" "link"
-    And I upload "theme/boost_union/tests/fixtures/login_bg1.jpg" file to "Course image" filemanager
+    And I upload "theme/boost_union/tests/fixtures/login_bg1.png" file to "Course image" filemanager
     And I press "Save and display"
     And I am on "Course 1" course homepage
     Then "//div[@id='courseheaderimage']" "xpath_element" should exist
@@ -293,12 +293,12 @@ Feature: Configuring the theme_boost_union plugin for the "Course" tab on the "L
     And the "data-value" attribute of "#courseindex .courseindex-item-content .courseindex-item:nth-of-type(3) > .completioninfo" "css_element" <solshouldornot> contain "1"
     And the "data-for" attribute of "#courseindex .courseindex-item-content .courseindex-item:nth-of-type(3) > .completioninfo" "css_element" <solshouldornot> contain "cm_completion"
     # Check the completion data of the completion indicator at the end of the line
-    And the "data-value" attribute of "#courseindex .courseindex-item-content .courseindex-item:nth-of-type(1) > .ml-auto > .completioninfo" "css_element" should contain "NaN"
-    And the "data-for" attribute of "#courseindex .courseindex-item-content .courseindex-item:nth-of-type(1) > .ml-auto > .completioninfo" "css_element" <eolshouldornot> contain "cm_completion"
-    And the "data-value" attribute of "#courseindex .courseindex-item-content .courseindex-item:nth-of-type(2) > .ml-auto > .completioninfo" "css_element" <eolshouldornot> contain "0"
-    And the "data-for" attribute of "#courseindex .courseindex-item-content .courseindex-item:nth-of-type(2) > .ml-auto > .completioninfo" "css_element" <eolshouldornot> contain "cm_completion"
-    And the "data-value" attribute of "#courseindex .courseindex-item-content .courseindex-item:nth-of-type(3) > .ml-auto > .completioninfo" "css_element" <eolshouldornot> contain "1"
-    And the "data-for" attribute of "#courseindex .courseindex-item-content .courseindex-item:nth-of-type(3) > .ml-auto > .completioninfo" "css_element" <eolshouldornot> contain "cm_completion"
+    And the "data-value" attribute of "#courseindex .courseindex-item-content .courseindex-item:nth-of-type(1) > .ms-auto > .completioninfo" "css_element" should contain "NaN"
+    And the "data-for" attribute of "#courseindex .courseindex-item-content .courseindex-item:nth-of-type(1) > .ms-auto > .completioninfo" "css_element" <eolshouldornot> contain "cm_completion"
+    And the "data-value" attribute of "#courseindex .courseindex-item-content .courseindex-item:nth-of-type(2) > .ms-auto > .completioninfo" "css_element" <eolshouldornot> contain "0"
+    And the "data-for" attribute of "#courseindex .courseindex-item-content .courseindex-item:nth-of-type(2) > .ms-auto > .completioninfo" "css_element" <eolshouldornot> contain "cm_completion"
+    And the "data-value" attribute of "#courseindex .courseindex-item-content .courseindex-item:nth-of-type(3) > .ms-auto > .completioninfo" "css_element" <eolshouldornot> contain "1"
+    And the "data-for" attribute of "#courseindex .courseindex-item-content .courseindex-item:nth-of-type(3) > .ms-auto > .completioninfo" "css_element" <eolshouldornot> contain "cm_completion"
     And I log out
     And I log in as "teacher1"
     And I am on "Courseindex" course homepage with editing mode on
@@ -315,9 +315,9 @@ Feature: Configuring the theme_boost_union plugin for the "Course" tab on the "L
     And the "data-value" attribute of "#courseindex .courseindex-item-content .courseindex-item:nth-of-type(1) > .completioninfo" "css_element" should contain "NaN"
     And the "data-value" attribute of "#courseindex .courseindex-item-content .courseindex-item:nth-of-type(2) > .completioninfo" "css_element" should contain "NaN"
     And the "data-value" attribute of "#courseindex .courseindex-item-content .courseindex-item:nth-of-type(3) > .completioninfo" "css_element" should contain "NaN"
-    And the "data-value" attribute of "#courseindex .courseindex-item-content .courseindex-item:nth-of-type(1) > .ml-auto > .completioninfo" "css_element" should contain "NaN"
-    And the "data-value" attribute of "#courseindex .courseindex-item-content .courseindex-item:nth-of-type(2) > .ml-auto > .completioninfo" "css_element" should contain "NaN"
-    And the "data-value" attribute of "#courseindex .courseindex-item-content .courseindex-item:nth-of-type(3) > .ml-auto > .completioninfo" "css_element" should contain "NaN"
+    And the "data-value" attribute of "#courseindex .courseindex-item-content .courseindex-item:nth-of-type(1) > .ms-auto > .completioninfo" "css_element" should contain "NaN"
+    And the "data-value" attribute of "#courseindex .courseindex-item-content .courseindex-item:nth-of-type(2) > .ms-auto > .completioninfo" "css_element" should contain "NaN"
+    And the "data-value" attribute of "#courseindex .courseindex-item-content .courseindex-item:nth-of-type(3) > .ms-auto > .completioninfo" "css_element" should contain "NaN"
 
     Examples:
       | enabled | position    | hascourseindexcmicons | hascourseindexcplicon | hascourseindexcplsol | hascourseindexcpleol | iconvisible | iconshouldornot | solshouldornot | eolshouldornot |
@@ -325,3 +325,38 @@ Feature: Configuring the theme_boost_union plugin for the "Course" tab on the "L
       | yes     | endofline   | should                | should not            | should not           | should               | should      | should not      | should not     | should         |
       | yes     | startofline | should                | should not            | should               | should not           | should      | should not      | should         | should not     |
       | yes     | iconcolor   | should                | should                | should not           | should not           | should      | should          | should not     | should not     |
+
+  @javascript
+  Scenario Outline: Setting: Course index - Display activity type icons in subsections in the course index as well.
+    Given the following config values are set as admin:
+      | config                            | value      | plugin            |
+      | courseindexmodiconenabled         | <enabled>  | theme_boost_union |
+      | courseindexcompletioninfoposition | <position> | theme_boost_union |
+    And I enable "subsection" "mod" plugin
+    And the following "courses" exist:
+      | fullname    | shortname | enablecompletion | numsections   | initsections  |
+      | Courseindex | CI        | 1                | 3             | 1             |
+    And the following "course enrolments" exist:
+      | user     | course | role           |
+      | student1 | CI     | student        |
+    And the following "activities" exist:
+      | activity   | name           		| course    | idnumber | section | completion |
+      | subsection | Subsection1     		| CI        | sub1     | 1       |            |
+      | page       | Page in Subsection | CI        | page11   | 4       | 1          |
+    When I log in as "student1"
+    And I am on "Courseindex" course homepage with editing mode off
+    And the manual completion button of "Page in Subsection" is displayed as "Mark as done"
+    And I toggle the manual completion state of "Page in Subsection"
+    And the manual completion button of "Page in Subsection" is displayed as "Done"
+    # Check the visibility of the activity icon
+    And "#courseindex .courseindex-item-content .courseindex-item:nth-of-type(1) .courseindex-cmicon-container" "css_element" <iconvisible> be visible
+    # Check the completion data of the completion indicator at the end of the line
+    # We just check this option to make sure that a completion indicator is there.
+    # We do not test all available options for subsections again as this has been tested in the previous scenario and the PHP / Mustache code is the same.
+    And the "data-value" attribute of "#courseindex .delegated-section .courseindex-item-content .courseindex-item:nth-of-type(1) > .ms-auto > .completioninfo" "css_element" <eolshouldornot> contain "1"
+    And the "data-for" attribute of "#courseindex .delegated-section .courseindex-item-content .courseindex-item:nth-of-type(1) > .ms-auto > .completioninfo" "css_element" <eolshouldornot> contain "cm_completion"
+
+    Examples:
+      | enabled | position    | iconvisible | eolshouldornot |
+      | no      | endofline   | should not  | should not     |
+      | yes     | endofline   | should      | should         |

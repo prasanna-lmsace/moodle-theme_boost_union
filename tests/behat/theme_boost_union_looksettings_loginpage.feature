@@ -4,12 +4,14 @@ Feature: Configuring the theme_boost_union plugin for the "Login page" tab on th
   As admin
   I need to be able to configure the theme Boost Union plugin
 
+  @javascript
   Scenario: Setting: Login page background images - Do not upload any login background image
     When I am on site homepage
     And I click on "Log in" "link" in the ".logininfo" "css_element"
     Then the "class" attribute of "body" "css_element" should contain "path-login"
     And the "class" attribute of "body" "css_element" should not contain "loginbackgroundimage"
     And the "class" attribute of "body" "css_element" should not contain "loginbackgroundimage1"
+    And DOM element "body" should have computed style "background-image" "none"
 
   @javascript @_file_upload
   Scenario: Setting: Login page background images - Upload one custom login background image
@@ -17,7 +19,7 @@ Feature: Configuring the theme_boost_union plugin for the "Login page" tab on th
     And Behat debugging is disabled
     And I navigate to "Appearance > Boost Union > Look" in site administration
     And I click on "Login page" "link" in the "#adminsettings .nav-tabs" "css_element"
-    And I upload "theme/boost_union/tests/fixtures/login_bg1.jpg" file to "Login page background images" filemanager
+    And I upload "theme/boost_union/tests/fixtures/login_bg1.png" file to "Login page background images" filemanager
     And I press "Save changes"
     And Behat debugging is enabled
     And I log out
@@ -25,6 +27,8 @@ Feature: Configuring the theme_boost_union plugin for the "Login page" tab on th
     Then the "class" attribute of "body" "css_element" should contain "path-login"
     And the "class" attribute of "body" "css_element" should contain "loginbackgroundimage"
     And the "class" attribute of "body" "css_element" should contain "loginbackgroundimage1"
+    And DOM element "body" should have computed style "background-size" "cover"
+    And DOM element "body" should have background image with file name "login_bg1.png"
 
   @javascript @_file_upload
   Scenario: Setting: Login page background images - Upload multiple custom login background image (and have one picked randomly)
@@ -32,9 +36,9 @@ Feature: Configuring the theme_boost_union plugin for the "Login page" tab on th
     And Behat debugging is disabled
     And I navigate to "Appearance > Boost Union > Look" in site administration
     And I click on "Login page" "link" in the "#adminsettings .nav-tabs" "css_element"
-    And I upload "theme/boost_union/tests/fixtures/login_bg1.jpg" file to "Login page background images" filemanager
-    And I upload "theme/boost_union/tests/fixtures/login_bg2.jpg" file to "Login page background images" filemanager
-    And I upload "theme/boost_union/tests/fixtures/login_bg3.jpg" file to "Login page background images" filemanager
+    And I upload "theme/boost_union/tests/fixtures/login_bg1.png" file to "Login page background images" filemanager
+    And I upload "theme/boost_union/tests/fixtures/login_bg2.png" file to "Login page background images" filemanager
+    And I upload "theme/boost_union/tests/fixtures/login_bg3.png" file to "Login page background images" filemanager
     And I press "Save changes"
     And Behat debugging is enabled
     And I log out
@@ -45,6 +49,8 @@ Feature: Configuring the theme_boost_union plugin for the "Login page" tab on th
     # However, the random image picking function is designed to detect Behat runs and will then always ship the
     # image matching the number of uploaded images (i.e. if you upload 3 images, you will get the third).
     And the "class" attribute of "body" "css_element" should contain "loginbackgroundimage3"
+    And DOM element "body" should have computed style "background-size" "cover"
+    And DOM element "body" should have background image with file name "login_bg3.png"
 
   @javascript @_file_upload
   Scenario Outline: Setting: Login page background images - Define the background image position.
@@ -55,7 +61,7 @@ Feature: Configuring the theme_boost_union plugin for the "Login page" tab on th
     And Behat debugging is disabled
     And I navigate to "Appearance > Boost Union > Look" in site administration
     And I click on "Login page" "link" in the "#adminsettings .nav-tabs" "css_element"
-    And I upload "theme/boost_union/tests/fixtures/login_bg1.jpg" file to "Login page background images" filemanager
+    And I upload "theme/boost_union/tests/fixtures/login_bg1.png" file to "Login page background images" filemanager
     And I press "Save changes"
     And Behat debugging is enabled
     And I log out
@@ -74,8 +80,8 @@ Feature: Configuring the theme_boost_union plugin for the "Login page" tab on th
     And Behat debugging is disabled
     And I navigate to "Appearance > Boost Union > Look" in site administration
     And I click on "Login page" "link" in the "#adminsettings .nav-tabs" "css_element"
-    And I upload "theme/boost_union/tests/fixtures/login_bg1.jpg" file to "Login page background images" filemanager
-    And I set the field "Display text for login background images" to "login_bg1.jpg|Copyright by SplitShire on pexels.com|dark"
+    And I upload "theme/boost_union/tests/fixtures/login_bg1.png" file to "Login page background images" filemanager
+    And I set the field "Display text for login background images" to "login_bg1.png|Copyright by SplitShire on pexels.com|dark"
     And I press "Save changes"
     And Behat debugging is enabled
     And I log out
@@ -88,8 +94,8 @@ Feature: Configuring the theme_boost_union plugin for the "Login page" tab on th
     And Behat debugging is disabled
     And I navigate to "Appearance > Boost Union > Look" in site administration
     And I click on "Login page" "link" in the "#adminsettings .nav-tabs" "css_element"
-    And I upload "theme/boost_union/tests/fixtures/login_bg1.jpg" file to "Login page background images" filemanager
-    And I set the field "Display text for login background images" to "<filename>.jpg|Copyright by SplitShire on pexels.com|dark"
+    And I upload "theme/boost_union/tests/fixtures/login_bg1.png" file to "Login page background images" filemanager
+    And I set the field "Display text for login background images" to "<filename>.png|Copyright by SplitShire on pexels.com|dark"
     And I press "Save changes"
     And Behat debugging is enabled
     And I log out
@@ -107,8 +113,8 @@ Feature: Configuring the theme_boost_union plugin for the "Login page" tab on th
     And Behat debugging is disabled
     And I navigate to "Appearance > Boost Union > Look" in site administration
     And I click on "Login page" "link" in the "#adminsettings .nav-tabs" "css_element"
-    And I upload "theme/boost_union/tests/fixtures/login_bg1.jpg" file to "Login page background images" filemanager
-    And I set the field "Display text for login background images" to "login_bg1.jpg|Copyright by SplitShire on pexels.com|<color>"
+    And I upload "theme/boost_union/tests/fixtures/login_bg1.png" file to "Login page background images" filemanager
+    And I set the field "Display text for login background images" to "login_bg1.png|Copyright by SplitShire on pexels.com|<color>"
     And I press "Save changes"
     And Behat debugging is enabled
     And I log out

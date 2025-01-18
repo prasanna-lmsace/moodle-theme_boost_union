@@ -59,6 +59,83 @@ class behat_theme_boost_union_base_general extends behat_base {
     }
 
     /**
+     * Checks if the given DOM element does not have the given computed style.
+     *
+     * @copyright 2024 Alexander Bias <bias@alexanderbias.de>
+     * @Then DOM element :arg1 should not have computed style :arg2 :arg3
+     * @param string $selector
+     * @param string $style
+     * @param string $value
+     * @throws ExpectationException
+     */
+    public function dom_element_should_not_have_computed_style($selector, $style, $value) {
+        $stylejs = "
+            return (
+                window.getComputedStyle(document.querySelector('$selector')).getPropertyValue('$style')
+            )
+        ";
+        $computedstyle = $this->evaluate_script($stylejs);
+        if ($computedstyle == $value) {
+            throw new ExpectationException('The \''.$selector.'\' DOM element does have the computed style \''.
+                $style.'\'=\''.$computedstyle.'\', but it should not have it.', $this->getSession());
+        }
+    }
+
+    /**
+     * Checks if the given DOM element has a background image with the given file name.
+     *
+     * @copyright 2024 Alexander Bias <bias@alexanderbias.de>
+     * @Then DOM element :arg1 should have background image with file name :arg2
+     * @param string $selector
+     * @param string $filename
+     * @throws ExpectationException
+     */
+    public function dom_element_should_have_background_image($selector, $filename) {
+        $stylejs = "
+            return (
+                window.getComputedStyle(document.querySelector('$selector')).getPropertyValue('background-image')
+            )
+        ";
+        $computedstyle = $this->evaluate_script($stylejs);
+        $urlmatches = [];
+        preg_match('/url\(["\']?(.*?)["\']?\)/', $computedstyle, $urlmatches);
+        $urlfromjs = $urlmatches[1];
+        $basenamefromjs = basename($urlfromjs);
+        if ($basenamefromjs != $filename) {
+            throw new ExpectationException('The \''.$selector.'\' DOM element does not have a background image with the file '.
+                    'name \''.$filename.'\', it has the file name \''.$basenamefromjs.'\' instead.',
+                            $this->getSession());
+        }
+    }
+
+    /**
+     * Checks if the given DOM element has a CSS filter which is close enough to the given hex color.
+     *
+     * @copyright 2024 Alexander Bias <bias@alexanderbias.de>
+     * @Then DOM element :arg1 should have a CSS filter close enough to hex color :arg2
+     * @param string $selector
+     * @param string $color
+     * @throws ExpectationException
+     */
+    public function dom_element_should_have_css_filter_close_to_hex($selector, $color) {
+        $stylejs = "
+            return (
+                window.getComputedStyle(document.querySelector('$selector')).getPropertyValue('filter')
+            )
+        ";
+        $computedfilter = $this->evaluate_script($stylejs);
+
+        // Check if the computed filter is close enough to the given color.
+        $solver = new \theme_boost_union\lib\hextocssfilter\solver($color);
+        $closeenough = $solver->filter_is_close_enough($computedfilter, '2');
+
+        if ($closeenough != true) {
+            throw new ExpectationException('The \''.$selector.'\' DOM element with the CSS filter \''.
+                $computedfilter.'\', is not close enough to the color \''.$color.'\'.', $this->getSession());
+        }
+    }
+
+    /**
      * Scroll the page to a given coordinate.
      *
      * @copyright 2016 Shweta Sharma on https://stackoverflow.com/a/39613869.
@@ -285,6 +362,15 @@ class behat_theme_boost_union_base_general extends behat_base {
     }
 
     /**
+     * Purges all caches
+     *
+     * @Given /^all caches are purged$/
+     */
+    public function purge_all_caches() {
+        purge_caches();
+    }
+
+    /**
      * Disables debugging in Behat.
      *
      * We sometimes need to deactivate debugging for a while as Behat steps would otherwise fail due to the
@@ -306,5 +392,14 @@ class behat_theme_boost_union_base_general extends behat_base {
     public function enable_behat_debugging() {
         set_config('debug', 32767);
         set_config('debugdisplay', 1);
+    }
+
+    /**
+     * Open the login page.
+     *
+     * @Given /^I am on login page$/
+     */
+    public function i_am_on_login_page() {
+        $this->execute('behat_general::i_visit', ['/login/index.php']);
     }
 }

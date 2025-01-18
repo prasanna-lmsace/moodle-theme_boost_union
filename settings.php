@@ -25,6 +25,8 @@
 use theme_boost_union\admin_setting_configdatetime;
 use theme_boost_union\admin_setting_configstoredfilealwayscallback;
 use theme_boost_union\admin_setting_configtext_url;
+use core\di;
+use core\hook\manager as hook_manager;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -43,9 +45,9 @@ if ($hassiteconfig || has_capability('theme/boost_union:configure', context_syst
     // settings and which is automatically linked from the theme selector page.
     // To avoid that there appears a broken "Boost Union" settings page, we redirect the user to a settings
     // overview page if he opens this page.
-    $mainsettingspageurl = new moodle_url('/admin/settings.php', ['section' => 'themesettingboost_union']);
+    $mainsettingspageurl = new core\url('/admin/settings.php', ['section' => 'themesettingboost_union']);
     if ($ADMIN->fulltree && $PAGE->has_set_url() && $PAGE->url->compare($mainsettingspageurl)) {
-        redirect(new moodle_url('/theme/boost_union/settings_overview.php'));
+        redirect(new core\url('/theme/boost_union/settings_overview.php'));
     }
 
     // Create custom admin settings category.
@@ -58,7 +60,7 @@ if ($hassiteconfig || has_capability('theme/boost_union:configure', context_syst
         // (and allow users with the theme/boost_union:configure capability to access it).
         $overviewpage = new admin_externalpage('theme_boost_union_overview',
                 get_string('settingsoverview', 'theme_boost_union', null, true),
-                new moodle_url('/theme/boost_union/settings_overview.php'),
+                new core\url('/theme/boost_union/settings_overview.php'),
                 'theme/boost_union:configure');
         $ADMIN->add('theme_boost_union', $overviewpage);
 
@@ -90,11 +92,18 @@ if ($hassiteconfig || has_capability('theme/boost_union:configure', context_syst
                 'theme/boost_union:configure');
         $ADMIN->add('theme_boost_union', $tab);
 
+        // Create Accessibility settings page
+        // (and allow users with the theme/boost_union:configure capability to access it).
+        $tab = new admin_settingpage('theme_boost_union_accessibility',
+                get_string('configtitleaccessibility', 'theme_boost_union', null, true),
+                'theme/boost_union:configure');
+        $ADMIN->add('theme_boost_union', $tab);
+
         // Create Flavours settings page as external page
         // (and allow users with the theme/boost_union:configure capability to access it).
         $flavourspage = new admin_externalpage('theme_boost_union_flavours',
                 get_string('configtitleflavours', 'theme_boost_union', null, true),
-                new moodle_url('/theme/boost_union/flavours/overview.php'),
+                new core\url('/theme/boost_union/flavours/overview.php'),
                 'theme/boost_union:configure');
         $ADMIN->add('theme_boost_union', $flavourspage);
 
@@ -102,7 +111,7 @@ if ($hassiteconfig || has_capability('theme/boost_union:configure', context_syst
         // (and allow users with the theme/boost_union:configure capability to access it).
         $smartmenuspage = new admin_externalpage('theme_boost_union_smartmenus',
                 get_string('smartmenus', 'theme_boost_union', null, true),
-                new moodle_url('/theme/boost_union/smartmenus/menus.php'),
+                new core\url('/theme/boost_union/smartmenus/menus.php'),
                 'theme/boost_union:configure');
         $ADMIN->add('theme_boost_union', $smartmenuspage);
     }
@@ -136,12 +145,12 @@ if ($hassiteconfig || has_capability('theme/boost_union:configure', context_syst
 
         // Create theme presets heading.
         $name = 'theme_boost_union/presetheading';
-        $preseturl = new moodle_url('/admin/settings.php', ['section' => 'themesettingboost'], 'theme_boost_general');
+        $preseturl = new core\url('/admin/settings.php', ['section' => 'themesettingboost'], 'theme_boost_general');
         $title = get_string('presetheading', 'theme_boost_union', null, true);
         $description = get_string('presetheading_desc', 'theme_boost_union', null, true).'<br />'.
             // We would love to use $OUTPUT->single_button($preseturl, ...) here, but this results in the fact
             // that the settings page redirects to the Boost Core settings after saving for an unknown reason.
-            html_writer::link($preseturl,
+            \core\output\html_writer::link($preseturl,
                     get_string('presetbutton', 'theme_boost_union', null, true),
                     ['class' => 'btn btn-secondary my-3']);
         $setting = new admin_setting_heading($name, $title, $description);
@@ -181,7 +190,7 @@ if ($hassiteconfig || has_capability('theme/boost_union:configure', context_syst
         // Create external SCSS heading.
         $name = 'theme_boost_union/extscssheading';
         $title = get_string('extscssheading', 'theme_boost_union', null, true);
-        $taskurl = new moodle_url('/admin/tool/task/scheduledtasks.php',
+        $taskurl = new core\url('/admin/tool/task/scheduledtasks.php',
                 ['action' => 'edit', 'task' => 'theme_boost_union\task\purge_cache']);
         $description = get_string('extscssheading_desc', 'theme_boost_union', null, true).'<br /><br />'.
                 get_string('extscssheading_instr', 'theme_boost_union', null, true).
@@ -292,6 +301,16 @@ if ($hassiteconfig || has_capability('theme/boost_union:configure', context_syst
         $page->hide_if('theme_boost_union/extscssgithubpostfilepath', 'theme_boost_union/extscsssource', 'neq',
                 THEME_BOOST_UNION_SETTING_EXTSCSSSOURCE_GITHUB);
 
+        // Setting: External SCSS validation.
+        $name = 'theme_boost_union/extscssvalidation';
+        $title = get_string('extscssvalidationsetting', 'theme_boost_union', null, true);
+        $description = get_string('extscssvalidationsetting_desc', 'theme_boost_union', null, true);
+        $setting = new admin_setting_configselect($name, $title, $description, THEME_BOOST_UNION_SETTING_SELECT_YES, $yesnooption);
+        $setting->set_updatedcallback('theme_reset_all_caches');
+        $tab->add($setting);
+        $page->hide_if('theme_boost_union/extscssvalidation', 'theme_boost_union/extscsssource', 'eq',
+                THEME_BOOST_UNION_SETTING_EXTSCSSSOURCE_NONE);
+
         // Add tab to settings page.
         $page->add($tab);
 
@@ -358,7 +377,7 @@ if ($hassiteconfig || has_capability('theme/boost_union:configure', context_syst
         // Create logos heading.
         $name = 'theme_boost_union/logosheading';
         $title = get_string('logosheading', 'theme_boost_union', null, true);
-        $notificationurl = new moodle_url('/admin/settings.php', ['section' => 'logos']);
+        $notificationurl = new core\url('/admin/settings.php', ['section' => 'logos']);
         $notification = new \core\output\notification(get_string('logosheading_desc', 'theme_boost_union', $notificationurl->out()),
                 \core\output\notification::NOTIFY_INFO);
         $notification->set_show_closebutton(false);
@@ -387,7 +406,7 @@ if ($hassiteconfig || has_capability('theme/boost_union:configure', context_syst
         // Create favicon heading.
         $name = 'theme_boost_union/faviconheading';
         $title = get_string('faviconheading', 'theme_boost_union', null, true);
-        $notificationurl = new moodle_url('/admin/settings.php', ['section' => 'logos']);
+        $notificationurl = new core\url('/admin/settings.php', ['section' => 'logos']);
         $notification = new \core\output\notification(get_string('faviconheading_desc', 'theme_boost_union',
                 $notificationurl->out()), \core\output\notification::NOTIFY_INFO);
         $notification->set_show_closebutton(false);
@@ -536,51 +555,36 @@ if ($hassiteconfig || has_capability('theme/boost_union:configure', context_syst
         $setting = new admin_setting_heading($name, $title, null);
         $tab->add($setting);
 
-        // Setting: Activity icon color for 'administration'.
-        $name = 'theme_boost_union/activityiconcoloradministration';
-        $title = get_string('activityiconcoloradministrationsetting', 'theme_boost_union', null, true);
-        $description = get_string('activityiconcoloradministrationsetting_desc', 'theme_boost_union', null, true);
-        $setting = new admin_setting_configcolourpicker($name, $title, $description, '');
-        $setting->set_updatedcallback('theme_reset_all_caches');
-        $tab->add($setting);
+        // Define all activity icon purposes (without the 'other' purpose as this is not branded).
+        $purposes = [MOD_PURPOSE_ADMINISTRATION,
+                MOD_PURPOSE_ASSESSMENT,
+                MOD_PURPOSE_COLLABORATION,
+                MOD_PURPOSE_COMMUNICATION,
+                MOD_PURPOSE_CONTENT,
+                MOD_PURPOSE_INTERACTIVECONTENT,
+                MOD_PURPOSE_INTERFACE];
+        // Iterate over all purposes.
+        foreach ($purposes as $purpose) {
+            // Setting: Activity icon color.
+            $name = 'theme_boost_union/activityiconcolor'.$purpose;
+            $title = get_string('activityiconcolor'.$purpose.'setting', 'theme_boost_union', null, true);
+            $description = get_string('activityiconcolor'.$purpose.'setting_desc', 'theme_boost_union', null, true);
+            $setting = new admin_setting_configcolourpicker($name, $title, $description, '');
+            $setting->set_updatedcallback('theme_reset_all_caches');
+            $tab->add($setting);
+        }
 
-        // Setting: Activity icon color for 'assessment'.
-        $name = 'theme_boost_union/activityiconcolorassessment';
-        $title = get_string('activityiconcolorassessmentsetting', 'theme_boost_union', null, true);
-        $description = get_string('activityiconcolorassessmentsetting_desc', 'theme_boost_union', null, true);
-        $setting = new admin_setting_configcolourpicker($name, $title, $description, '');
-        $setting->set_updatedcallback('theme_reset_all_caches');
-        $tab->add($setting);
-
-        // Setting: Activity icon color for 'collaboration'.
-        $name = 'theme_boost_union/activityiconcolorcollaboration';
-        $title = get_string('activityiconcolorcollaborationsetting', 'theme_boost_union', null, true);
-        $description = get_string('activityiconcolorcollaborationsetting_desc', 'theme_boost_union', null, true);
-        $setting = new admin_setting_configcolourpicker($name, $title, $description, '');
-        $setting->set_updatedcallback('theme_reset_all_caches');
-        $tab->add($setting);
-
-        // Setting: Activity icon color for 'communication'.
-        $name = 'theme_boost_union/activityiconcolorcommunication';
-        $title = get_string('activityiconcolorcommunicationsetting', 'theme_boost_union', null, true);
-        $description = get_string('activityiconcolorcommunicationsetting_desc', 'theme_boost_union', null, true);
-        $setting = new admin_setting_configcolourpicker($name, $title, $description, '');
-        $setting->set_updatedcallback('theme_reset_all_caches');
-        $tab->add($setting);
-
-        // Setting: Activity icon color for 'content'.
-        $name = 'theme_boost_union/activityiconcolorcontent';
-        $title = get_string('activityiconcolorcontentsetting', 'theme_boost_union', null, true);
-        $description = get_string('activityiconcolorcontentsetting_desc', 'theme_boost_union', null, true);
-        $setting = new admin_setting_configcolourpicker($name, $title, $description, '');
-        $setting->set_updatedcallback('theme_reset_all_caches');
-        $tab->add($setting);
-
-        // Setting: Activity icon color for 'interface'.
-        $name = 'theme_boost_union/activityiconcolorinterface';
-        $title = get_string('activityiconcolorinterfacesetting', 'theme_boost_union', null, true);
-        $description = get_string('activityiconcolorinterfacesetting_desc', 'theme_boost_union', null, true);
-        $setting = new admin_setting_configcolourpicker($name, $title, $description, '');
+        // Setting: Activity icon color fidelity.
+        $name = 'theme_boost_union/activityiconcolorfidelity';
+        $title = get_string('activityiconcolorfidelitysetting', 'theme_boost_union', null, true);
+        $description = get_string('activityiconcolorfidelitysetting_desc', 'theme_boost_union', null, true);
+        $activityiconcolorfidelityoptions = [
+                1 => get_string('activityiconcolorfidelity_oneshot', 'theme_boost_union'),
+                10 => get_string('activityiconcolorfidelity_sometries', 'theme_boost_union'),
+                100 => get_string('activityiconcolorfidelity_detailled', 'theme_boost_union'),
+                500 => get_string('activityiconcolorfidelity_insane', 'theme_boost_union'),
+            ];
+        $setting = new admin_setting_configselect($name, $title, $description, 1, $activityiconcolorfidelityoptions);
         $setting->set_updatedcallback('theme_reset_all_caches');
         $tab->add($setting);
 
@@ -601,6 +605,7 @@ if ($hassiteconfig || has_capability('theme/boost_union:configure', context_syst
                 MOD_PURPOSE_COLLABORATION => get_string('activitypurposecollaboration', 'theme_boost_union'),
                 MOD_PURPOSE_COMMUNICATION => get_string('activitypurposecommunication', 'theme_boost_union'),
                 MOD_PURPOSE_CONTENT => get_string('activitypurposecontent', 'theme_boost_union'),
+                MOD_PURPOSE_INTERACTIVECONTENT => get_string('activitypurposeinteractivecontent', 'theme_boost_union'),
                 MOD_PURPOSE_INTERFACE => get_string('activitypurposeinterface', 'theme_boost_union'),
                 MOD_PURPOSE_OTHER => get_string('activitypurposeother', 'theme_boost_union'),
         ];
@@ -761,13 +766,22 @@ if ($hassiteconfig || has_capability('theme/boost_union:configure', context_syst
         // Create login providers heading.
         $name = 'theme_boost_union/loginprovidersheading';
         $title = get_string('loginprovidersheading', 'theme_boost_union', null, true);
-        $setting = new admin_setting_heading($name, $title, null);
+        $notificationurl = new core\url('/admin/settings.php', ['section' => 'manageauths']);
+        $notificationsettingname = get_string('showloginform', 'core_auth');
+        $notification = new \core\output\notification(
+            get_string('loginprovidersheading_desc', 'theme_boost_union',
+            ['settingname' => $notificationsettingname, 'url' => $notificationurl->out()]),
+            \core\output\notification::NOTIFY_INFO
+        );
+        $notification->set_show_closebutton(false);
+        $description = $OUTPUT->render($notification);
+        $setting = new admin_setting_heading($name, $title, $description);
         $tab->add($setting);
 
         // Setting: Local login.
         $name = 'theme_boost_union/loginlocalloginenable';
         $title = get_string('loginlocalloginenablesetting', 'theme_boost_union', null, true);
-        $localloginurl = new moodle_url('/theme/boost_union/locallogin.php');
+        $localloginurl = new core\url('/theme/boost_union/locallogin.php');
         $description = get_string('loginlocalloginenablesetting_desc', 'theme_boost_union', null, true).'<br /><br />'.
                 get_string('loginlocalloginenablesetting_note', 'theme_boost_union', ['url' => $localloginurl], true);
         $setting = new admin_setting_configselect($name, $title, $description, THEME_BOOST_UNION_SETTING_SELECT_YES, $yesnooption);
@@ -846,6 +860,70 @@ if ($hassiteconfig || has_capability('theme/boost_union:configure', context_syst
         $title = get_string('courseoverviewshowprogresssetting', 'theme_boost_union', null, true);
         $description = get_string('courseoverviewshowprogresssetting_desc', 'theme_boost_union', null, true);
         $setting = new admin_setting_configselect($name, $title, $description, THEME_BOOST_UNION_SETTING_SELECT_YES, $yesnooption);
+        $setting->set_updatedcallback('theme_reset_all_caches');
+        $tab->add($setting);
+
+        // Add tab to settings page.
+        $page->add($tab);
+
+
+        // Create Blocks tab.
+        $tab = new admin_settingpage('theme_boost_union_look_blocks',
+            get_string('blockstab', 'theme_boost_union', null, true));
+
+        // Create Timeline block heading.
+        $name = 'theme_boost_union/timelineheading';
+        $title = get_string('timelineheading', 'theme_boost_union', null, true);
+        $setting = new admin_setting_heading($name, $title, null);
+        $tab->add($setting);
+
+        // Setting: Tint activity icons in the timeline block.
+        $name = 'theme_boost_union/timelinetintenabled';
+        $title = get_string('timelinetintenabled', 'theme_boost_union', null, true);
+        $description = get_string('timelinetintenabled_desc', 'theme_boost_union', null, true);
+        $setting = new admin_setting_configselect($name, $title, $description, THEME_BOOST_UNION_SETTING_SELECT_NO, $yesnooption);
+        $setting->set_updatedcallback('theme_reset_all_caches');
+        $tab->add($setting);
+
+        // Create Upcoming events block heading.
+        $name = 'theme_boost_union/upcomingeventsheading';
+        $title = get_string('upcomingeventsheading', 'theme_boost_union', null, true);
+        $setting = new admin_setting_heading($name, $title, null);
+        $tab->add($setting);
+
+        // Setting: Tint activity icons in the upcoming events block.
+        $name = 'theme_boost_union/upcomingeventstintenabled';
+        $title = get_string('upcomingeventstintenabled', 'theme_boost_union', null, true);
+        $description = get_string('upcomingeventstintenabled_desc', 'theme_boost_union', null, true);
+        $setting = new admin_setting_configselect($name, $title, $description, THEME_BOOST_UNION_SETTING_SELECT_NO, $yesnooption);
+        $setting->set_updatedcallback('theme_reset_all_caches');
+        $tab->add($setting);
+
+        // Create Recently accessed items block heading.
+        $name = 'theme_boost_union/recentlyaccesseditemsheading';
+        $title = get_string('recentlyaccesseditemsheading', 'theme_boost_union', null, true);
+        $setting = new admin_setting_heading($name, $title, null);
+        $tab->add($setting);
+
+        // Setting: Tint activity icons in the recently accessed items block.
+        $name = 'theme_boost_union/recentlyaccesseditemstintenabled';
+        $title = get_string('recentlyaccesseditemstintenabled', 'theme_boost_union', null, true);
+        $description = get_string('recentlyaccesseditemstintenabled_desc', 'theme_boost_union', null, true);
+        $setting = new admin_setting_configselect($name, $title, $description, THEME_BOOST_UNION_SETTING_SELECT_NO, $yesnooption);
+        $setting->set_updatedcallback('theme_reset_all_caches');
+        $tab->add($setting);
+
+        // Create Activities block heading.
+        $name = 'theme_boost_union/activitiesheading';
+        $title = get_string('activitiesheading', 'theme_boost_union', null, true);
+        $setting = new admin_setting_heading($name, $title, null);
+        $tab->add($setting);
+
+        // Setting: Tint activity icons in the activities block.
+        $name = 'theme_boost_union/activitiestintenabled';
+        $title = get_string('activitiestintenabled', 'theme_boost_union', null, true);
+        $description = get_string('activitiestintenabled_desc', 'theme_boost_union', null, true);
+        $setting = new admin_setting_configselect($name, $title, $description, THEME_BOOST_UNION_SETTING_SELECT_NO, $yesnooption);
         $setting->set_updatedcallback('theme_reset_all_caches');
         $tab->add($setting);
 
@@ -998,7 +1076,7 @@ if ($hassiteconfig || has_capability('theme/boost_union:configure', context_syst
         $title = '';
         $description = '<h4>'.get_string('emailbrandinginstruction', 'theme_boost_union', null, true).'</h4>';
         $description .= '<p>'.get_string('emailbrandinginstruction0', 'theme_boost_union', null, true).'</p>';
-        $emailbrandinginstructionli1url = new moodle_url('/admin/tool/customlang/index.php', ['lng' => $CFG->lang]);
+        $emailbrandinginstructionli1url = new core\url('/admin/tool/customlang/index.php', ['lng' => $CFG->lang]);
         $description .= '<ul><li>'.get_string('emailbrandinginstructionli1', 'theme_boost_union',
                 ['url' => $emailbrandinginstructionli1url->out(), 'lang' => $CFG->lang], true).'</li>';
         $description .= '<li>'.get_string('emailbrandinginstructionli2', 'theme_boost_union', null, true).'</li>';
@@ -1233,7 +1311,7 @@ if ($hassiteconfig || has_capability('theme/boost_union:configure', context_syst
         $name = 'theme_boost_union/mobilescss';
         $title = get_string('mobilecss', 'theme_boost_union', null, true);
         $description = get_string('mobilecss_desc', 'theme_boost_union', null, true);
-        $mobilecssurl = new moodle_url('/admin/settings.php', ['section' => 'mobileappearance']);
+        $mobilecssurl = new core\url('/admin/settings.php', ['section' => 'mobileappearance']);
         // If another Mobile App CSS URL is set already (in the $CFG->mobilecssurl setting), we add a warning to the description.
         if (isset($CFG->mobilecssurl) && !empty($CFG->mobilecssurl) &&
                 strpos($CFG->mobilecssurl, '/boost_union/mobile/styles.php') == false) {
@@ -1318,9 +1396,9 @@ if ($hassiteconfig || has_capability('theme/boost_union:configure', context_syst
         // Add tab to settings page.
         $page->add($tab);
 
-
         // Add settings page to the admin settings category.
         $ADMIN->add('theme_boost_union', $page);
+
 
         // Create Feel settings page with tabs
         // (and allow users with the theme/boost_union:configure capability to access it).
@@ -1350,7 +1428,7 @@ if ($hassiteconfig || has_capability('theme/boost_union:configure', context_syst
         // Setting: Hide nodes in primary navigation.
         $name = 'theme_boost_union/hidenodesprimarynavigation';
         $title = get_string('hidenodesprimarynavigationsetting', 'theme_boost_union', null, true);
-        $smartmenuurl = new moodle_url('/theme/boost_union/smartmenus/menus.php');
+        $smartmenuurl = new core\url('/theme/boost_union/smartmenus/menus.php');
         $description = get_string('hidenodesprimarynavigationsetting_desc', 'theme_boost_union',
                 ['url' => $smartmenuurl], true);
         $setting = new admin_setting_configmulticheckbox($name, $title, $description, [], $hidenodesoptions);
@@ -1380,9 +1458,9 @@ if ($hassiteconfig || has_capability('theme/boost_union:configure', context_syst
         // Setting: Add preferred language link to language menu.
         $name = 'theme_boost_union/addpreferredlang';
         $title = get_string('addpreferredlangsetting', 'theme_boost_union', null, true);
-        $langmenuurl = new moodle_url('/admin/search.php', ['query' => 'langmenu']);
-        $langtoolurl = new moodle_url('/admin/tool/langimport/index.php');
-        $langlisturl = new moodle_url('/admin/search.php', ['query' => 'langlist']);
+        $langmenuurl = new core\url('/admin/search.php', ['query' => 'langmenu']);
+        $langtoolurl = new core\url('/admin/tool/langimport/index.php');
+        $langlisturl = new core\url('/admin/search.php', ['query' => 'langlist']);
         $description = get_string('addpreferredlangsetting_desc',
                 'theme_boost_union',
                 ['url1' => $langmenuurl, 'url2' => $langtoolurl, 'url3' => $langlisturl],
@@ -1676,7 +1754,8 @@ if ($hassiteconfig || has_capability('theme/boost_union:configure', context_syst
         // Setting: Navigation on policy overview page.
         $name = 'theme_boost_union/policyoverviewnavigation';
         $title = get_string('policyoverviewnavigationsetting', 'theme_boost_union', null, true);
-        $description = get_string('policyoverviewnavigationsetting_desc', 'theme_boost_union', null, true);
+        $policyoverviewurl = new core\url('/admin/tool/policy/viewall.php');
+        $description = get_string('policyoverviewnavigationsetting_desc', 'theme_boost_union', ['url' => $policyoverviewurl], true);
         $setting = new admin_setting_configselect($name, $title, $description, THEME_BOOST_UNION_SETTING_SELECT_NO, $yesnooption);
         $tab->add($setting);
 
@@ -1778,9 +1857,9 @@ if ($hassiteconfig || has_capability('theme/boost_union:configure', context_syst
         // Add tab to settings page.
         $page->add($tab);
 
-
         // Add settings page to the admin settings category.
         $ADMIN->add('theme_boost_union', $page);
+
 
         // Create Content settings page with tabs
         // (and allow users with the theme/boost_union:configure capability to access it).
@@ -1847,7 +1926,7 @@ if ($hassiteconfig || has_capability('theme/boost_union:configure', context_syst
         // Setting: Suppress 'Documentation for this page' link.
         $name = 'theme_boost_union/footersuppresshelp';
         $title = get_string('footersuppresshelpsetting', 'theme_boost_union', null, true);
-        $url = new moodle_url('/admin/settings.php', ['section' => 'documentation']);
+        $url = new core\url('/admin/settings.php', ['section' => 'documentation']);
         $description = get_string('footersuppresshelpsetting_desc', 'theme_boost_union', ['url' => $url], true);
         $setting = new admin_setting_configselect($name, $title, $description, THEME_BOOST_UNION_SETTING_SELECT_NO, $yesnooption);
         $tab->add($setting);
@@ -1857,7 +1936,7 @@ if ($hassiteconfig || has_capability('theme/boost_union:configure', context_syst
         // Setting: Suppress 'Services and support' link.
         $name = 'theme_boost_union/footersuppressservices';
         $title = get_string('footersuppressservicessetting', 'theme_boost_union', null, true);
-        $url = new moodle_url('/admin/settings.php', ['section' => 'supportcontact']);
+        $url = new core\url('/admin/settings.php', ['section' => 'supportcontact']);
         $description = get_string('footersuppressservicessetting_desc', 'theme_boost_union', ['url' => $url], true);
         $setting = new admin_setting_configselect($name, $title, $description, THEME_BOOST_UNION_SETTING_SELECT_NO, $yesnooption);
         $tab->add($setting);
@@ -1867,7 +1946,7 @@ if ($hassiteconfig || has_capability('theme/boost_union:configure', context_syst
         // Setting: Suppress 'Contact site support' link.
         $name = 'theme_boost_union/footersuppresscontact';
         $title = get_string('footersuppresscontactsetting', 'theme_boost_union', null, true);
-        $url = new moodle_url('/admin/settings.php', ['section' => 'supportcontact']);
+        $url = new core\url('/admin/settings.php', ['section' => 'supportcontact']);
         $description = get_string('footersuppresscontactsetting_desc', 'theme_boost_union', ['url' => $url], true);
         $setting = new admin_setting_configselect($name, $title, $description, THEME_BOOST_UNION_SETTING_SELECT_NO, $yesnooption);
         $tab->add($setting);
@@ -1892,16 +1971,6 @@ if ($hassiteconfig || has_capability('theme/boost_union:configure', context_syst
         $page->hide_if('theme_boost_union/footersuppressusertour', 'theme_boost_union/enablefooterbutton', 'eq',
                 THEME_BOOST_UNION_SETTING_ENABLEFOOTER_NONE);
 
-        // Setting: Suppress 'Give feedback about this software' link.
-        $name = 'theme_boost_union/footersuppressfeedback';
-        $title = get_string('footersuppressfeedbacksetting', 'theme_boost_union', null, true);
-        $url = new moodle_url('/admin/settings.php', ['section' => 'userfeedback']);
-        $description = get_string('footersuppressfeedbacksetting_desc', 'theme_boost_union', ['url' => $url], true);
-        $setting = new admin_setting_configselect($name, $title, $description, THEME_BOOST_UNION_SETTING_SELECT_NO, $yesnooption);
-        $tab->add($setting);
-        $page->hide_if('theme_boost_union/footersuppressfeedback', 'theme_boost_union/enablefooterbutton', 'eq',
-                THEME_BOOST_UNION_SETTING_ENABLEFOOTER_NONE);
-
         // Setting: Suppress theme switcher links.
         $name = 'theme_boost_union/footersuppressthemeswitch';
         $title = get_string('footersuppressthemeswitchsetting', 'theme_boost_union', null, true);
@@ -1920,7 +1989,34 @@ if ($hassiteconfig || has_capability('theme/boost_union:configure', context_syst
         $page->hide_if('theme_boost_union/footersuppresspowered', 'theme_boost_union/enablefooterbutton', 'eq',
                 THEME_BOOST_UNION_SETTING_ENABLEFOOTER_NONE);
 
-        // Settings: Suppress footer output by plugins.
+        // Settings: Suppress footer output by plugins (for updated plugins with the hook).
+        // Get the array of plugins with the before_standard_footer_html_generation hook which can be suppressed by Boost Union.
+        $pluginswithcallback =
+                di::get(hook_manager::class)->get_callbacks_for_hook('core\\hook\\output\\before_standard_footer_html_generation');
+        // Iterate over all plugins.
+        foreach ($pluginswithcallback as $callback) {
+            // Extract the pluginname.
+            $pluginname = theme_boost_union_get_pluginname_from_callbackname($callback);
+            // Compose the label.
+            if ($callback['component'] == 'core') {
+                $hooklabeltitle = get_string('footersuppressstandardfootercore', 'theme_boost_union', $pluginname, true);
+                $hooklabeldesc = get_string('footersuppressstandardfootercore_desc', 'theme_boost_union', $pluginname, true);
+            } else {
+                $hooklabeltitle = get_string('footersuppressstandardfooter', 'theme_boost_union', $pluginname, true);
+                $hooklabeldesc = get_string('footersuppressstandardfooter_desc', 'theme_boost_union', $pluginname, true);
+            }
+            // Get the plugin name from the language pack.
+            // Create the setting.
+            $name = 'theme_boost_union/footersuppressstandardfooter_'.$pluginname;
+            $setting = new admin_setting_configselect($name, $hooklabeltitle, $hooklabeldesc,
+                    THEME_BOOST_UNION_SETTING_SELECT_NO, $yesnooption);
+            $setting->set_updatedcallback('theme_boost_union_remove_hookmanipulation');
+            $tab->add($setting);
+            $page->hide_if('theme_boost_union/footersuppressstandardfooter_'.$pluginname,
+                    'theme_boost_union/enablefooterbutton', 'eq', THEME_BOOST_UNION_SETTING_ENABLEFOOTER_NONE);
+        }
+
+        // Settings: Suppress footer output by plugins (for legacy plugins).
         // Get the array of plugins with the standard_footer_html() function which can be suppressed by Boost Union.
         $pluginswithfunction = get_plugins_with_function('standard_footer_html', 'lib.php');
         // Iterate over all plugins.
@@ -2163,10 +2259,10 @@ if ($hassiteconfig || has_capability('theme/boost_union:configure', context_syst
             $description = get_string('infobannerdismissiblesetting_desc', 'theme_boost_union', ['no' => $i], true);
             // Add Reset button if the info banner is already configured to be dismissible.
             if (get_config('theme_boost_union', 'infobanner'.$i.'dismissible') == true) {
-                $reseturl = new moodle_url('/theme/boost_union/settings_infobanner_resetdismissed.php',
+                $reseturl = new core\url('/theme/boost_union/settings_infobanner_resetdismissed.php',
                         ['sesskey' => sesskey(), 'no' => $i]);
-                $description .= html_writer::empty_tag('br');
-                $description .= html_writer::link($reseturl,
+                $description .= \core\output\html_writer::empty_tag('br');
+                $description .= \core\output\html_writer::link($reseturl,
                         get_string('infobannerdismissresetbutton', 'theme_boost_union', ['no' => $i], true),
                         ['class' => 'btn btn-secondary mt-3', 'role' => 'button']);
             }
@@ -2201,7 +2297,7 @@ if ($hassiteconfig || has_capability('theme/boost_union:configure', context_syst
                         get_string('tilefrontpagepositionsetting_after', 'theme_boost_union'), ];
         $name = 'theme_boost_union/tilefrontpageposition';
         $title = get_string('tilefrontpagepositionsetting', 'theme_boost_union', null, true);
-        $url = new moodle_url('/admin/settings.php', ['section' => 'frontpagesettings']);
+        $url = new core\url('/admin/settings.php', ['section' => 'frontpagesettings']);
         $description = get_string('tilefrontpagepositionsetting_desc', 'theme_boost_union', ['url' => $url], true);
         $setting = new admin_setting_configselect($name, $title, $description,
                 THEME_BOOST_UNION_SETTING_ADVERTISEMENTTILES_FRONTPAGEPOSITION_BEFORE, $tilefrontpagepositionoptions);
@@ -2404,7 +2500,7 @@ if ($hassiteconfig || has_capability('theme/boost_union:configure', context_syst
         ];
         $name = 'theme_boost_union/sliderfrontpageposition';
         $title = get_string('sliderfrontpagepositionsetting', 'theme_boost_union', null, true);
-        $url = new moodle_url('/admin/settings.php', ['section' => 'frontpagesettings']);
+        $url = new core\url('/admin/settings.php', ['section' => 'frontpagesettings']);
         $description = get_string('sliderfrontpagepositionsetting_desc', 'theme_boost_union', ['url' => $url], true);
         $setting = new admin_setting_configselect($name, $title, $description,
                 THEME_BOOST_UNION_SETTING_SLIDER_FRONTPAGEPOSITION_BEFOREBEFORE, $sliderfrontpagepositionoptions);
@@ -2634,9 +2730,9 @@ if ($hassiteconfig || has_capability('theme/boost_union:configure', context_syst
         // Add tab to settings page.
         $page->add($tab);
 
-
         // Add settings page to the admin settings category.
         $ADMIN->add('theme_boost_union', $page);
+
 
         // Create Functionality settings page with tabs
         // (and allow users with the theme/boost_union:configure capability to access it).
@@ -2707,7 +2803,7 @@ if ($hassiteconfig || has_capability('theme/boost_union:configure', context_syst
         $tab->add($setting);
 
         // Prepare course management page URL.
-        $coursemgnturl = new moodle_url('/course/management.php');
+        $coursemgnturl = new core\url('/course/management.php');
 
         // Setting: Show view course icon in course management.
         $name = 'theme_boost_union/showviewcourseiconincoursemgnt';
@@ -2720,9 +2816,233 @@ if ($hassiteconfig || has_capability('theme/boost_union:configure', context_syst
         // Add tab to settings page.
         $page->add($tab);
 
+        // Add settings page to the admin settings category.
+        $ADMIN->add('theme_boost_union', $page);
+
+
+        // Create Accessibility settings page with tabs
+        // (and allow users with the theme/boost_union:configure capability to access it).
+        $page = new theme_boost_admin_settingspage_tabs('theme_boost_union_accessibility',
+                get_string('configtitleaccessibility', 'theme_boost_union', null, true),
+                'theme/boost_union:configure');
+
+        // Create Declaration tab.
+        $tab = new admin_settingpage('theme_boost_union_content_accessibilitydeclaration',
+                get_string('accessibilitydeclarationtab', 'theme_boost_union', null, true));
+
+        // Create Declaration of accessibility page heading.
+        $name = 'theme_boost_union/accessibilityheading';
+        $title = get_string('accessibilitydeclarationheading', 'theme_boost_union', null, true);
+        $setting = new admin_setting_heading($name, $title, null);
+        $tab->add($setting);
+
+        // Setting: Enable Declaration of accessibility page.
+        $name = 'theme_boost_union/enableaccessibilitydeclaration';
+        $title = get_string('enableaccessibilitydeclarationsetting', 'theme_boost_union', null, true);
+        $staticpagesurl = new \core\url('/admin/settings.php', ['section' => 'theme_boost_union_content'],
+                'theme_boost_union_content_staticpages');
+        $description = get_string('enableaccessibilitydeclarationsetting_desc', 'theme_boost_union', ['url' => $staticpagesurl],
+                true);
+        $setting = new admin_setting_configselect($name, $title, $description, THEME_BOOST_UNION_SETTING_SELECT_NO,
+                $yesnooption);
+        $tab->add($setting);
+
+        // Setting: Declaration of accessibility page content.
+        $name = 'theme_boost_union/accessibilitydeclarationcontent';
+        $title = get_string('accessibilitydeclarationcontentsetting', 'theme_boost_union', null, true);
+        $description = get_string('accessibilitydeclarationcontentsetting_desc', 'theme_boost_union', null, true);
+        $setting = new admin_setting_confightmleditor($name, $title, $description, '');
+        $tab->add($setting);
+        $page->hide_if('theme_boost_union/accessibilitydeclarationcontent', 'theme_boost_union/enableaccessibilitydeclaration',
+                'neq', THEME_BOOST_UNION_SETTING_SELECT_YES);
+
+        // Setting: Declaration of accessibility page title.
+        $name = 'theme_boost_union/accessibilitydeclarationpagetitle';
+        $title = get_string('accessibilitydeclarationpagetitlesetting', 'theme_boost_union', null, true);
+        $description = get_string('accessibilitydeclarationpagetitlesetting_desc', 'theme_boost_union', null, true);
+        $default = get_string('accessibilitydeclarationpagetitledefault', 'theme_boost_union', null, true);
+        $setting = new admin_setting_configtext($name, $title, $description, $default);
+        $tab->add($setting);
+        $page->hide_if('theme_boost_union/accessibilitydeclarationpagetitle', 'theme_boost_union/enableaccessibilitydeclaration',
+                'neq', THEME_BOOST_UNION_SETTING_SELECT_YES);
+
+        // Setting: Declaration of accessibility page link position.
+        $name = 'theme_boost_union/accessibilitydeclarationlinkposition';
+        $title = get_string('accessibilitydeclarationlinkpositionsetting', 'theme_boost_union', null, true);
+        $pageurl = theme_boost_union_get_staticpage_link('accessibility');
+        $description = get_string('accessibilitydeclarationlinkpositionsetting_desc', 'theme_boost_union', ['url' => $pageurl],
+                true);
+        $linkpositionoption =
+                // Don't use string lazy loading (= false) because the string will be directly used and would produce a
+                // PHP warning otherwise.
+                [THEME_BOOST_UNION_SETTING_STATICPAGELINKPOSITION_NONE =>
+                        get_string('accessibilitydeclarationlinkpositionnone', 'theme_boost_union', null, false),
+                        THEME_BOOST_UNION_SETTING_STATICPAGELINKPOSITION_FOOTNOTE =>
+                                get_string('accessibilitydeclarationlinkpositionfootnote', 'theme_boost_union', null, false),
+                        THEME_BOOST_UNION_SETTING_STATICPAGELINKPOSITION_FOOTER =>
+                                get_string('accessibilitydeclarationlinkpositionfooter', 'theme_boost_union', null, false),
+                        THEME_BOOST_UNION_SETTING_STATICPAGELINKPOSITION_BOTH =>
+                                get_string('accessibilitydeclarationlinkpositionboth', 'theme_boost_union', null, false), ];
+        $default = 'none';
+        $setting = new admin_setting_configselect($name, $title, $description, $default, $linkpositionoption);
+        $tab->add($setting);
+        $page->hide_if('theme_boost_union/accessibilitydeclarationlinkposition', 'theme_boost_union/enableaccessibilitydeclaration',
+                'neq', THEME_BOOST_UNION_SETTING_SELECT_YES);
+
+        // Add tab to settings page.
+        $page->add($tab);
+
+        // Create Support tab.
+        $tab = new admin_settingpage('theme_boost_union_content_accessibilitysupport',
+                get_string('accessibilitysupporttab', 'theme_boost_union', null, true));
+
+        // Create Accessibility support page heading.
+        $name = 'theme_boost_union/accessibilitysupportheading';
+        $title = get_string('accessibilitysupportheading', 'theme_boost_union', null, true);
+        $setting = new admin_setting_heading($name, $title, null);
+        $tab->add($setting);
+
+        // Setting: Enable accessibility support page.
+        $name = 'theme_boost_union/enableaccessibilitysupport';
+        $title = get_string('enableaccessibilitysupportsetting', 'theme_boost_union', null, true);
+        $sitesupporturl = new \core\url('/user/contactsitesupport.php');
+        $description = get_string('enableaccessibilitysupportsetting_desc', 'theme_boost_union', ['url' => $sitesupporturl],
+                true);
+        $setting = new admin_setting_configselect($name, $title, $description, THEME_BOOST_UNION_SETTING_SELECT_NO,
+                $yesnooption);
+        $tab->add($setting);
+
+        // Setting: Accessibility support page content.
+        $name = 'theme_boost_union/accessibilitysupportcontent';
+        $title = get_string('accessibilitysupportcontentsetting', 'theme_boost_union', null, true);
+        $description = get_string('accessibilitysupportcontentsetting_desc', 'theme_boost_union', null, true);
+        $default = get_string('accessibilitysupportcontentdefault', 'theme_boost_union', null, true);
+        $setting = new admin_setting_confightmleditor($name, $title, $description, $default);
+        $tab->add($setting);
+        $page->hide_if('theme_boost_union/accessibilitysupportcontent', 'theme_boost_union/enableaccessibilitysupport', 'neq',
+                THEME_BOOST_UNION_SETTING_SELECT_YES);
+
+        // Setting: Accessibility support page title.
+        $name = 'theme_boost_union/accessibilitysupportpagetitle';
+        $title = get_string('accessibilitysupportpagetitlesetting', 'theme_boost_union', null, true);
+        $description = get_string('accessibilitysupportpagetitlesetting_desc', 'theme_boost_union', null, true);
+        $default = get_string('accessibilitysupportpagetitledefault', 'theme_boost_union', null, true);
+        $setting = new admin_setting_configtext($name, $title, $description, $default);
+        $tab->add($setting);
+        $page->hide_if('theme_boost_union/accessibilitysupportpagetitle', 'theme_boost_union/enableaccessibilitysupport', 'neq',
+                THEME_BOOST_UNION_SETTING_SELECT_YES);
+
+        // Setting: Accessibility support page link position.
+        $name = 'theme_boost_union/accessibilitysupportlinkposition';
+        $title = get_string('accessibilitysupportlinkpositionsetting', 'theme_boost_union', null, true);
+        $pageurl = theme_boost_union_get_accessibility_link('support');
+        $description = get_string('accessibilitysupportlinkpositionsetting_desc', 'theme_boost_union', ['url' => $pageurl],
+                true);
+        $linkpositionoption =
+                // Don't use string lazy loading (= false) because the string will be directly used and would produce a
+                // PHP warning otherwise.
+                [THEME_BOOST_UNION_SETTING_STATICPAGELINKPOSITION_NONE =>
+                        get_string('accessibilitysupportlinkpositionnone', 'theme_boost_union', null, false),
+                        THEME_BOOST_UNION_SETTING_STATICPAGELINKPOSITION_FOOTNOTE =>
+                                get_string('accessibilitysupportlinkpositionfootnote', 'theme_boost_union', null, false),
+                        THEME_BOOST_UNION_SETTING_STATICPAGELINKPOSITION_FOOTER =>
+                                get_string('accessibilitysupportlinkpositionfooter', 'theme_boost_union', null, false),
+                        THEME_BOOST_UNION_SETTING_STATICPAGELINKPOSITION_BOTH =>
+                                get_string('accessibilitysupportlinkpositionboth', 'theme_boost_union', null, false), ];
+        $default = 'none';
+        $setting = new admin_setting_configselect($name, $title, $description, $default, $linkpositionoption);
+        $tab->add($setting);
+        $page->hide_if('theme_boost_union/accessibilitysupportlinkposition', 'theme_boost_union/enableaccessibilitysupport', 'neq',
+                THEME_BOOST_UNION_SETTING_SELECT_YES);
+
+        // Setting: Allow accessibility support page without login.
+        $name = 'theme_boost_union/allowaccessibilitysupportwithoutlogin';
+        $title = get_string('allowaccessibilitysupportwithoutlogin', 'theme_boost_union', null, true);
+        $description = get_string('allowaccessibilitysupportwithoutlogin_desc', 'theme_boost_union', null, true);
+        $setting = new admin_setting_configselect($name, $title, $description, THEME_BOOST_UNION_SETTING_SELECT_NO,
+                $yesnooption);
+        $tab->add($setting);
+        $page->hide_if('theme_boost_union/allowaccessibilitysupportwithoutlogin', 'theme_boost_union/enableaccessibilitysupport',
+                'neq', THEME_BOOST_UNION_SETTING_SELECT_YES);
+
+        // Setting: Enable accessibility button.
+        $name = 'theme_boost_union/enableaccessibilitysupportfooterbutton';
+        $title = get_string('enableaccessibilitysupportfooterbuttonsetting', 'theme_boost_union', null, true);
+        $description = get_string('enableaccessibilitysupportfooterbuttonsetting_desc', 'theme_boost_union', null, true);
+        $setting = new admin_setting_configselect($name, $title, $description, THEME_BOOST_UNION_SETTING_SELECT_NO,
+                $yesnooption);
+        $tab->add($setting);
+        $page->hide_if('theme_boost_union/enableaccessibilitysupportfooterbutton', 'theme_boost_union/enableaccessibilitysupport',
+                'neq', THEME_BOOST_UNION_SETTING_SELECT_YES);
+
+        // Setting: Allow anonymous support page submissions.
+        $name = 'theme_boost_union/allowanonymoussubmits';
+        $title = get_string('allowanonymoussubmitssetting', 'theme_boost_union', null, true);
+        $description = get_string('allowanonymoussubmitssetting_desc', 'theme_boost_union', null, true);
+        $setting = new admin_setting_configselect($name, $title, $description, THEME_BOOST_UNION_SETTING_SELECT_NO,
+                $yesnooption);
+        $tab->add($setting);
+        $page->hide_if('theme_boost_union/allowanonymoussubmits', 'theme_boost_union/enableaccessibilitysupport', 'neq',
+                THEME_BOOST_UNION_SETTING_SELECT_YES);
+
+        // Setting: Allow sending technical information along.
+        $name = 'theme_boost_union/allowsendtechinfoalong';
+        $title = get_string('allowsendtechinfoalongsetting', 'theme_boost_union', null, true);
+        $description = get_string('allowsendtechinfoalongsetting_desc', 'theme_boost_union', null, true);
+        $setting = new admin_setting_configselect($name, $title, $description, THEME_BOOST_UNION_SETTING_SELECT_YES,
+                $yesnooption);
+        $tab->add($setting);
+        $page->hide_if('theme_boost_union/allowsendtechinfoalong', 'theme_boost_union/enableaccessibilitysupport', 'neq',
+                THEME_BOOST_UNION_SETTING_SELECT_YES);
+
+        // Setting: Accessibility support user email.
+        $name = 'theme_boost_union/accessibilitysupportusermail';
+        $title = get_string('accessibilitysupportusermail', 'theme_boost_union', null, true);
+        $sitesupportsettingsurl = new \core\url('/admin/settings.php', ['section' => 'supportcontact']);
+        $description = get_string('accessibilitysupportusermail_desc', 'theme_boost_union', ['url' => $sitesupportsettingsurl],
+                true);
+        $setting = new admin_setting_configtext($name, $title, $description, '', PARAM_EMAIL);
+        $tab->add($setting);
+        $page->hide_if('theme_boost_union/accessibilitysupportusermail', 'theme_boost_union/enableaccessibilitysupport', 'neq',
+                THEME_BOOST_UNION_SETTING_SELECT_YES);
+
+        // Setting: Accessibility support page screenreader title.
+        $name = 'theme_boost_union/accessibilitysupportpagesrlinktitle';
+        $title = get_string('accessibilitysupportpagesrlinktitlesetting', 'theme_boost_union', null, true);
+        $description = get_string('accessibilitysupportpagesrlinktitlesetting_desc', 'theme_boost_union', null, true);
+        $default = get_string('accessibilitysupportpagesrlinktitledefault', 'theme_boost_union', null, true);
+        $setting = new admin_setting_configtext($name, $title, $description, $default);
+        $tab->add($setting);
+        $page->hide_if('theme_boost_union/accessibilitysupportpagesrlinktitle', 'theme_boost_union/enableaccessibilitysupport',
+                'neq', THEME_BOOST_UNION_SETTING_SELECT_YES);
+
+        // Setting: Add re-captcha to accessibility support page.
+        $name = 'theme_boost_union/accessibilitysupportrecaptcha';
+        $title = get_string('accessibilitysupportrecaptcha', 'theme_boost_union', null, true);
+        $authsettingsurl = new \core\url('/admin/settings.php', ['section' => 'manageauths']);
+        $supportformsurl = new \core\url('/user/contactsitesupport.php');
+        $description = get_string('accessibilitysupportrecaptcha_desc', 'theme_boost_union',
+                ['settings' => $authsettingsurl, 'support' => $supportformsurl], true);
+        $accessibilitysupportrecaptchaoptions = [
+                THEME_BOOST_UNION_SETTING_SELECT_NEVER =>
+                        get_string('never', 'theme_boost_union'),
+                THEME_BOOST_UNION_SETTING_SELECT_ALWAYS =>
+                        get_string('always', 'theme_boost_union'),
+                THEME_BOOST_UNION_SETTING_SELECT_ONLYGUESTSANDNONLOGGEDIN =>
+                        get_string('forguestsonly', 'theme_boost_union'),
+        ];
+        $setting = new admin_setting_configselect($name, $title, $description, THEME_BOOST_UNION_SETTING_SELECT_NEVER,
+                $accessibilitysupportrecaptchaoptions);
+        $tab->add($setting);
+        $page->hide_if('theme_boost_union/accessibilitysupportrecaptcha', 'theme_boost_union/enableaccessibilitysupport',
+                'neq', THEME_BOOST_UNION_SETTING_SELECT_YES);
+
+        // Add tab to settings page.
+        $page->add($tab);
 
         // Add settings page to the admin settings category.
         $ADMIN->add('theme_boost_union', $page);
+
     }
 
     // Add JS to remember the active admin tab to the page.
