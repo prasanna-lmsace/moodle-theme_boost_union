@@ -31,7 +31,10 @@ define(["jquery", "core/moremenu", "theme_boost_union/submenu"], function($, Mor
         classes: {
             dropDownMenuList: ".dropdownmoremenu ul.dropdown-menu",
             forceOut: ".dropdownmoremenu .force-menu-out",
-            dropdownmoremenu: 'dropdownmoremenu'
+            dropdownmoremenu: '.dropdownmoremenu',
+            menuBar: '.boost-union-menubar',
+            primaryNavigation: '.primary-navigation',
+
         },
         regions: {
             moredropdown: '[data-region="moredropdown"]'
@@ -241,13 +244,19 @@ define(["jquery", "core/moremenu", "theme_boost_union/submenu"], function($, Mor
             // In moodle 5.0, only the first moremenu is initialized. if the menubar and primary navigation are present,
             // the moremenu is initialized on the menubar.
             // So we need to add the event listener to the primary navigation if the menubar is present.
-            if (document.querySelector('.boost-union-menubar')) {
-                document.querySelector('.primary-navigation .' + Selectors.classes.dropdownmoremenu).addEventListener('show.bs.dropdown', () => {
-                    const moreDropdown = document.querySelector('.primary-navigation')?.querySelector(Selectors.regions.moredropdown);
+            if (document.querySelector(Selectors.classes.menuBar) !== null) {
+
+                var primaryNav = document
+                    .querySelector(Selectors.classes.primaryNavigation + ' ' + Selectors.classes.dropdownmoremenu);
+
+                primaryNav?.addEventListener('show.bs.dropdown', () => {
+                    const moreDropdown = document.querySelector(Selectors.classes.primaryNavigation)
+                        ?.querySelector(Selectors.regions.moredropdown);
                     moreDropdown?.querySelectorAll('.dropdown').forEach((dropdown) => {
                         dropdown.removeEventListener('click', toggledropdown, true);
                         dropdown.addEventListener('click', toggledropdown, true);
                     });
+
                 });
             }
         }
