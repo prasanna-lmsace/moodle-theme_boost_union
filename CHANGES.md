@@ -6,6 +6,43 @@ Changes
 
 ### Unreleased
 
+* 2025-05-08 - Preemptive regression fix: Moodle 5.0 showed the footer (questionmark) icon on mobiles as well, resolves #928.
+* 2025-04-10 - Upgrade: Remove the 'none' option from the slider animation type as this seems not to anymore out of the box in Bootstrap 5.
+* 2025-04-10 - Upgrade: Adapt some more deprecated Bootstrap classes.
+* 2025-04-10 - Improvement: Change the defaults of the theme/boost_union:viewregion* capabilities for the guest role on new Boost Union installatins, resolves #893.
+               Please note: Boost Union instances which are upgraded from a release before v5.0 will see a notification on /admin/settings.php?section=theme_boost_union_feel#theme_boost_union_feel_blocks and will have the possibility there to fix the defaults of the role automatically.
+* 2025-04-10 - Upgrade: Adapt width of advertisement tiles on site home, resolves #917.
+* 2025-04-10 - Upgrade: Support the new activity overview page when changing activity icon purposes in Boost Union.
+* 2025-04-10 - Upgrade: Remove recentlyaccesseditemstintenabled setting as the icons in this block are tinted by default now in Moodle 5.0.
+* 2025-04-10 - Upgrade: Adapt activity coloring for Moodle 5.0 and remove the activityiconcolorfidelity setting, resolves #824.
+* 2025-04-10 - Upgrade: Remove activitiestintenabled setting as the activities block is gone in Moodle 5.0.
+* 2025-04-10 - Upgrade: Adapt Behat tests as the subsections are now enabled by default
+* 2025-04-10 - Upgrade: Adopt changes regarding dismisssing alerts for the infobanner feature in Boost Union
+* 2025-04-10 - Upgrade: Adopt Bootstrap changes to the media-breakpoint-down mixin
+* 2025-04-10 - Upgrade: Adopt Bootstrap changes to the slider feature in Boost Union
+* 2025-04-10 - Upgrade: Fix the appearance of the off-canvas block region
+* 2025-04-10 - Upgrade: Adopt changes for course index view feature in Boost Union
+* 2025-04-10 - Upgrade: Adopt changes to other sr-only classes used in Boost Union
+* 2025-04-10 - Upgrade: Adopt changes to submenu.js
+* 2025-04-10 - Upgrade: Adopt changes to other data-bs-* attributes used in Boost Union
+* 2025-04-10 - Upgrade: Adopt changes to courselistingcard.mustache
+* 2025-04-10 - Upgrade: Adopt changes to courselistinglist.mustache
+* 2025-04-10 - Upgrade: Adopt changes to smartmenus-*menu-children.mustache
+* 2025-04-10 - Upgrade: Adopt changes to cm.mustache
+* 2025-04-10 - Upgrade: Adopt changes to user_menu.mustache
+* 2025-04-10 - Upgrade: Adopt changes to loginform.mustache
+* 2025-04-10 - Upgrade: Adopt changes to moremenu.mustache
+* 2025-04-10 - Upgrade: Adopt changes to primary-drawer-mobile.mustache
+* 2025-04-10 - Preemptive regression fix: Communication button in course did not use the same Bootstrap 5 styling as the footer (questionmark) button, resolves #912.
+* 2025-04-10 - Upgrade: Adopt changes to footer.mustache and all Boost Union footer buttons.
+* 2025-04-10 - Upgrade: Adopt changes to drawers.mustache
+* 2025-04-10 - Upgrade: Adopt changes to classes/boostnavbar.php
+* 2025-04-10 - Upgrade: Adopt changes to drawer.mustache
+* 2025-04-10 - Upgrade: Adopt Bootstrap changes to navbar.mustache and the colored navbar feature.
+               Please note: The bg-dark color has changed in Bootstrap 5 which results in Boost Union in a even darker navbar.
+* 2025-04-10 - Upgrade: Remove mediumwidth setting, resolves #780
+* 2025-04-10 - Upgrade: Replace the $nav-divider-color SCSS variable in post.scss which does not exist anymore and prevented the Boost Union SCSS from being compiled.
+* 2025-04-10 - Prepare compatibility for Moodle 5.0.
 * 2025-05-08 - Bugfix: Smart menu item icon was not black when hovered on a black navbar, resolves #936
 
 ### v4.5-r15

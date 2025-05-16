@@ -19,23 +19,18 @@
  * Setting: Navbar color
  --------------------------------------*/
 
-/* Moodle core already presents the light navbar with dark font color (.navbar-light.bg-white) perfectly.
+/* Moodle core already presents the light navbar with dark font color (.bg-body) perfectly.
    There is nothing to change here. */
 
 /* Tweak the dark navbar with light font color
    and the primary color navbar with light font color. */
-.navbar.navbar-dark.bg-dark,
-.navbar.navbar-dark.bg-primary {
+.navbar.bg-dark[data-bs-theme="dark"],
+.navbar.bg-primary[data-bs-theme="dark"] {
     /* Remove the white border at the bottom of the navbar as it looks odd with a dark navbar. */
     border-bottom: none;
 
-    /* Change the color of the site name in the navbar to white. */
-    .navbar-brand {
-        color: $white;
-    }
-
     /* Change the color of the navigation items in the navbar to white
-       and to black when hovered (as Moodle core will then show a white background).
+       and to black on white when hovered (Bootstrap already makes the background white when hovered, but not when focused).
        This has to use !important as Moodle core already uses !important for some of its hover states. */
     .nav-link {
         color: $white;
@@ -46,17 +41,11 @@
     .nav-link:hover,
     .nav-link:focus {
         color: $black !important; /* stylelint-disable-line declaration-no-important */
+        background-color: $white;
 
         .icon {
             color: $black !important; /* stylelint-disable-line declaration-no-important */
         }
-    }
-
-    /* Change the background color and colors of open custom menu parent navigation items in the navbar
-       as they are built differently from single navigation items. */
-    .nav-item.dropdown.show .nav-link.dropdown-toggle {
-        background-color: #f8f9fa;
-        color: $black;
     }
 
     /* Change the color of the icons in the navbar as well as the toggle icon in the usermenu
@@ -68,21 +57,6 @@
         color: $white !important; /* stylelint-disable-line declaration-no-important */
     }
 
-    /* Change the color of the icons in the dropdown menu to a dark grey and to white when hovered.
-       This has to use !important as Moodle core already uses !important for the icon colors. */
-    .dropdown-menu .dropdown-item .icon {
-        color: #1d2125 !important; /* stylelint-disable-line declaration-no-important */
-    }
-    .dropdown-menu .dropdown-item:hover .icon {
-        color: $white !important; /* stylelint-disable-line declaration-no-important */
-    }
-
-    /* Revert color of the close icon in the search panel in the navbar as this icon is still dark on white
-       within the input form. */
-    #searchform-navbar .btn-close .icon {
-        color: #6a737b !important; /* stylelint-disable-line declaration-no-important */
-    }
-
     /* Change the color of the edit switch label in the navbar to white.
        This has to use !important as Moodle core would change the color to text-primary as soon as editing is on. */
     .editmode-switch-form,
@@ -90,20 +64,8 @@
         color: $white !important; /* stylelint-disable-line declaration-no-important */
     }
 
-    /* Adapt the color of the edit switch widget to fit onto the dark background. */
-    .custom-control-input:checked ~ .custom-control-label::before {
-        background-color: $white;
-        border-color: #c8c8c8;
-    }
-    .custom-switch .custom-control-input:checked ~ .custom-control-label::after {
-        background-color: #8f959e;
-    }
-
     /* Change the color of the offcanvas button to fit onto the dark background. */
     #theme_boost_union-offcanvas-btn {
-        color: #c8c8c8;
-    }
-    #theme_boost_union-offcanvas-btn:hover {
         color: #fff;
     }
 
@@ -119,14 +81,23 @@
         color: #343a40 !important; /* stylelint-disable-line declaration-no-important */
     }
 
-    /* Change the color of the language selector link in the navbar to white. */
-    .langmenu .dropdown .dropdown-toggle {
-        color: $white;
+    /* Change the color of the footer in the notification popover to normal.
+       This cannot be done with data-bs-theme as we did not overwrite the corresponding mustache template. */
+    .popover-region-footer-container {
+        background-color: $white;
+    }
+
+    /* Change the link colors in the notification popover to a more solid color. */
+    .popover-region-container {
+        .see-all-link,
+        .view-more {
+            color: $primary;
+        }
     }
 }
 
 /* Tweak the dark navbar with light font color a little bit more. */
-.navbar.navbar-dark.bg-dark {
+.navbar.bg-dark[data-bs-theme="dark"] {
     /* If we are showing the search form, we need to show the border again as dark border
        as otherwise the active node's bottom bar might peek through. */
     &:has(#searchform-navbar.show) {
@@ -135,36 +106,36 @@
 
     /* Change the background color of the custom child menu and user menu navigation items in the navbar
        to dark grey when hovered and focused (especially during keyboard navigation) */
-    .nav-item.dropdown.show,
+    .nav-item .dropdown-menu.show,
     #user-action-menu.show {
         a.dropdown-item {
             background-color: inherit;
         }
         a.dropdown-item:hover,
         a.dropdown-item:focus {
-            background-color: #343a40;
+            background-color: rgba(var(--bs-dark-rgb), var(--bs-bg-opacity));
         }
+    }
+
+    /* Adapt the color of the edit switch widget to fit onto the dark background. */
+    .editmode-switch-form input {
+        background-color: var(--bs-body-bg);
+        border-color: $white;
     }
 
     /* Change the background color of the search panel in the navbar. */
     #searchform-navbar {
-        background-color: #343a40;
+        @extend .bg-dark;
     }
-
-    /* Change the color of the language selector drop down items when hovered, focused and active to dark grey
-       as this would be presented in the primary color otherwise. */
-    .langmenu {
-        .dropdown-item:active,
-        .dropdown-item:hover,
-        .dropdown-item:focus,
-        .dropdown-item:focus-within {
-            background-color: $dark;
-        }
+    /* Make sure that the search form's submit button is black as well. */
+    .simplesearchform .btn-submit {
+        background-color: var(--bs-body-bg);
+        color: #6a737b;
     }
 }
 
 /* Tweak the primary color navbar with light font color a little bit more. */
-.navbar.navbar-dark.bg-primary {
+.navbar.bg-primary[data-bs-theme="dark"] {
     /* If we are showing the search form, we need to show the border again as dark border
        as otherwise the active node's bottom bar might peek through. */
     &:has(#searchform-navbar.show) {
@@ -173,7 +144,7 @@
 
     /* Change the background color of the custom child menu and user menu navigation items in the navbar
        to dark grey when hovered and focused (especially during keyboard navigation) */
-    .nav-item.dropdown.show,
+    .nav-item .dropdown-menu.show,
     #user-action-menu.show {
         a.dropdown-item {
             background-color: inherit;
@@ -184,61 +155,93 @@
         }
     }
 
+    /* Adapt the color of the edit switch widget to fit onto the primary color background. */
+    .editmode-switch-form input {
+        background-color: $primary;
+        border-color: $white;
+    }
+
     /* Change the background color of the search panel in the navbar. */
     #searchform-navbar {
         background-color: $primary;
+
+        /* Make sure that the search form input elements are colorized as well. */
+        input,
+        button {
+            background-color: $primary;
+            border-color: $white;
+            color: $white;
+        }
+    }
+
+    /* Change the color of the divider to white.
+       This has to use !important as Moodle core already uses !important for the border-left color.*/
+    .divider {
+        background-color: $white;
+        border-left: none !important; /* stylelint-disable-line declaration-no-important */
     }
 
     /* Change the color of the active nav items's bottom border to white as this would be presented in the
-   primary color otherwise. */
+        primary color otherwise. */
     .nav-link.active {
         border-bottom-color: $white;
-    }
-
-    /* Change the color of the language selector icon to a light grey as well.
-        This has to use !important as Moodle core already uses !important for the icon colors. */
-    .langmenu .icon {
-        color: #c8c8c8 !important; /* stylelint-disable-line declaration-no-important */
     }
 }
 
 /* Tweak the primary color navbar with dark font color. */
-.navbar.navbar-light.bg-primary {
+.navbar.bg-primary[data-bs-theme="light"] {
     /* Change the color of the active nav items's bottom border to dark grey as this would be presented in the
        primary color as well otherwise. */
     .nav-link.active {
         border-bottom-color: rgba($black, .6);
     }
 
-    /* Change the background color and colors of open custom menu parent navigation items in the navbar
-   as they are built differently from single navigation items. */
-    .nav-item.dropdown.show .nav-link.dropdown-toggle {
-        background-color: #f8f9fa;
-        color: $black;
+    /* Change the color of the navigation items in the navbar
+       to black on white when hovered (Bootstrap already makes the background white when hovered, but not when focused).
+       This has to use !important as Moodle core already uses !important for some of its hover states. */
+    .nav-link:hover,
+    .nav-link:focus {
+        color: $black !important; /* stylelint-disable-line declaration-no-important */
+        background-color: $white;
     }
+
+    /* Change the font color of the custom child menu and user menu navigation items in the navbar
+       to black when hovered and focused (especially during keyboard navigation).
+       This will then diverge from the way how Boost core shows these menu items in the unchanged navbar,
+       but we do have to expect in this particular case here that the primary color is rather light. */
+        .nav-item .dropdown-menu.show,
+        #user-action-menu.show {
+            a.dropdown-item:hover,
+            a.dropdown-item:focus {
+                color: var(--bs-dropdown-link-color);
+            }
+        }
 
     /* Change the color of the edit switch label in the navbar to dark grey.
        This has to use !important as Moodle core wants to use the color text-primary as soon as editing is on. */
     .editmode-switch-form,
     .editmode-switch-form label {
-        color: rgba($black, .6) !important; /* stylelint-disable-line declaration-no-important */
+        color: var(--bs-nav-link-color) !important; /* stylelint-disable-line declaration-no-important */
     }
     .editmode-switch-form label:hover {
-        color: rgba($black, .9) !important; /* stylelint-disable-line declaration-no-important */
+        color: var(--bs-nav-link-color) !important; /* stylelint-disable-line declaration-no-important */
     }
 
-    /* Adapt the color of the edit switch widget to fit onto the dark background. */
-    .custom-control-input:checked ~ .custom-control-label::before {
-        background-color: $white;
-        border-color: #c8c8c8;
-    }
-    .custom-switch .custom-control-input:checked ~ .custom-control-label::after {
-        background-color: #8f959e;
+    /* Adapt the color of the edit switch widget to fit onto the primary color background. */
+    .editmode-switch-form input {
+        background-color: $primary;
+        background-image: #{escape-svg($form-switch-bg-image)};
+        border-color: var(--bs-nav-link-color);
     }
 
     /* Change the background color of the search panel in the navbar. */
     #searchform-navbar {
         background-color: $primary;
+
+        /* Make sure that the search form input element have a real border, even if focused. */
+        input:focus {
+            border-color: var(--bs-gray-500);
+        }
     }
 
     /* Change the color of the login link in the navbar to dark grey and to darker grey when hovered. */
@@ -255,6 +258,43 @@
     .divider {
         border-left: 1px solid rgba($black, .6) !important; /* stylelint-disable-line declaration-no-important */
     }
+}
+
+/*=======================================
+ * Settings: Look -> Activity branding
+ ======================================*/
+
+/*---------------------------------------
+ * Setting: Activity icon colors
+ --------------------------------------*/
+
+// This mixin change an icon color using filters.
+// This is just the "recolor-icon" mixin from Moodle core but with the "!imporant" suffix which is needed to override
+// activity icon purposes.An
+@mixin recolor-icon-important($color: #000, $opacity: 1) {
+    // Extracting the color component using / 255 is deprecated in Sass.
+    // However, the alternative of using math.div is not working in moodle yet.
+    // The workaround to extract the color component is multiply by 1/255 as float.
+    $r: red($color) * 0.00392156862745098;
+    $g: green($color) * 0.00392156862745098;
+    $b: blue($color) * 0.00392156862745098;
+    $a: $opacity;
+    $svg-filter-id: "recolor";
+
+    $svg-url: 'data:image/svg+xml;utf8,' +
+        '<svg xmlns="http://www.w3.org/2000/svg">' +
+        '<filter id="#{$svg-filter-id}" color-interpolation-filters="sRGB">' +
+        '<feColorMatrix type="matrix" values="' +
+        '0 0 0 0 #{$r} ' +
+        '0 0 0 0 #{$g} ' +
+        '0 0 0 0 #{$b} ' +
+        '0 0 0 #{$a} 0 ' +
+        '"/>' +
+        '</filter>' +
+        '</svg>' +
+        '##{$svg-filter-id}';
+
+    filter: url($svg-url) !important; /* stylelint-disable-line declaration-no-important */
 }
 
 /*=======================================
@@ -552,7 +592,7 @@
                 }
             }
 
-            > .category:last-child {
+            > .category[data-depth="1"]:last-child {
                 @extend .py-2;
             }
         }
@@ -826,6 +866,19 @@ body.hascourseindexcmicons {
  * Setting: Boost Union footer buttons (i.e. Back to top button and Accessibility button).
  --------------------------------------*/
 
+/* Preemptive regression fix for MDL-85326 until Moodle 5.0.1 is released. */
+body:not(.jsenabled) {
+    .btn-footer-popover {
+        display: none !important; // stylelint-disable-line declaration-no-important
+    }
+}
+
+@include media-breakpoint-down(sm) {
+    .jsenabled .btn-footer-popover {
+        display: none;
+    }
+}
+
 /* Boost Union footer buttons container */
 #boost-union-footer-buttons {
     /* Place the Boost Union footer buttons at a fixed place. */
@@ -841,7 +894,7 @@ body.hascourseindexcmicons {
     /* Add margin between the individual buttons. */
     .btn {
         display: block;
-        margin-top: 0.75rem;
+        margin-top: 1rem;
     }
 
     /* Style accessibility button. */
@@ -884,11 +937,6 @@ body.hascourseindexcmicons {
     #back-to-top {
         /* Hide the back to top icon initially. It will be unhidden by JS only. */
         display: none;
-
-        i::before {
-            /* Move the caret icon slightly up for a nicer look. */
-            vertical-align: 0.3rem;
-        }
     }
 }
 
@@ -901,14 +949,14 @@ body.hasstickyfooter #boost-union-footer-buttons {
    the Boost Union footer buttons have to be shown above of the footer button. */
 body.theme_boost-union-footerbuttonall.jsenabled,
 body.theme_boost-union-footerbuttonmobile.jsenabled {
-    @include media-breakpoint-down(xs) {
+    @include media-breakpoint-down(sm) {
         #boost-union-footer-buttons {
             bottom: 5rem;
         }
     }
     /* And if the sticky footer is shown by Moodle core, move the Boost Union footer buttons more upwards. */
     &.hasstickyfooter {
-        @include media-breakpoint-down(xs) {
+        @include media-breakpoint-down(sm) {
             #boost-union-footer-buttons {
                 bottom: 10rem;
             }
@@ -1020,8 +1068,7 @@ body.theme-boost-union-commincourse {
     min-height: 300px;
     top: -100vh;
     width: 100vw;
-    z-index: 1050; /* This z-index is equal to $zindex-modal and puts the drawer on top of
-                      the whole page regardless what Moodle does for the .drawer class. */
+    z-index: $zindex-modal;
 
     /* And show it as soon as the drawer is set to be shown. */
     &.show {
@@ -1034,7 +1081,7 @@ body.theme-boost-union-commincourse {
         /* Position the icon. */
         .btn {
             margin-left: auto;
-            margin-right: 10px;
+            margin-right: 17px;
         }
 
         /* Make the close icon more visible. */
@@ -1086,7 +1133,7 @@ body.theme-boost-union-commincourse {
             }
             i {
                 font-size: 20px;
-                line-height: 30px;
+                line-height: 25px;
             }
         }
     }
@@ -1188,7 +1235,7 @@ body.theme-boost-union-commincourse {
 }
 
 /* And on smaller screens. */
-@include media-breakpoint-down(sm) {
+@include media-breakpoint-down(md) {
     /* Change the outside-left and outside-right blocks to full width (with some horizontal space). */
     #theme-block-region-outside-left,
     #theme-block-region-outside-right {
@@ -1233,7 +1280,7 @@ body.theme-boost-union-commincourse {
     }
 
     /* And on smaller screens. */
-    @include media-breakpoint-down(sm) {
+    @include media-breakpoint-down(md) {
         &.theme-block-region-outside-fullwidth,
         &.theme-block-region-outside-coursecontentwidth,
         &.theme-block-region-footer-fullwidth,
@@ -1277,7 +1324,7 @@ body.limitedwidth .theme-block-region-footer-coursecontentwidth {
     }
 
     /* And on smaller screens. */
-    @include media-breakpoint-down(sm) {
+    @include media-breakpoint-down(md) {
         /* Just show the block full width with some horizontal space. */
         padding-left: 15px;
         padding-right: 15px;
@@ -1306,7 +1353,7 @@ body.limitedwidth .theme-block-region-footer-coursecontentwidth {
 }
 
 /* And on smaller screens. */
-@include media-breakpoint-down(sm) {
+@include media-breakpoint-down(md) {
     /* Add some horizontal space on the small screen. */
     #theme-block-region-footer {
         padding-left: 15px;
@@ -1339,7 +1386,7 @@ body.limitedwidth .theme-block-region-footer-coursecontentwidth {
 /* Static pages links dividers. */
 #footnote {
     .theme_boost_union_footnote_link {
-        border-right: 2px solid $nav-divider-color;
+        border-right: 2px solid $breadcrumb-divider-color;
     }
     .theme_boost_union_footnote_link:last-of-type {
         border-right: none;
@@ -1399,7 +1446,7 @@ body.limitedwidth .theme-block-region-footer-coursecontentwidth {
 }
 
 /* And on really small screens. */
-@include media-breakpoint-down(xs) {
+@include media-breakpoint-down(sm) {
     #footnote {
         /* On really small screens, there isn't any background image, so there's no need for a white background. */
 
@@ -1450,7 +1497,7 @@ body.limitedwidth .theme-block-region-footer-coursecontentwidth {
 }
 
 /* And on really small screens. */
-@include media-breakpoint-down(xs) {
+@include media-breakpoint-down(sm) {
     body.pagelayout-login.loginbackgroundimage {
         #footnote {
             /* Add white background color and a small bottom margin
@@ -1525,7 +1572,7 @@ body.theme_boost-union-footerbuttonmobile.jsenabled {
         }
     }
     /* On smaller screens. */
-    @include media-breakpoint-down(xs) {
+    @include media-breakpoint-down(sm) {
         /* Show the footer button.
            This uses !important to make really sure that the element is shown regardless of other CSS rules. */
         .btn-footer-popover {
@@ -1590,9 +1637,9 @@ body.theme_boost-union-footerbuttonnone.jsenabled {
 /* Style the advertisement tile cards. */
 #themeboostunionadvtiles [class*="col-"] .card {
     background-size: cover;
-    /* d-flex align-items-stretch align-self-stretch classes in mustache template require to set width to inherit
+    /* d-flex align-items-stretch align-self-stretch classes in mustache template require to set width explicitely
        (Otherwise width is flexible dependent on content). */
-    width: inherit;
+    width: 100%;
 }
 
 /* Classes for the content style of advertisement tiles. */
@@ -1690,7 +1737,7 @@ body.theme_boost-union-footerbuttonnone.jsenabled {
  ======================================*/
 
 /* Remove horizontal paddings on the tile / slider container on smaller screens to align it with the main frontpage content. */
-@include media-breakpoint-down(sm) {
+@include media-breakpoint-down(md) {
     #themeboostunionadvtiles,
     #themeboostunionslider-wrapper {
         padding-left: 0;
@@ -2249,7 +2296,7 @@ body.theme_boost-union-footerbuttonnone.jsenabled {
                                     }
                                     /* The line height added and "Go" button block aligned right side
                                     in the content block for the card dropdown items */
-                                    .btn-block {
+                                    .card-btn-block {
                                         width: auto;
                                         line-height: 10px;
                                         text-align: right;
@@ -2282,7 +2329,7 @@ body.theme_boost-union-footerbuttonnone.jsenabled {
                                             opacity: .6;
                                         }
                                         /* The Card Menu as "Heading" option content block "Go" button link is hidden */
-                                        .btn-block {
+                                        .card-btn-block {
                                             display: none;
                                         }
                                     }
@@ -2562,7 +2609,7 @@ body.theme_boost-union-footerbuttonnone.jsenabled {
 }
 
 /* The nav drawer position to the top in the responsive alignment */
-@include media-breakpoint-down(md) {
+@include media-breakpoint-down(lg) {
     .navbar.fixed-top.boost-union-menubar ~ .drawer {
         top: 100px; /* The position has been adjusted to prevent the message drawer from being hidden behind the primary header. */
         &.drawer-right {
@@ -2578,7 +2625,7 @@ body.theme_boost-union-footerbuttonnone.jsenabled {
     }
 }
 
-@include media-breakpoint-down(sm) {
+@include media-breakpoint-down(md) {
     .navbar.fixed-top {
         /* The header z-index is increased to show at top when the footer bottom menu is added */
         &.smartmenu-bottom-navigation {
@@ -2903,7 +2950,7 @@ body.theme_boost-union-footerbuttonnone.jsenabled {
 /* End of Footer Menu */
 
 /* On small screens (where the bottom bar could be visible). */
-@include media-breakpoint-down(xs) {
+@include media-breakpoint-down(sm) {
     /* If the bottom bar is shown. */
     body.theme-boost-union-bottombar {
         /* The Boost Union footer buttons have to be moved more upwards. */
@@ -2980,7 +3027,7 @@ body.theme_boost-union-footerbuttonnone.jsenabled {
     }
 }
 
-@include media-breakpoint-down(sm) {
+@include media-breakpoint-down(md) {
     /* The padding for the footer to visible the footer bottom menu because it is in the position style */
     /* Boost union footer bottom menu style when the smart menu is enabled */
     body.theme-boost-union-bottombar #page-wrapper #page {
@@ -3143,7 +3190,7 @@ body.dir-rtl {
  --------------------------------------*/
 
 /* On smaller screens. */
-@include media-breakpoint-down(sm) {
+@include media-breakpoint-down(md) {
     /* Move the learning tools floating button up as soon as the bottom menu is shown. */
     body.theme-boost-union-bottombar .learningtools-action-info .floating-button {
         bottom: 4rem;
@@ -3206,7 +3253,7 @@ body.dir-rtl {
     }
 
     /* On not-so-large screens. */
-    @include media-breakpoint-down(lg) { /* This means less than 300px per outside block region. */
+    @include media-breakpoint-down(xl) { /* This means less than 300px per outside block region. */
         /* Stack content vertically. */
         .main-inner-outside-nextmaincontent {
             display: flex;

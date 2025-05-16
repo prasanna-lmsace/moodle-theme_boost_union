@@ -30,7 +30,12 @@ define(["jquery", "core/moremenu", "theme_boost_union/submenu"], function($, Mor
         dropDownItem: "dropdown-item",
         classes: {
             dropDownMenuList: ".dropdownmoremenu ul.dropdown-menu",
-            forceOut: ".dropdownmoremenu .force-menu-out"
+            forceOut: ".dropdownmoremenu .force-menu-out",
+            dropdownmoremenu: 'dropdownmoremenu'
+        },
+        regions: {
+            moredropdown: '[data-region="moredropdown"]'
+
         }
     };
 
@@ -92,7 +97,6 @@ define(["jquery", "core/moremenu", "theme_boost_union/submenu"], function($, Mor
             setOutMenuPositions(primaryNav); // Create a data flag to maintain the original position of the menus.
             moveOutMoreMenu(primaryNav);
         }
-
 
         var menuBar = document.querySelector('nav.menubar ul.more-nav');
         if (menuBar != undefined) {
@@ -214,6 +218,7 @@ define(["jquery", "core/moremenu", "theme_boost_union/submenu"], function($, Mor
 
     return {
         init: () => {
+
             SubMenu.init();
             cardScroll();
             autoCollapse();
@@ -224,6 +229,24 @@ define(["jquery", "core/moremenu", "theme_boost_union/submenu"], function($, Mor
                 helpIcon.forEach((icon) => {
                     icon.addEventListener('click', (e) => {
                         e.stopPropagation();
+                    });
+                });
+            }
+
+            const toggledropdown = e => e.stopPropagation();
+
+            // If there are dropdowns in the MoreMenu, add a new
+            // event listener to show the contents on click and prevent the
+            // moreMenu from closing.
+            // In moodle 5.0, only the first moremenu is initialized. if the menubar and primary navigation are present,
+            // the moremenu is initialized on the menubar.
+            // So we need to add the event listener to the primary navigation if the menubar is present.
+            if (document.querySelector('.boost-union-menubar')) {
+                document.querySelector('.primary-navigation .' + Selectors.classes.dropdownmoremenu).addEventListener('show.bs.dropdown', () => {
+                    const moreDropdown = document.querySelector('.primary-navigation')?.querySelector(Selectors.regions.moredropdown);
+                    moreDropdown?.querySelectorAll('.dropdown').forEach((dropdown) => {
+                        dropdown.removeEventListener('click', toggledropdown, true);
+                        dropdown.addEventListener('click', toggledropdown, true);
                     });
                 });
             }

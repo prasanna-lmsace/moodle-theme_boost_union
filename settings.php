@@ -337,15 +337,6 @@ if ($hassiteconfig || has_capability('theme/boost_union:configure', context_syst
         $setting->set_updatedcallback('theme_reset_all_caches');
         $tab->add($setting);
 
-        // Setting: Medium content max width.
-        $name = 'theme_boost_union/mediumcontentmaxwidth';
-        $title = get_string('mediumcontentmaxwidthsetting', 'theme_boost_union', null, true);
-        $description = get_string('mediumcontentmaxwidthsetting_desc', 'theme_boost_union', null, true);
-        $default = '1120px';
-        $setting = new admin_setting_configtext($name, $title, $description, $default, $widthregex, 6);
-        $setting->set_updatedcallback('theme_reset_all_caches');
-        $tab->add($setting);
-
         // Create drawer width heading.
         $name = 'theme_boost_union/drawerwidthheading';
         $title = get_string('drawerwidthheading', 'theme_boost_union', null, true);
@@ -587,24 +578,11 @@ if ($hassiteconfig || has_capability('theme/boost_union:configure', context_syst
             $tab->add($setting);
         }
 
-        // Setting: Activity icon color fidelity.
-        $name = 'theme_boost_union/activityiconcolorfidelity';
-        $title = get_string('activityiconcolorfidelitysetting', 'theme_boost_union', null, true);
-        $description = get_string('activityiconcolorfidelitysetting_desc', 'theme_boost_union', null, true);
-        $activityiconcolorfidelityoptions = [
-                1 => get_string('activityiconcolorfidelity_oneshot', 'theme_boost_union'),
-                10 => get_string('activityiconcolorfidelity_sometries', 'theme_boost_union'),
-                100 => get_string('activityiconcolorfidelity_detailled', 'theme_boost_union'),
-                500 => get_string('activityiconcolorfidelity_insane', 'theme_boost_union'),
-            ];
-        $setting = new admin_setting_configselect($name, $title, $description, 1, $activityiconcolorfidelityoptions);
-        $setting->set_updatedcallback('theme_reset_all_caches');
-        $tab->add($setting);
-
         // Create activity icons purpose heading.
         $name = 'theme_boost_union/activitypurposeheading';
         $title = get_string('activitypurposeheading', 'theme_boost_union', null, true);
         $description = get_string('activitypurposeheading_desc', 'theme_boost_union', null, true).'<br /><br />'.
+                get_string('activitypurposeheadingpleasenote', 'theme_boost_union', null, true).'<br /><br />'.
                 get_string('activitypurposeheadingtechnote', 'theme_boost_union',
                         get_string('githubissueslink', 'theme_boost_union', null, true),
                 true);
@@ -1084,34 +1062,6 @@ if ($hassiteconfig || has_capability('theme/boost_union:configure', context_syst
         $name = 'theme_boost_union/upcomingeventstintenabled';
         $title = get_string('upcomingeventstintenabled', 'theme_boost_union', null, true);
         $description = get_string('upcomingeventstintenabled_desc', 'theme_boost_union', null, true);
-        $setting = new admin_setting_configselect($name, $title, $description, THEME_BOOST_UNION_SETTING_SELECT_NO, $yesnooption);
-        $setting->set_updatedcallback('theme_reset_all_caches');
-        $tab->add($setting);
-
-        // Create Recently accessed items block heading.
-        $name = 'theme_boost_union/recentlyaccesseditemsheading';
-        $title = get_string('recentlyaccesseditemsheading', 'theme_boost_union', null, true);
-        $setting = new admin_setting_heading($name, $title, null);
-        $tab->add($setting);
-
-        // Setting: Tint activity icons in the recently accessed items block.
-        $name = 'theme_boost_union/recentlyaccesseditemstintenabled';
-        $title = get_string('recentlyaccesseditemstintenabled', 'theme_boost_union', null, true);
-        $description = get_string('recentlyaccesseditemstintenabled_desc', 'theme_boost_union', null, true);
-        $setting = new admin_setting_configselect($name, $title, $description, THEME_BOOST_UNION_SETTING_SELECT_NO, $yesnooption);
-        $setting->set_updatedcallback('theme_reset_all_caches');
-        $tab->add($setting);
-
-        // Create Activities block heading.
-        $name = 'theme_boost_union/activitiesheading';
-        $title = get_string('activitiesheading', 'theme_boost_union', null, true);
-        $setting = new admin_setting_heading($name, $title, null);
-        $tab->add($setting);
-
-        // Setting: Tint activity icons in the activities block.
-        $name = 'theme_boost_union/activitiestintenabled';
-        $title = get_string('activitiestintenabled', 'theme_boost_union', null, true);
-        $description = get_string('activitiestintenabled_desc', 'theme_boost_union', null, true);
         $setting = new admin_setting_configselect($name, $title, $description, THEME_BOOST_UNION_SETTING_SELECT_NO, $yesnooption);
         $setting->set_updatedcallback('theme_reset_all_caches');
         $tab->add($setting);
@@ -1748,6 +1698,30 @@ if ($hassiteconfig || has_capability('theme/boost_union:configure', context_syst
         $description = get_string('blockregionsheading_desc', 'theme_boost_union', null, true);
         $setting = new admin_setting_heading($name, $title, $description);
         $tab->add($setting);
+
+        // Add guest role warning (If the guestroleupgradedfrompre500 setting is set to true).
+        if (get_config('theme_boost_union', 'guestroleupgradedfrompre500') == 1) {
+            $name = 'theme_boost_union/blockregionsheadingguestrole';
+            $guestrolefixurl = new core\url('/theme/boost_union/settings_update_guestrole.php',
+                    ['sesskey' => sesskey(), 'fix' => 1]);
+            $guestrolekeepurl = new core\url('/theme/boost_union/settings_update_guestrole.php',
+                    ['sesskey' => sesskey(), 'fix' => 0]);
+            $guestrolenote = \core\output\html_writer::tag('p',
+                    get_string('blockregionsheading_guestrole', 'theme_boost_union', null, true));
+            $guestrolenote .= \core\output\html_writer::link(
+                    $guestrolefixurl,
+                    get_string('blockregionsheading_guestrole_fix', 'theme_boost_union', null, true),
+                    ['class' => 'btn btn-secondary mt-1 me-3', 'role' => 'button']);
+            $guestrolenote .= \core\output\html_writer::link(
+                    $guestrolekeepurl,
+                    get_string('blockregionsheading_guestrole_keep', 'theme_boost_union', null, true),
+                    ['class' => 'btn btn-secondary mt-1', 'role' => 'button']);
+            $notification = new \core\output\notification($guestrolenote, \core\output\notification::NOTIFY_ERROR);
+            $notification->set_show_closebutton(false);
+            $description = $OUTPUT->render($notification);
+            $setting = new admin_setting_heading($name, '', $description);
+            $tab->add($setting);
+        }
 
         // Add experimental warning.
         $name = 'theme_boost_union/blockregionsheadingexperimental';
@@ -2713,8 +2687,6 @@ if ($hassiteconfig || has_capability('theme/boost_union:configure', context_syst
 
         // Setting: Slider animation type.
         $slideranimationoptions = [
-                THEME_BOOST_UNION_SETTING_SLIDER_ANIMATIONTYPE_NONE =>
-                        get_string('slideranimationsetting_none', 'theme_boost_union'),
                 THEME_BOOST_UNION_SETTING_SLIDER_ANIMATIONTYPE_FADE =>
                         get_string('slideranimationsetting_fade', 'theme_boost_union'),
                 THEME_BOOST_UNION_SETTING_SLIDER_ANIMATIONTYPE_SLIDE =>

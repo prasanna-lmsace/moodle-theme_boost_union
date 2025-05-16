@@ -127,9 +127,6 @@ $string['pagewidthheading'] = 'Page width';
 // ... ... Setting: Course content max width.
 $string['coursecontentmaxwidthsetting'] = 'Course content max width';
 $string['coursecontentmaxwidthsetting_desc'] = 'With this setting, you can override Moodle\'s course content width without manual SCSS modifications. This width is used as page width of course pages and within several activities. By default, Moodle uses a course content max width of 830px. You can enter other pixel-based values like 1200px, but you can also enter a percentage-based value like 100% or a viewport-width value like 90vw.';
-// ... ... Setting: Medium content max width.
-$string['mediumcontentmaxwidthsetting'] = 'Medium content max width';
-$string['mediumcontentmaxwidthsetting_desc'] = 'With this setting, you can override Moodle\'s medium content width without manual SCSS modifications. This page width is used in certain activities like the database activity. By default, Moodle uses a medium content max width of 1120px. You can enter other pixel-based values like 1200px, but you can also enter a percentage-based value like 100% or a viewport-width value like 90vw.';
 // ... Section: Drawer width.
 $string['drawerwidthheading'] = 'Drawer width';
 // ... ... Setting: Course content max width.
@@ -218,16 +215,10 @@ $string['activityiconcolorinteractivecontentsetting_desc'] = 'The activity icon 
 // ... ... Setting: Activity icon color for 'Interface'.
 $string['activityiconcolorinterfacesetting'] = 'Activity icon color for "Interface"';
 $string['activityiconcolorinterfacesetting_desc'] = 'The activity icon color for "Interface"';
-// ... ... Setting: Activity icon color fidelity'.
-$string['activityiconcolorfidelitysetting'] = 'Activity icon color fidelity';
-$string['activityiconcolorfidelitysetting_desc'] = 'With the settings above, you set a hex color which will be used to tint the particular activity icon. However, technically, the activity icon is tinted with a CSS filter. Boost Union uses a sophisticated algorithm to determine a CSS filter which matches the given hex color visually, but this algorithm is based on a randomized search and might produce suboptimal results when it is run just once. With this setting, you can allow Boost Union to run the algorithm multiple times and pick the filter which deviates least from the hex color at the end. Please note that this setting has an impact on the cache purging times (the more iterations you allow, the longer Moodle will take to purge the theme cache), but it will not have an impact on page load times.';
-$string['activityiconcolorfidelity_oneshot'] = 'One shot (1 iteration)';
-$string['activityiconcolorfidelity_sometries'] = 'Some tries (up to 10 iterations)';
-$string['activityiconcolorfidelity_detailled'] = 'Detailled research (up to 100 iterations)';
-$string['activityiconcolorfidelity_insane'] = 'Insane quest (up to 500 iterations)';
 // ... Section: Activity icon purposes.
 $string['activitypurposeheading'] = 'Activity icon purposes';
 $string['activitypurposeheading_desc'] = 'With these settings, you can override the activity icon background color which is defined by the activity\'s purpose (and which is a hardcoded plugin feature in each activity).';
+$string['activitypurposeheadingpleasenote'] = 'Please note: On the activities overview page within a course, all resource activities like "book" are all combined under a "resources" section. Thus, the purpose of these individual activitiy types cannot / do not need to be changed on this page. You can just change the color of the "resources" icon color with the setting above.';
 $string['activitypurposeheadingtechnote'] = 'Technical note: Due to the way how Moodle core implements the activity purposes and their colors, the activity purposes are only overridden with CSS by Boost Union. Currently, all areas in Moodle core which show colored activity icons should be covered. If you spot any area or third party plugin which continues to show the unchanged activity purpose colors, please report it on {$a}.';
 $string['activitypurposeadministration'] = 'Administration';
 $string['activitypurposeassessment'] = 'Assessment';
@@ -401,16 +392,6 @@ $string['upcomingeventsheading'] = 'Upcoming events block';
 // Setting: Tint activity icons in the upcoming events block.
 $string['upcomingeventstintenabled'] = 'Tint upcoming events activity icons';
 $string['upcomingeventstintenabled_desc'] = 'With this setting, you can tint the activity icons in the upcoming events block based on the activity purposes. By default, Moodle core displays them just as black icons.';
-// ... Section: Recently accessed items block.
-$string['recentlyaccesseditemsheading'] = 'Recently accessed items block';
-// Setting: Tint activity icons in the recently accessed items block.
-$string['recentlyaccesseditemstintenabled'] = 'Tint recently accessed items activity icons';
-$string['recentlyaccesseditemstintenabled_desc'] = 'With this setting, you can tint the activity icons in the recently accessed items block based on the activity purposes. By default, Moodle core displays them just as black icons.';
-// ... Section: Activities block.
-$string['activitiesheading'] = 'Activities block';
-// Setting: Tint activity icons in the activities block.
-$string['activitiestintenabled'] = 'Tint activities activity icons';
-$string['activitiestintenabled_desc'] = 'With this setting, you can tint the activity icons in the activities block based on the activity purposes. By default, Moodle core displays them just as black icons.';
 
 // Settings: Course tab.
 $string['coursetab'] = 'Course';
@@ -614,9 +595,15 @@ $string['blockregionsheading_desc'] = '<p>Boost Union provides a large number of
 <li>The <em>Off-canvas block region</em> is somehow special as it hovers over the whole Moodle page as a drawer. The drawer is opened by the 9-dots icon at the very right side of the navigation bar. You have three off-canvas regions available to build columns if necessary.</li></ul>
 <p>Please note:</p>
 <ul><li>By default, all additional block regions are disabled. Please enable the particular block regions on the particular page layouts according to your needs. Try to be as focused as possible – too many block regions could overwhelm end users.</li>
-<li>As soon as an additional block region is enabled, it is visible for all authenticated users and editable by teachers and managers (depending on the fact if the particular user is allowed to edit the particular Moodle page, of course). But there are also theme/boost_union:viewregion* and theme/boost_union:editregion* capabilities which allow you to fine-tune the usage of each block region according to your needs.</li>
+<li>As soon as an additional block region is enabled, it is visible for all authenticated users as well as guest users and editable by teachers and managers (depending on the fact if the particular user is allowed to edit the particular Moodle page, of course). But there are also theme/boost_union:viewregion* and theme/boost_union:editregion* capabilities which allow you to fine-tune the usage of each block region according to your needs.</li>
 <li>The Outside (left), Outside (right), Content (upper), Content (lower) and Header block regions are not available for all page layouts.</li></ul>';
+$string['blockregionsheading_guestrole'] = '<strong>Attention!</strong><br />On Boost Union installations which were upgraded from a release earlier than Boost Union v5.0, the block regions are not yet visible for the guest users by default as well as these visibility defaults have been changed in Boost Union v5.0. You can automatically fix the defaults (and thereby make the block regions visible for guests) or keep your local visibility configuration as it is (and thereby diverge from the explanation text above).';
+$string['blockregionsheading_guestrole_fix'] = 'Fix the guest role to use the new defaults';
+$string['blockregionsheading_guestrole_fixed'] = 'The guest role uses the new defaults now and the notification on the settings page will be removed now.';
+$string['blockregionsheading_guestrole_keep'] = 'Keep the guest role as it is';
+$string['blockregionsheading_guestrole_kept'] = 'The guest role will be kept as it is and the notification on the settings page will be removed now.';
 $string['blockregionsheading_experimental'] = 'Please note: The <em>Outside (left) and Outside (right) block regions</em> are fully working in the current state of implementation, but have to be <em>considered as experimental</em> as they do not wrap properly on medium width screens yet. Against this background, please use them with care. This issue will be fixed in an upcoming release.';
+$string['error:infobannerdismissnonotvalidnotset'] = 'This Boost Union instance was either not upgraded from a release earlier than Boost Union v5.0 or the new guest role defaults were already handled. There is nothing to do here.';
 $string['region-none'] = 'None';
 $string['region-outside-left'] = 'Outside (left)';
 $string['region-outside-top'] = 'Outside (top)';
@@ -1029,9 +1016,8 @@ $string['slidertab'] = 'Slider';
 // ... Section: Slider general.
 $string['slidergeneralheading'] = 'Slider general';
 $string['slideranimationsetting'] = 'Slider animation type';
-$string['slideranimationsetting_desc'] = 'With this setting, you control the slider animation. \'Slide\' applies a sliding animation, \'Fade\' applies a fading animation and \'None\' removes all animations.';
+$string['slideranimationsetting_desc'] = 'With this setting, you control the slider animation. \'Slide\' applies a sliding animation and \'Fade\' applies a fading animation.';
 $string['slideranimationsetting_fade'] = 'Fade';
-$string['slideranimationsetting_none'] = 'None';
 $string['slideranimationsetting_slide'] = 'Slide';
 $string['sliderarrownavsetting'] = 'Enable arrow navigation';
 $string['sliderarrownavsetting_desc'] = 'With this setting, you can add navigation arrows on both sides of the slider.';

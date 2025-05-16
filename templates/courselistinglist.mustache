@@ -45,7 +45,7 @@
             <div class="col-md-3 col-sm-4 mb-md-0">
                 <a href="{{viewurl}}" tabindex="-1" class="mw-100 w-100">
                     <div class="rounded list-image mw-100" style='background-image: url("{{{courseimage}}}");'>
-                        <span class="sr-only">{{fullname}}</span>
+                        <span class="visually-hidden">{{fullname}}</span>
                     </div>
                 </a>
                 {{#showcoursecontacts}}
@@ -54,7 +54,8 @@
                             {{#contacts}}
                                 {{#canviewuserdetails}}<a href="{{config.wwwroot}}/user/profile.php?id={{{id}}}" tabindex="-1">{{/canviewuserdetails}}
                                     <div class="contact me-2 mb-2">
-                                        <img src="{{{userpicture}}}" class="rounded-circle shadow-sm" alt="{{{contactname}}}" data-toggle="tooltip" title="{{{contactname}}}" />
+                                        {{! The Bootstrap tooltip which we set with the data-bs-toggle attribute might not be shown on pages where this template is lazy-loaded (e.g. the combo list on site home). But we accept this. }}
+                                        <img src="{{{userpicture}}}" class="rounded-circle shadow-sm" alt="{{{contactname}}}" data-bs-toggle="tooltip" title="{{{contactname}}}" />
                                     </div>
                                 {{#canviewuserdetails}}</a>{{/canviewuserdetails}}
                             {{/contacts}}
@@ -66,7 +67,7 @@
         <div class="{{#showsidebar}}{{#showcourseimage}}col-md-6 col-sm-4{{/showcourseimage}}{{^showcourseimage}}col-md-9 col-sm-8{{/showcourseimage}}{{/showsidebar}}{{^showsidebar}}{{#showcourseimage}}col-md-9 col-sm-8{{/showcourseimage}}{{^showcourseimage}}col-md-12 col-sm-12{{/showcourseimage}}{{/showsidebar}} d-flex flex-column">
             {{#showshortname}}
                 <div class="text-muted muted d-flex flex-wrap">
-                    <span class="sr-only">
+                    <span class="visually-hidden">
                         {{#str}}aria:courseshortname, core_course{{/str}}
                     </span>
                     <span class="shortname">
@@ -75,14 +76,14 @@
                 </div>
             {{/showshortname}}
             <a href="{{viewurl}}" class="aalink coursename">
-                <span class="sr-only">
+                <span class="visually-hidden">
                     {{#str}}aria:coursename, core_course{{/str}}
                 </span>
                 {{{fullname}}}
             </a>
             {{#showcoursecategory}}
                 <div class="text-muted muted d-flex flex-wrap">
-                    <span class="sr-only">
+                    <span class="visually-hidden">
                         {{#str}}aria:coursecategory, core_course{{/str}}
                     </span>
                     <span class="categoryname text-truncate">

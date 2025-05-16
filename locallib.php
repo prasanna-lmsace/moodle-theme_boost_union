@@ -1409,14 +1409,6 @@ function theme_boost_union_get_scss_for_activity_icon_purpose($theme) {
         if (get_config('theme_boost_union', 'upcomingeventstintenabled') == THEME_BOOST_UNION_SETTING_SELECT_YES) {
             $blocksscss[] = '.block_calendar_upcoming .theme-boost-union-mod_'.$modname.'.activityiconcontainer img';
         }
-        // If the admin wanted us to tint the recently accessed items block as well.
-        if (get_config('theme_boost_union', 'recentlyaccesseditemstintenabled') == THEME_BOOST_UNION_SETTING_SELECT_YES) {
-            $blocksscss[] = '.block_recentlyaccesseditems .theme-boost-union-'.$modname.'.activityiconcontainer img';
-        }
-        // If the admin wanted us to tint the activities block as well.
-        if (get_config('theme_boost_union', 'activitiestintenabled') == THEME_BOOST_UNION_SETTING_SELECT_YES) {
-            $blocksscss[] = '.block_activity_modules .content .icon[title="'.$modinfo.'"]';
-        }
         $blocksscss = implode(', ', $blocksscss);
 
         // If the activity purpose setting is set and differs from the activity's default purpose.
@@ -1425,17 +1417,18 @@ function theme_boost_union_get_scss_for_activity_icon_purpose($theme) {
             // Add CSS to modify the activity purpose color in the activity chooser and the activity icon.
             $scss .= '.activity.modtype_'.$modname.' .activityiconcontainer.courseicon img,';
             $scss .= '.modchoosercontainer .modicon_'.$modname.'.activityiconcontainer img,';
-            $scss .= '#page-header .modicon_'.$modname.'.activityiconcontainer img';
+            $scss .= '#page-header .modicon_'.$modname.'.activityiconcontainer img,';
+            $scss .= '#page-course-overview #'.$modname.'_overview_title .activityiconcontainer img';
             // Add CSS for the configured blocks.
             if (strlen($blocksscss) > 0) {
                 $scss .= ', '.$blocksscss;
             }
             $scss .= ' {';
-            // If the purpose is now different than 'other', change the filter to the new color.
+            // If the purpose is now different than 'other', change the filter to the new color (and force it with important).
             if ($activitypurpose != MOD_PURPOSE_OTHER) {
-                $scss .= 'filter: var(--activity' . $activitypurpose . ') !important;';
+                $scss .= '@include recolor-icon-important(map-get($activity-icon-colors, "'.$activitypurpose.'"), 1);';
 
-                // Otherwise, the filter is removed (as there is no '--activityother' variable).
+                // Otherwise, the filter is removed.
             } else {
                 $scss .= 'filter: none !important;';
             }
@@ -1449,7 +1442,7 @@ function theme_boost_union_get_scss_for_activity_icon_purpose($theme) {
 
                 // If the purpose is now different than 'other', set the filter to tint the icon.
                 if ($activitypurpose != MOD_PURPOSE_OTHER) {
-                    $scss .= 'filter: var(--activity' . $defaultpurpose . ') !important;';
+                    $scss .= '@include recolor-icon-important(map-get($activity-icon-colors, "'.$defaultpurpose.'"), 1);';
                 }
 
                 $scss .= '}';
@@ -2341,7 +2334,7 @@ function theme_boost_union_get_accessibility_support_skip_link() {
             $supporttitle = theme_boost_union_get_accessibility_srlinktitle();
             $output .= \core\output\html_writer::link($supporturl, $supporttitle, [
                 'id' => 'access-support-form-sr-link',
-                'class' => 'sr-only sr-only-focusable',
+                'class' => 'visually-hidden visually-hidden-focusable',
             ]);
         }
     }

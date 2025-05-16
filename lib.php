@@ -53,7 +53,6 @@ define('THEME_BOOST_UNION_SETTING_ADVERTISEMENTTILES_FRONTPAGEPOSITION_BEFORE', 
 define('THEME_BOOST_UNION_SETTING_ADVERTISEMENTTILES_FRONTPAGEPOSITION_AFTER', 2);
 
 define('THEME_BOOST_UNION_SETTING_SLIDES_COUNT', 6);
-define('THEME_BOOST_UNION_SETTING_SLIDER_ANIMATIONTYPE_NONE', 0);
 define('THEME_BOOST_UNION_SETTING_SLIDER_ANIMATIONTYPE_SLIDE', 1);
 define('THEME_BOOST_UNION_SETTING_SLIDER_ANIMATIONTYPE_FADE', 2);
 define('THEME_BOOST_UNION_SETTING_SLIDER_FRONTPAGEPOSITION_BEFOREBEFORE', 1);
@@ -285,10 +284,6 @@ function theme_boost_union_get_pre_scss($theme) {
     if (get_config('theme_boost_union', 'coursecontentmaxwidth')) {
         $scss .= '$course-content-maxwidth: '.get_config('theme_boost_union', 'coursecontentmaxwidth').";\n";
     }
-    // Set variables which are influenced by the mediumcontentmaxwidth setting.
-    if (get_config('theme_boost_union', 'mediumcontentmaxwidth')) {
-        $scss .= '$medium-content-maxwidth: '.get_config('theme_boost_union', 'mediumcontentmaxwidth').";\n";
-    }
     // Set variables which are influenced by the h5pcontentmaxwidth setting.
     if (get_config('theme_boost_union', 'h5pcontentmaxwidth')) {
         $scss .= '$h5p-content-maxwidth: '.get_config('theme_boost_union', 'h5pcontentmaxwidth').";\n";
@@ -331,14 +326,8 @@ function theme_boost_union_get_pre_scss($theme) {
 
         // If a color is set.
         if (!empty($activityiconcolor)) {
-            // Set the activity-icon-*-bg variable which was replaced by the CSS filters in Moodle 4.4 but which is still part
-            // of the codebase.
+            // Set the activity-icon-*-bg variable which will be replaced with the CSS filters by Moodle core.
             $scss .= '$activity-icon-'.$purpose.'-bg: '.$activityiconcolor.";\n";
-
-            // Set the activity-icon-*-filter variable which holds the CSS filters for the activity icon colors now.
-            $solver = new \theme_boost_union\lib\hextocssfilter\solver($activityiconcolor);
-            $cssfilterresult = $solver->solve();
-            $scss .= '$activity-icon-'.$purpose.'-filter: '.$cssfilterresult['filter'].";\n";
         }
     }
 
