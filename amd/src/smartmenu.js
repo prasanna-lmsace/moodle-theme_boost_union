@@ -32,7 +32,6 @@ define(["jquery", "core/moremenu", "theme_boost_union/submenu"], function($, Mor
             dropDownMenuList: ".dropdownmoremenu ul.dropdown-menu",
             forceOut: ".dropdownmoremenu .force-menu-out",
             dropdownmoremenu: '.dropdownmoremenu',
-            menuBar: '.boost-union-menubar',
             primaryNavigation: '.primary-navigation',
 
         },
@@ -244,10 +243,10 @@ define(["jquery", "core/moremenu", "theme_boost_union/submenu"], function($, Mor
             // In moodle 5.0, only the first moremenu is initialized. if the menubar and primary navigation are present,
             // the moremenu is initialized on the menubar.
             // So we need to add the event listener to the primary navigation if the menubar is present.
-            if (document.querySelector(Selectors.classes.menuBar) !== null) {
-
-                var primaryNav = document
+            var primaryNav = document
                     .querySelector(Selectors.classes.primaryNavigation + ' ' + Selectors.classes.dropdownmoremenu);
+
+            if (document.querySelector(Selectors.classes.dropdownmoremenu) !== primaryNav) {
 
                 primaryNav?.addEventListener('show.bs.dropdown', () => {
                     const moreDropdown = document.querySelector(Selectors.classes.primaryNavigation)

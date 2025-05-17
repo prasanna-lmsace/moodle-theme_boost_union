@@ -95,7 +95,6 @@ const registerEventListeners = (smartMenu) => {
         // Get the position (index) of the targeted carousel item within the parent container element.
         const index = Array.from(targetedCarouselItem.parentNode.children).indexOf(targetedCarouselItem);
         // Navigate to the targeted carousel item.
-        // $(smartMenu.querySelector(Selectors.smartMenuCarousel)).carousel(index);
         Carousel.getOrCreateInstance(smartMenuCarousel).to(index);
 
     };
@@ -104,7 +103,6 @@ const registerEventListeners = (smartMenu) => {
     smartMenu.addEventListener('hide.bs.dropdown', () => {
         // Reset the state once the smart menu dropdown is closed and return back to the first (main) carousel item
         // if necessary.
-        // $(smartMenu.querySelector(Selectors.smartMenuCarousel)).carousel(0);
         Carousel.getOrCreateInstance(smartMenuCarousel).to(0);
 
     });
